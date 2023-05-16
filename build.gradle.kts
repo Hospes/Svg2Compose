@@ -1,28 +1,35 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    id("org.jetbrains.compose") version "1.1.1"
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose)
 }
 
 val v = "1.1.0"
-group = "com.blunderer"
+group = "svg2compose"
 version = v
 
-repositories {
-    google()
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+java {
+    toolchain { languageVersion.set(JavaLanguageVersion.of(19)) }
 }
 
-dependencies {
-    implementation(compose.desktop.currentOs)
-}
+kotlin {
+    jvm()
+    jvmToolchain { languageVersion.set(JavaLanguageVersion.of(19)) }
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(compose.materialIconsExtended)
+            }
+        }
+        //val jvmTest by getting
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "15"
+        all {
+            languageSettings.optIn("androidx.compose.ui.ExperimentalComposeUiApi")
+            languageSettings.optIn("androidx.compose.material.ExperimentalMaterialApi")
+        }
+    }
 }
 
 compose.desktop {
@@ -30,7 +37,7 @@ compose.desktop {
         mainClass = "AppKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
-            packageName = "Svg2Compose"
+            packageName = "svg2compose"
             packageVersion = v
             windows {
                 iconFile.set(File("icon.ico"))

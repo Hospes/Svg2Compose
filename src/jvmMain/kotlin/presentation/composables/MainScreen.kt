@@ -35,8 +35,6 @@ import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @Composable
 fun MainScreen() {
     MaterialTheme(colors = darkColors()) {
