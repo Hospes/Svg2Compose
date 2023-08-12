@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
@@ -31,13 +30,14 @@ import domain.UnknownColors
 import domain.VectorDrawableParser
 import model.Svg
 import model.SvgData
+import theme.MyTheme
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
 
 @Composable
 fun MainScreen() {
-    MaterialTheme(colors = darkColors()) {
+    MyTheme {
         val clipboardManager = LocalClipboardManager.current
         var currentTabIndex by remember { mutableStateOf(0) }
 //        var svgFileTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
@@ -114,6 +114,7 @@ fun MainScreen() {
                             label = { Text(text = "Vector Drawable") },
                         )
                     }
+
                     1 -> {
                         OutlinedTextField(
                             modifier = Modifier.weight(1F),
@@ -422,8 +423,6 @@ private fun ItemHeader(
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @Composable
 private fun AskForValidColorDialog(
     colorsValue: Set<String>,
@@ -500,8 +499,6 @@ private fun AskForValidColorDialog(
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @Composable
 private fun IconNameDialog(onValidateClick: (iconName: String) -> Unit, onCancelClick: () -> Unit) {
     val iconName = remember { mutableStateOf(TextFieldValue("")) }
@@ -553,8 +550,6 @@ private fun IconNameDialog(onValidateClick: (iconName: String) -> Unit, onCancel
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @Composable
 private fun CodeCopiedDialog(onCloseClick: () -> Unit) {
     Dialog(
@@ -593,7 +588,6 @@ private fun CodeCopiedDialog(onCloseClick: () -> Unit) {
     }
 }
 
-@ExperimentalComposeUiApi
 @Composable
 private fun ChooseFileDialog(onCloseRequest: (directoryPath: String?, fileName: String?) -> Unit) {
     FileDialog(null as? Frame, "Choose a Vector Drawable file", FileDialog.LOAD).apply {
@@ -604,7 +598,6 @@ private fun ChooseFileDialog(onCloseRequest: (directoryPath: String?, fileName: 
     }
 }
 
-@ExperimentalComposeUiApi
 @Composable
 private fun SaveFileDialog(fileName: String, onCloseRequest: (directoryPath: String?, fileName: String?) -> Unit) {
     FileDialog(null as? Frame, "Choose a directory", FileDialog.SAVE).apply {
