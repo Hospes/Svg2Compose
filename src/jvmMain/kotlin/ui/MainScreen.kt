@@ -24,40 +24,38 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.FrameWindowScope
 import domain.Export
 import domain.SvgPathParser
 import domain.UnknownColors
 import domain.VectorDrawableParser
 import model.Svg
 import model.SvgData
-import theme.MyTheme
 import java.awt.FileDialog
-import java.awt.Frame
 import java.io.File
 
 @Composable
-fun MainScreen() {
-    MyTheme {
-        val clipboardManager = LocalClipboardManager.current
-        var currentTabIndex by remember { mutableStateOf(0) }
+fun FrameWindowScope.MainScreen() {
+    val clipboardManager = LocalClipboardManager.current
+    var currentTabIndex by remember { mutableStateOf(0) }
 //        var svgFileTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-        var vectorDrawableTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-        var svgPathTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-        var svg: Svg? by remember { mutableStateOf(null) }
-        var showImageBackground by remember { mutableStateOf(false) }
-        var showImageBlackBackground by remember { mutableStateOf(false) }
-        var showIconNameDialog by remember { mutableStateOf(false) }
-        var showCodeCopiedDialog by remember { mutableStateOf(false) }
-        var showChooseFileDialog by remember { mutableStateOf(false) }
-        var showSaveFileDialog by remember { mutableStateOf(false) }
-        var unknownColors by remember { mutableStateOf(emptySet<String>()) }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TabRow(selectedTabIndex = currentTabIndex) {
+    var vectorDrawableTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var svgPathTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var svg: Svg? by remember { mutableStateOf(null) }
+    var showImageBackground by remember { mutableStateOf(false) }
+    var showImageBlackBackground by remember { mutableStateOf(false) }
+    var showIconNameDialog by remember { mutableStateOf(false) }
+    var showCodeCopiedDialog by remember { mutableStateOf(false) }
+    var showChooseFileDialog by remember { mutableStateOf(false) }
+    var showSaveFileDialog by remember { mutableStateOf(false) }
+    var unknownColors by remember { mutableStateOf(emptySet<String>()) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        TabRow(selectedTabIndex = currentTabIndex) {
 //                Tab(
 //                    selected = currentTabIndex == 0,
 //                    onClick = {
@@ -68,27 +66,27 @@ fun MainScreen() {
 //                    },
 //                    text = { Text(text = "SVG file") },
 //                )
-                Tab(
-                    selected = currentTabIndex == 0,
-                    onClick = {
-                        svg = null
-                        currentTabIndex = 0
-                    },
-                    text = { Text(text = "Vector Drawable") },
-                )
-                Tab(
-                    selected = currentTabIndex == 1,
-                    onClick = {
-                        svg = null
-                        currentTabIndex = 1
-                    },
-                    text = { Text(text = "SVG path") },
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Spacer(modifier = Modifier.width(16.dp))
-                when (currentTabIndex) {
+            Tab(
+                selected = currentTabIndex == 0,
+                onClick = {
+                    svg = null
+                    currentTabIndex = 0
+                },
+                text = { Text(text = "Vector Drawable") },
+            )
+            Tab(
+                selected = currentTabIndex == 1,
+                onClick = {
+                    svg = null
+                    currentTabIndex = 1
+                },
+                text = { Text(text = "SVG path") },
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Spacer(modifier = Modifier.width(16.dp))
+            when (currentTabIndex) {
 //                0 -> {
 //                    OutlinedTextField(
 //                        modifier = Modifier
@@ -100,266 +98,265 @@ fun MainScreen() {
 //                        label = { Text(text = "SVG file") },
 //                    )
 //                }
-                    0 -> {
-                        OutlinedButton(onClick = { showChooseFileDialog = true }) {
-                            Text("Pick a file")
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        OutlinedTextField(
-                            modifier = Modifier.weight(1F),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
-                            maxLines = 4,
-                            value = vectorDrawableTextFieldValue,
-                            onValueChange = { vectorDrawableTextFieldValue = it },
-                            label = { Text(text = "Vector Drawable") },
-                        )
+                0 -> {
+                    OutlinedButton(onClick = { showChooseFileDialog = true }) {
+                        Text("Pick a file")
                     }
-
-                    1 -> {
-                        OutlinedTextField(
-                            modifier = Modifier.weight(1F),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
-                            maxLines = 4,
-                            value = svgPathTextFieldValue,
-                            onValueChange = { svgPathTextFieldValue = it },
-                            label = { Text(text = "SVG path") },
-                        )
-                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1F),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+                        maxLines = 4,
+                        value = vectorDrawableTextFieldValue,
+                        onValueChange = { vectorDrawableTextFieldValue = it },
+                        label = { Text(text = "Vector Drawable") },
+                    )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                Button(
-                    onClick = {
-                        val svgData = buildSvgData(
-                            currentTabIndex = currentTabIndex,
-                            vectorDrawableValue = vectorDrawableTextFieldValue.text,
-                            svgPathValue = svgPathTextFieldValue.text,
-                            onColorsNotFound = { unknownColors = it },
-                        ) ?: return@Button
 
-                        svg = Svg(
-                            pathDecomposed = svgData.toPathDecomposed(),
-                            imageVectorCode = svgData.toImageVectorCode(),
-                            imageVector = svgData.toImageVector(),
-                            `package` = svgData.toPackage(),
-                            imports = svgData.toImports(),
-                            fileName = null,
-                        )
-                    },
-                ) {
-                    Text(text = "Convert".toUpperCase(Locale.current))
+                1 -> {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1F),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+                        maxLines = 4,
+                        value = svgPathTextFieldValue,
+                        onValueChange = { svgPathTextFieldValue = it },
+                        label = { Text(text = "SVG path") },
+                    )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Divider(color = LightGray)
-            val pathDecomposed = svg?.pathDecomposed
-            val imageVectorCode = svg?.imageVectorCode
-            if (!pathDecomposed.isNullOrBlank() && !imageVectorCode.isNullOrBlank()) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    backgroundColor = DarkGray,
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        var showContent by remember { mutableStateOf(false) }
-                        ItemHeader(
-                            modifier = Modifier.clickable { showContent = !showContent },
-                            imageVector = svg?.imageVector,
-                            selectedFileName = svg?.fileName,
-                            onShowIconNameButtonClick = { showIconNameDialog = true },
-                            onShowExportButtonClick = { showSaveFileDialog = true },
-                            isExpanded = showContent,
-                        )
-                        if (showContent) {
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Row(
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(
+                onClick = {
+                    val svgData = buildSvgData(
+                        currentTabIndex = currentTabIndex,
+                        vectorDrawableValue = vectorDrawableTextFieldValue.text,
+                        svgPathValue = svgPathTextFieldValue.text,
+                        onColorsNotFound = { unknownColors = it },
+                    ) ?: return@Button
+
+                    svg = Svg(
+                        pathDecomposed = svgData.toPathDecomposed(),
+                        imageVectorCode = svgData.toImageVectorCode(),
+                        imageVector = svgData.toImageVector(),
+                        `package` = svgData.toPackage(),
+                        imports = svgData.toImports(),
+                        fileName = null,
+                    )
+                },
+            ) {
+                Text(text = "Convert".toUpperCase(Locale.current))
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Divider(color = LightGray)
+        val pathDecomposed = svg?.pathDecomposed
+        val imageVectorCode = svg?.imageVectorCode
+        if (!pathDecomposed.isNullOrBlank() && !imageVectorCode.isNullOrBlank()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                backgroundColor = DarkGray,
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    var showContent by remember { mutableStateOf(false) }
+                    ItemHeader(
+                        modifier = Modifier.clickable { showContent = !showContent },
+                        imageVector = svg?.imageVector,
+                        selectedFileName = svg?.fileName,
+                        onShowIconNameButtonClick = { showIconNameDialog = true },
+                        onShowExportButtonClick = { showSaveFileDialog = true },
+                        isExpanded = showContent,
+                    )
+                    if (showContent) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .verticalScroll(rememberScrollState()),
+                        ) {
+                            Text(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                                    .verticalScroll(rememberScrollState()),
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .weight(1F)
-                                        .wrapContentWidth(Alignment.End),
-                                    text = pathDecomposed,
-                                    lineHeight = 32.sp,
-                                    color = White,
-                                )
+                                    .weight(1F)
+                                    .wrapContentWidth(Alignment.End),
+                                text = pathDecomposed,
+                                lineHeight = 32.sp,
+                                color = White,
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = imageVectorCode, lineHeight = 32.sp, color = White)
+                            svg?.imageVector?.let {
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text(text = imageVectorCode, lineHeight = 32.sp, color = White)
-                                svg?.imageVector?.let {
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Column(modifier = Modifier.weight(1F)) {
-                                        var imageSizeRatio by remember { mutableStateOf(1F) }
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
+                                Column(modifier = Modifier.weight(1F)) {
+                                    var imageSizeRatio by remember { mutableStateOf(1F) }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            text = "Show background",
+                                            color = White,
+                                            modifier = Modifier.clickable {
+                                                showImageBackground = !showImageBackground
+                                            },
+                                        )
+                                        Checkbox(
+                                            checked = showImageBackground,
+                                            onCheckedChange = { showImageBackground = it },
+                                        )
+                                        if (showImageBackground) {
+                                            Spacer(modifier = Modifier.width(16.dp))
                                             Text(
-                                                text = "Show background",
+                                                text = "Use black background",
                                                 color = White,
                                                 modifier = Modifier.clickable {
-                                                    showImageBackground = !showImageBackground
+                                                    showImageBlackBackground = !showImageBlackBackground
                                                 },
                                             )
                                             Checkbox(
-                                                checked = showImageBackground,
-                                                onCheckedChange = { showImageBackground = it },
+                                                checked = showImageBlackBackground,
+                                                onCheckedChange = { showImageBlackBackground = it },
                                             )
-                                            if (showImageBackground) {
-                                                Spacer(modifier = Modifier.width(16.dp))
-                                                Text(
-                                                    text = "Use black background",
-                                                    color = White,
-                                                    modifier = Modifier.clickable {
-                                                        showImageBlackBackground = !showImageBlackBackground
-                                                    },
-                                                )
-                                                Checkbox(
-                                                    checked = showImageBlackBackground,
-                                                    onCheckedChange = { showImageBlackBackground = it },
-                                                )
-                                            }
                                         }
-                                        Row(modifier = Modifier.fillMaxWidth()) {
-                                            OutlinedButton(
-                                                onClick = { imageSizeRatio /= 1.5F },
-                                            ) {
-                                                Text("-")
-                                            }
-                                            OutlinedButton(
-                                                onClick = { imageSizeRatio *= 1.5F },
-                                            ) {
-                                                Text("+")
-                                            }
-                                        }
-                                        Image(
-                                            modifier = Modifier
-                                                .size(
-                                                    width = it.defaultWidth * imageSizeRatio,
-                                                    height = it.defaultHeight * imageSizeRatio,
-                                                )
-                                                .background(
-                                                    if (showImageBackground) {
-                                                        if (showImageBlackBackground) Black else White
-                                                    } else {
-                                                        Color.Unspecified
-                                                    }
-                                                ),
-                                            imageVector = it,
-                                            contentDescription = null,
-                                        )
                                     }
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        OutlinedButton(
+                                            onClick = { imageSizeRatio /= 1.5F },
+                                        ) {
+                                            Text("-")
+                                        }
+                                        OutlinedButton(
+                                            onClick = { imageSizeRatio *= 1.5F },
+                                        ) {
+                                            Text("+")
+                                        }
+                                    }
+                                    Image(
+                                        modifier = Modifier
+                                            .size(
+                                                width = it.defaultWidth * imageSizeRatio,
+                                                height = it.defaultHeight * imageSizeRatio,
+                                            )
+                                            .background(
+                                                if (showImageBackground) {
+                                                    if (showImageBlackBackground) Black else White
+                                                } else {
+                                                    Color.Unspecified
+                                                }
+                                            ),
+                                        imageVector = it,
+                                        contentDescription = null,
+                                    )
                                 }
-                                Spacer(modifier = Modifier.height(24.dp))
                             }
+                            Spacer(modifier = Modifier.height(24.dp))
                         }
                     }
                 }
             }
         }
-        if (showIconNameDialog) {
-            IconNameDialog(
-                onValidateClick = { iconName ->
-                    svg?.let {
-                        clipboardManager.setText(AnnotatedString(Export.getCodeToCopy(iconName, it)))
-                    }
-                    showIconNameDialog = false
-                    showCodeCopiedDialog = true
-                },
-                onCancelClick = { showIconNameDialog = false },
-            )
-        } else if (showCodeCopiedDialog) {
-            CodeCopiedDialog(onCloseClick = { showCodeCopiedDialog = false })
-        } else if (showChooseFileDialog) {
-            ChooseFileDialog(
-                onCloseRequest = { directoryPath, fileName ->
-                    showChooseFileDialog = false
-                    if (!directoryPath.isNullOrBlank() && !fileName.isNullOrBlank()) {
-                        val file = File(directoryPath, fileName)
-                        val fileNameWithoutExtension = file.nameWithoutExtension.replace("ic_", "").trim()
-                        vectorDrawableTextFieldValue = TextFieldValue(file.readText())
-                        svgPathTextFieldValue = TextFieldValue("")
-                        val svgData = buildSvgData(
-                            currentTabIndex = currentTabIndex,
-                            vectorDrawableValue = vectorDrawableTextFieldValue.text,
-                            svgPathValue = svgPathTextFieldValue.text,
-                            onColorsNotFound = { unknownColors = it },
-                        ) ?: run {
-                            svg = Svg(
-                                pathDecomposed = "",
-                                imageVectorCode = "",
-                                imageVector = null,
-                                `package` = "",
-                                imports = "",
-                                fileName = fileNameWithoutExtension,
-                            )
-                            return@ChooseFileDialog
-                        }
-
+    }
+    if (showIconNameDialog) {
+        IconNameDialog(
+            onValidateClick = { iconName ->
+                svg?.let {
+                    clipboardManager.setText(AnnotatedString(Export.getCodeToCopy(iconName, it)))
+                }
+                showIconNameDialog = false
+                showCodeCopiedDialog = true
+            },
+            onCancelClick = { showIconNameDialog = false },
+        )
+    } else if (showCodeCopiedDialog) {
+        CodeCopiedDialog(onCloseClick = { showCodeCopiedDialog = false })
+    } else if (showChooseFileDialog) {
+        ChooseFileDialog(
+            onCloseRequest = { directoryPath, fileName ->
+                showChooseFileDialog = false
+                if (!directoryPath.isNullOrBlank() && !fileName.isNullOrBlank()) {
+                    val file = File(directoryPath, fileName)
+                    val fileNameWithoutExtension = file.nameWithoutExtension.replace("ic_", "").trim()
+                    vectorDrawableTextFieldValue = TextFieldValue(file.readText())
+                    svgPathTextFieldValue = TextFieldValue("")
+                    val svgData = buildSvgData(
+                        currentTabIndex = currentTabIndex,
+                        vectorDrawableValue = vectorDrawableTextFieldValue.text,
+                        svgPathValue = svgPathTextFieldValue.text,
+                        onColorsNotFound = { unknownColors = it },
+                    ) ?: run {
                         svg = Svg(
-                            pathDecomposed = svgData.toPathDecomposed(),
-                            imageVectorCode = svgData.toImageVectorCode(),
-                            imageVector = svgData.toImageVector(),
-                            `package` = svgData.toPackage(),
-                            imports = svgData.toImports(),
+                            pathDecomposed = "",
+                            imageVectorCode = "",
+                            imageVector = null,
+                            `package` = "",
+                            imports = "",
                             fileName = fileNameWithoutExtension,
                         )
+                        return@ChooseFileDialog
                     }
-                },
-            )
-        } else if (showSaveFileDialog) {
-            var svgFileName = svg?.fileName?.takeIf { it.isNotBlank() }?.let {
-                "${it.first().uppercase()}${it.substring(1)}"
-            } ?: "Icon"
-            var index = svgFileName.indexOf('_')
-            while (index != -1) {
-                val start = svgFileName.substring(0, index)
-                val end = svgFileName.substring(index).replaceFirst("_", "")
-                svgFileName = if (end.isBlank()) start
-                else "$start${end.first().uppercase()}${end.substring(1)}"
-                index = svgFileName.indexOf('_')
-            }
-            SaveFileDialog(
-                onCloseRequest = { directoryPath, fileName ->
-                    showSaveFileDialog = false
-                    if (!directoryPath.isNullOrBlank() && !fileName.isNullOrBlank()) {
-                        svg?.let { Export.exportFile(File(directoryPath, fileName).path, it) }
-                            ?.takeIf { it }
-                            ?.also { svg = svg?.copy(fileName = fileName.substringBeforeLast(".kt")) }
-                    }
-                },
-                fileName = svgFileName,
-            )
-        } else if (unknownColors.isNotEmpty()) {
-            AskForValidColorDialog(
-                colorsValue = unknownColors,
-                onUnknownColorsMapped = { validColors ->
-                    UnknownColors.unknownColors.putAll(validColors)
-                    unknownColors = emptySet()
 
-                    if (validColors.isNotEmpty()) {
-                        val svgData = buildSvgData(
-                            currentTabIndex = currentTabIndex,
-                            vectorDrawableValue = vectorDrawableTextFieldValue.text,
-                            svgPathValue = svgPathTextFieldValue.text,
-                            onColorsNotFound = { unknownColors = it },
-                        ) ?: return@AskForValidColorDialog
-
-                        svg = Svg(
-                            pathDecomposed = svgData.toPathDecomposed(),
-                            imageVectorCode = svgData.toImageVectorCode(),
-                            imageVector = svgData.toImageVector(),
-                            `package` = svgData.toPackage(),
-                            imports = svgData.toImports(),
-                            fileName = svg?.fileName,
-                        )
-                    }
-                },
-            )
+                    svg = Svg(
+                        pathDecomposed = svgData.toPathDecomposed(),
+                        imageVectorCode = svgData.toImageVectorCode(),
+                        imageVector = svgData.toImageVector(),
+                        `package` = svgData.toPackage(),
+                        imports = svgData.toImports(),
+                        fileName = fileNameWithoutExtension,
+                    )
+                }
+            },
+        )
+    } else if (showSaveFileDialog) {
+        var svgFileName = svg?.fileName?.takeIf { it.isNotBlank() }?.let {
+            "${it.first().uppercase()}${it.substring(1)}"
+        } ?: "Icon"
+        var index = svgFileName.indexOf('_')
+        while (index != -1) {
+            val start = svgFileName.substring(0, index)
+            val end = svgFileName.substring(index).replaceFirst("_", "")
+            svgFileName = if (end.isBlank()) start
+            else "$start${end.first().uppercase()}${end.substring(1)}"
+            index = svgFileName.indexOf('_')
         }
+        SaveFileDialog(
+            onCloseRequest = { directoryPath, fileName ->
+                showSaveFileDialog = false
+                if (!directoryPath.isNullOrBlank() && !fileName.isNullOrBlank()) {
+                    svg?.let { Export.exportFile(File(directoryPath, fileName).path, it) }
+                        ?.takeIf { it }
+                        ?.also { svg = svg?.copy(fileName = fileName.substringBeforeLast(".kt")) }
+                }
+            },
+            fileName = svgFileName,
+        )
+    } else if (unknownColors.isNotEmpty()) {
+        AskForValidColorDialog(
+            colorsValue = unknownColors,
+            onUnknownColorsMapped = { validColors ->
+                UnknownColors.unknownColors.putAll(validColors)
+                unknownColors = emptySet()
+
+                if (validColors.isNotEmpty()) {
+                    val svgData = buildSvgData(
+                        currentTabIndex = currentTabIndex,
+                        vectorDrawableValue = vectorDrawableTextFieldValue.text,
+                        svgPathValue = svgPathTextFieldValue.text,
+                        onColorsNotFound = { unknownColors = it },
+                    ) ?: return@AskForValidColorDialog
+
+                    svg = Svg(
+                        pathDecomposed = svgData.toPathDecomposed(),
+                        imageVectorCode = svgData.toImageVectorCode(),
+                        imageVector = svgData.toImageVector(),
+                        `package` = svgData.toPackage(),
+                        imports = svgData.toImports(),
+                        fileName = svg?.fileName,
+                    )
+                }
+            },
+        )
     }
 }
 
@@ -589,8 +586,8 @@ private fun CodeCopiedDialog(onCloseClick: () -> Unit) {
 }
 
 @Composable
-private fun ChooseFileDialog(onCloseRequest: (directoryPath: String?, fileName: String?) -> Unit) {
-    FileDialog(null as? Frame, "Choose a Vector Drawable file", FileDialog.LOAD).apply {
+private fun FrameWindowScope.ChooseFileDialog(onCloseRequest: (directoryPath: String?, fileName: String?) -> Unit) {
+    FileDialog(window, "Choose a Vector Drawable file", FileDialog.LOAD).apply {
         file = "*.xml"
         isVisible = true
         onCloseRequest(directory, file)
@@ -599,8 +596,11 @@ private fun ChooseFileDialog(onCloseRequest: (directoryPath: String?, fileName: 
 }
 
 @Composable
-private fun SaveFileDialog(fileName: String, onCloseRequest: (directoryPath: String?, fileName: String?) -> Unit) {
-    FileDialog(null as? Frame, "Choose a directory", FileDialog.SAVE).apply {
+private fun FrameWindowScope.SaveFileDialog(
+    fileName: String,
+    onCloseRequest: (directoryPath: String?, fileName: String?) -> Unit,
+) {
+    FileDialog(window, "Choose a directory", FileDialog.SAVE).apply {
         file = "$fileName.kt"
         isVisible = true
         onCloseRequest(directory, file)

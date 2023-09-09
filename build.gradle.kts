@@ -44,7 +44,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "AppKt"
+        mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
             packageName = "svg2compose"
