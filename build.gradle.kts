@@ -16,10 +16,20 @@ java {
 kotlin {
     jvm()
     jvmToolchain { languageVersion.set(JavaLanguageVersion.of(19)) }
+
     sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(compose.material)
+                implementation(compose.materialIconsExtended)
+            }
+        }
+
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(compose.material)
                 implementation(compose.materialIconsExtended)
             }
         }
