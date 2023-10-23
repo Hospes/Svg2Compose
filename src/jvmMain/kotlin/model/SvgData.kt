@@ -708,8 +708,7 @@ data class SvgData(
     }
 
     companion object {
-
-        val DEFAULT_SIZE = 200.dp
-        const val DEFAULT_VIEWPORT_SIZE = 200F
+        val DEFAULT_SIZE = 24.dp
+        const val DEFAULT_VIEWPORT_SIZE = 24F
     }
 }

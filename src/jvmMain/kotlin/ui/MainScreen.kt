@@ -92,7 +92,7 @@ fun FrameWindowScope.MainScreen() {
 //                        modifier = Modifier
 //                            .fillMaxWidth()
 //                            .padding(horizontal = 16.dp),
-//                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+//                        colors = TextFieldDefaults.outlinedTextFieldColors(),
 //                        value = svgFileTextFieldValue,
 //                        onValueChange = { svgFileTextFieldValue = it },
 //                        label = { Text(text = "SVG file") },
@@ -105,7 +105,7 @@ fun FrameWindowScope.MainScreen() {
                     Spacer(modifier = Modifier.width(16.dp))
                     OutlinedTextField(
                         modifier = Modifier.weight(1F),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(),
                         maxLines = 4,
                         value = vectorDrawableTextFieldValue,
                         onValueChange = { vectorDrawableTextFieldValue = it },
@@ -116,7 +116,7 @@ fun FrameWindowScope.MainScreen() {
                 1 -> {
                     OutlinedTextField(
                         modifier = Modifier.weight(1F),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(),
                         maxLines = 4,
                         value = svgPathTextFieldValue,
                         onValueChange = { svgPathTextFieldValue = it },
@@ -460,7 +460,7 @@ private fun AskForValidColorDialog(
                             Text(text = "Unknown color \"${color.key}\"", color = White)
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(),
                                 value = color.value.first,
                                 onValueChange = { validColorValues[color.key] = it to true },
                                 label = { Text("Hexadecimal color") },
@@ -522,7 +522,7 @@ private fun IconNameDialog(onValidateClick: (iconName: String) -> Unit, onCancel
             ) {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(),
                     value = iconName.value,
                     onValueChange = { iconName.value = it },
                     label = { Text("Icon name") },
