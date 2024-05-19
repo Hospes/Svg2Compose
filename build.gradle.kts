@@ -10,12 +10,12 @@ group = "svg2compose"
 version = v
 
 java {
-    toolchain { languageVersion.set(JavaLanguageVersion.of(19)) }
+    toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
 }
 
 kotlin {
     jvm()
-    jvmToolchain { languageVersion.set(JavaLanguageVersion.of(19)) }
+    jvmToolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
 
     sourceSets {
         val commonMain by getting {
