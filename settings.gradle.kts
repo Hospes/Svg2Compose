@@ -1,20 +1,43 @@
-@file:Suppress("UnstableApiUsage")
-
 pluginManagement {
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex(".*google.*")
+                includeGroupByRegex(".*android.*")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+
+        // Prerelease versions of Compose Multiplatform
+        // maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+
+        // Used for snapshots if needed
+        // maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 }
+
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex(".*google.*")
+                includeGroupByRegex(".*android.*")
+            }
+        }
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-        maven { url = uri("https://maven.google.com/") }
+        mavenLocal()
+
+        // Prerelease versions of Compose Multiplatform
+        // maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+
+        // Used for snapshots if needed
+        // maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 }
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "svg2compose"
