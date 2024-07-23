@@ -729,7 +729,7 @@ data class SvgData(
                 "import androidx.compose.runtime.Composable\n" +
                 "import androidx.compose.ui.graphics.vector.ImageVector\n" +
                 "import androidx.compose.ui.tooling.preview.Preview\n" +
-                "import com.whoppah.common.compose.icons.WhIcons"
+                "import com.whoppah.common.compose.icons.WhIcons\n"
 
         imports += if (isMaterialIcon) "import androidx.compose.material.icons.materialIcon\n"
         else "import androidx.compose.ui.unit.dp\n"
@@ -739,8 +739,7 @@ data class SvgData(
                 "import androidx.compose.ui.graphics.SolidColor\n" +
                 "import androidx.compose.ui.graphics.StrokeCap\n" +
                 "import androidx.compose.ui.graphics.StrokeJoin\n" +
-                "import androidx.compose.ui.graphics.vector.path\n" +
-                "import com.whoppah.common.compose.icons.WhIcons"
+                "import androidx.compose.ui.graphics.vector.path"
 
         imports += "\n"
 
