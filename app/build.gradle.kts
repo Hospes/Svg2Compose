@@ -15,7 +15,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)
                 implementation(compose.materialIconsExtended)
-                implementation(libs.kotlinx.coroutines.swing)
+                //implementation(libs.kotlinx.coroutines.swing)
             }
         }
 
@@ -24,15 +24,15 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)
                 implementation(compose.materialIconsExtended)
-                implementation(libs.kotlinx.coroutines.swing)
+                //implementation(libs.kotlinx.coroutines.swing)
             }
         }
         //val jvmTest by getting
 
-        all {
-            languageSettings.optIn("androidx.compose.ui.ExperimentalComposeUiApi")
-            languageSettings.optIn("androidx.compose.material.ExperimentalMaterialApi")
-        }
+//        all {
+//            languageSettings.optIn("androidx.compose.ui.ExperimentalComposeUiApi")
+//            languageSettings.optIn("androidx.compose.material.ExperimentalMaterialApi")
+//        }
     }
 }
 

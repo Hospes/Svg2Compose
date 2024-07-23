@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.FrameWindowScope
 import domain.Export
 import domain.SvgPathParser
@@ -31,6 +31,7 @@ import domain.UnknownColors
 import domain.VectorDrawableParser
 import model.Svg
 import model.SvgData
+import ui.IconInfoDialog
 import java.awt.FileDialog
 import java.io.File
 
@@ -259,10 +260,10 @@ fun FrameWindowScope.MainScreen() {
         }
     }
     if (showIconNameDialog) {
-        IconNameDialog(
-            onValidateClick = { iconName ->
+        IconInfoDialog(
+            onValidateClick = { parent, group, name ->
                 svg?.let {
-                    clipboardManager.setText(AnnotatedString(Export.getCodeToCopy(iconName, it)))
+                    clipboardManager.setText(AnnotatedString(Export.getCodeToCopy(parent, group, name, it)))
                 }
                 showIconNameDialog = false
                 showCodeCopiedDialog = true
@@ -429,7 +430,7 @@ private fun AskForValidColorDialog(
 
     colorsValue.forEach { validColorValues[it] = TextFieldValue("") to true }
 
-    Dialog(
+    DialogWindow(
         onCloseRequest = { onUnknownColorsMapped(emptyMap()) },
         title = "Enter valid colors",
         onKeyEvent = { keyEvent ->
@@ -497,59 +498,8 @@ private fun AskForValidColorDialog(
 }
 
 @Composable
-private fun IconNameDialog(onValidateClick: (iconName: String) -> Unit, onCancelClick: () -> Unit) {
-    val iconName = remember { mutableStateOf(TextFieldValue("")) }
-    var hasError by remember { mutableStateOf(false) }
-    Dialog(
-        onCloseRequest = onCancelClick,
-        title = "Choose an icon name",
-        onKeyEvent = { keyEvent ->
-            if (keyEvent.key == Key.Escape) onCancelClick()
-            true
-        },
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1F)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(),
-                    value = iconName.value,
-                    onValueChange = { iconName.value = it },
-                    label = { Text("Icon name") },
-                    isError = hasError,
-                )
-            }
-            TextButton(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 8.dp),
-                onClick = {
-                    if (iconName.value.text.isNotBlank()) {
-                        onValidateClick(iconName.value.text)
-                    } else {
-                        hasError = true
-                    }
-                },
-            ) {
-                Text("Copy code to clipboard")
-            }
-        }
-    }
-}
-
-@Composable
 private fun CodeCopiedDialog(onCloseClick: () -> Unit) {
-    Dialog(
+    DialogWindow(
         onCloseRequest = onCloseClick,
         title = "Code copied!",
         onKeyEvent = { keyEvent ->
@@ -570,7 +520,6 @@ private fun CodeCopiedDialog(onCloseClick: () -> Unit) {
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 text = "The ImageVector code has been copied to your clipboard!",
-                color = White,
                 textAlign = TextAlign.Center,
             )
             TextButton(

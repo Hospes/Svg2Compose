@@ -162,20 +162,16 @@ data class SvgData(
 
     fun toImageVectorCode(): String {
         var imageVectorCode = if (isMaterialIcon) {
-            "val Icons.[IconName]: ImageVector\n" +
+            "val [IconParent].[IconGroup].[IconName]: ImageVector\n" +
                     "    get() {\n" +
-                    "        if (_[iconName] != null) {\n" +
-                    "            return _[iconName]!!\n" +
-                    "        }\n" +
-                    "        _[iconName] = materialIcon(name = \"[IconName]\") {"
+                    "        if (_[iconName] != null) return _[iconName]!!" +
+                    "        _[iconName] = materialIcon(name = \"[IconGroup].[IconName]\") {"
         } else {
-            "val Icons.[IconName]: ImageVector\n" +
+            "val [IconParent].[IconGroup].[IconName]: ImageVector\n" +
                     "    get() {\n" +
-                    "        if (_[iconName] != null) {\n" +
-                    "            return _[iconName]!!\n" +
-                    "        }\n" +
+                    "        if (_[iconName] != null) return _[iconName]!!" +
                     "        _[iconName] = ImageVector.Builder(\n" +
-                    "            name = \"[IconName]\",\n" +
+                    "            name = \"[IconGroup].[IconName]\",\n" +
                     "            defaultWidth = ${width},\n" +
                     "            defaultHeight = ${height},\n" +
                     "            viewportWidth = ${viewportWidth}F,\n" +
@@ -443,9 +439,8 @@ data class SvgData(
                     "\n" +
                     "@Preview\n" +
                     "@Composable\n" +
-                    "@Suppress(\"UnusedPrivateMember\")\n" +
-                    "private fun Icon[IconName]Preview() {\n" +
-                    "    Image(imageVector = Icons.[IconName], contentDescription = null)\n" +
+                    "private fun Preview() {\n" +
+                    "    Image(imageVector = [IconParent].[IconGroup].[IconName], contentDescription = null)\n" +
                     "}"
         } else {
             ".build()\n" +
@@ -455,9 +450,8 @@ data class SvgData(
                     "\n" +
                     "@Preview\n" +
                     "@Composable\n" +
-                    "@Suppress(\"UnusedPrivateMember\")\n" +
-                    "private fun Icon[IconName]Preview() {\n" +
-                    "    Image(imageVector = Icons.[IconName], contentDescription = null)\n" +
+                    "private fun Preview() {\n" +
+                    "    Image(imageVector = [IconParent].[IconGroup].[IconName], contentDescription = null)\n" +
                     "}"
         }
         return imageVectorCode

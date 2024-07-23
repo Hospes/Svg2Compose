@@ -39,13 +39,11 @@ object Export {
         return true
     }
 
-    fun getCodeToCopy(iconName: String, svg: Svg): String =
-        svg.imports +
-                svg.imageVectorCode.replace(
-                    "[IconName]",
-                    "${iconName.firstOrNull()?.uppercase()}${iconName.substring(1)}",
-                ).replace(
-                    "[iconName]",
-                    "${iconName.firstOrNull()?.lowercase()}${iconName.substring(1)}",
-                )
+    fun getCodeToCopy(iconParent: String, iconGroup: String, iconName: String, svg: Svg): String = svg.imports + svg.imageVectorCode
+        .replace("[IconParent]", "${iconParent.firstOrNull()?.uppercase()}${iconParent.substring(1)}")
+        .replace("[iconParent]", "${iconParent.firstOrNull()?.lowercase()}${iconParent.substring(1)}")
+        .replace("[IconGroup]", "${iconGroup.firstOrNull()?.uppercase()}${iconGroup.substring(1)}")
+        .replace("[iconGroup]", "${iconGroup.firstOrNull()?.lowercase()}${iconGroup.substring(1)}")
+        .replace("[IconName]", "${iconName.firstOrNull()?.uppercase()}${iconName.substring(1)}")
+        .replace("[iconName]", "${iconName.firstOrNull()?.lowercase()}${iconName.substring(1)}")
 }
