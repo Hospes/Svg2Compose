@@ -164,12 +164,12 @@ data class SvgData(
         var imageVectorCode = if (isMaterialIcon) {
             "val [IconParent].[IconGroup].[IconName]: ImageVector\n" +
                     "    get() {\n" +
-                    "        if (_[iconName] != null) return _[iconName]!!" +
+                    "        if (_[iconName] != null) return _[iconName]!!\n" +
                     "        _[iconName] = materialIcon(name = \"[IconGroup].[IconName]\") {"
         } else {
             "val [IconParent].[IconGroup].[IconName]: ImageVector\n" +
                     "    get() {\n" +
-                    "        if (_[iconName] != null) return _[iconName]!!" +
+                    "        if (_[iconName] != null) return _[iconName]!!\n" +
                     "        _[iconName] = ImageVector.Builder(\n" +
                     "            name = \"[IconGroup].[IconName]\",\n" +
                     "            defaultWidth = ${width},\n" +
@@ -437,7 +437,7 @@ data class SvgData(
                     "\n" +
                     "private var _[iconName]: ImageVector? = null\n" +
                     "\n" +
-                    "@Preview\n" +
+                    "@Preview(showBackground = true)\n" +
                     "@Composable\n" +
                     "private fun Preview() {\n" +
                     "    Image(imageVector = [IconParent].[IconGroup].[IconName], contentDescription = null)\n" +
@@ -448,7 +448,7 @@ data class SvgData(
                     "    }\n" +
                     "private var _[iconName]: ImageVector? = null\n" +
                     "\n" +
-                    "@Preview\n" +
+                    "@Preview(showBackground = true)\n" +
                     "@Composable\n" +
                     "private fun Preview() {\n" +
                     "    Image(imageVector = [IconParent].[IconGroup].[IconName], contentDescription = null)\n" +
