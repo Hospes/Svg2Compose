@@ -10,8 +10,19 @@ import model.SvgData
 
 object SvgPathParser {
 
-    fun toSvgData(svgPath: String): SvgData? = buildPathConverted(svgPath = svgPath, onColorsNotFound = {})?.let {
-        SvgData(paths = listOf(it))
+    //private val regex = "<path\\s+d=\"(.*?)\"".toRegex()
+    private val regex = "<path\\s+(fill=\"(.*?)\")?(?:\\s+d=\"(.*?)\")".toRegex()
+
+    fun toSvgData(svgPath: String): SvgData? {
+        val matches = regex.findAll(svgPath).mapNotNull { match ->
+            val fillColor = match.groupValues.getOrNull(1) // Access fill color (group 1) or null if not present
+            val pathContent = match.groupValues[2] // Access path content (group 2)
+            buildPathConverted(svgPath = pathContent, pathFillColor = fillColor, onColorsNotFound = {})
+        }.toList()
+        if (matches.isEmpty()) {
+            return buildPathConverted(svgPath = svgPath, onColorsNotFound = {})?.let { SvgData(paths = listOf(it)) }
+        }
+        return SvgData(paths = matches)
     }
 
     fun buildPathConverted(
@@ -117,12 +128,15 @@ object SvgPathParser {
                     val value = listOf("0xFF").plus(it.substring(1).toList().joinToString("") { char -> "$char$char" })
                     value.joinToString("")
                 }
+
                 7 -> {//#FFFFFF format
                     "0xFF${it.substring(1)}"
                 }
+
                 9 -> {//#FFFFFFFF format
                     "0x${it.substring(1)}"
                 }
+
                 else -> null
             }
         }
