@@ -1,4 +1,4 @@
-package ui
+package ua.hospes.svg2compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect

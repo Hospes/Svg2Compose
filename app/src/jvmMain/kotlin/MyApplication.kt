@@ -3,9 +3,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.MenuScope
 import androidx.compose.ui.window.Tray
-import common.LocalAppResources
+import ua.hospes.svg2compose.common.LocalAppResources
 import kotlinx.coroutines.launch
-import theme.MyTheme
+import ua.hospes.svg2compose.theme.MyTheme
 import ui.MainWindow
 
 @Composable

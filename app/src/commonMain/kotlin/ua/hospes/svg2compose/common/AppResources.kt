@@ -1,4 +1,4 @@
-package common
+package ua.hospes.svg2compose.common
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description

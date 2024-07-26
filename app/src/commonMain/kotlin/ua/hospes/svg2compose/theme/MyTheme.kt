@@ -1,4 +1,4 @@
-package theme
+package ua.hospes.svg2compose.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -41,7 +41,7 @@ fun MyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () 
     ) {
         MaterialTheme(
             colors = LocalMyColor.current.asMaterialColors(),
-            typography = LocalMyTypography.current.asMaterialTypography(),
+            typography = MyTypography.asMaterialTypography(),
             shapes = LocalMyShapes.current.asMaterialShapes(),
         ) {
             val selectionColors = LocalTextSelectionColors.current

@@ -1,4 +1,4 @@
-package theme
+package ua.hospes.svg2compose.theme
 
 import androidx.compose.ui.graphics.Color
 
