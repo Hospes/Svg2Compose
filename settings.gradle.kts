@@ -46,4 +46,6 @@ include(
     "app",
     ":core:base",
     ":core:preferences",
+    ":core:logging:api",
+    ":core:logging:implementation",
 )
