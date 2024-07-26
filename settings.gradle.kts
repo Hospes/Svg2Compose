@@ -42,4 +42,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "svg2compose"
 
-include("app")
+include(
+    "app",
+    ":core:base",
+    ":core:preferences",
+)
