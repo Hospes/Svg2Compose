@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose.plugin)
-    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.multiplatform)
 }
 
 kotlin {
@@ -24,7 +24,8 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)
                 implementation(compose.materialIconsExtended)
-                //implementation(libs.kotlinx.coroutines.swing)
+                implementation(compose.preview)
+            //implementation(libs.kotlinx.coroutines.swing)
             }
         }
         //val jvmTest by getting
