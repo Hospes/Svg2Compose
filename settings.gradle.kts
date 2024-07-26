@@ -48,4 +48,5 @@ include(
     ":core:preferences",
     ":core:logging:api",
     ":core:logging:implementation",
+    ":data",
 )

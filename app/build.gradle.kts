@@ -7,19 +7,23 @@ plugins {
 }
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+
     jvm()
 
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)
                 implementation(compose.materialIconsExtended)
                 //implementation(libs.kotlinx.coroutines.swing)
+
+                implementation(projects.data)
             }
         }
 
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)
