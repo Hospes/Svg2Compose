@@ -8,6 +8,7 @@ ksp = "2.0.0-1.0.23"
 kotlininject = "0.7.1"
 multiplatformsettings = "1.1.1"
 kermit = "2.0.4"
+ksoup = "0.1.2"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -35,5 +36,6 @@ multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", 
 multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }
 
 kermit-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+fleeksoft-ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup"}
 
 [bundles]
