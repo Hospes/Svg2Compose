@@ -1,7 +1,7 @@
 package app.s2c.data.parser
 
-import app.s2c.data.domain.FileType
-import app.s2c.data.domain.xml.*
+import app.s2c.data.model.FileType
+import app.s2c.data.model.xml.*
 import app.s2c.data.logger.verbose
 import app.s2c.data.logger.verboseSection
 import app.s2c.data.logger.warn

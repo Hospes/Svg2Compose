@@ -1,6 +1,6 @@
 package app.s2c.data.geom.bounds
 
-import app.s2c.data.domain.PathNodes
+import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.PrecisePoint2D
 import app.s2c.data.geom.bounds.BoundingBox.NoBoundingBox
 import kotlin.math.max
@@ -118,7 +118,7 @@ fun List<PathNodes>.boundingBox(): BoundingBox {
     }
     check(none { it is PathNodes.ReflectiveCurveTo || it is PathNodes.ReflectiveQuadTo }) {
         "ReflectiveCurveTo and ReflectiveQuadTo are not supported. " +
-            "Call List<PathNodes>.removeShorthandNodes() before calling boundingBox()."
+                "Call List<PathNodes>.removeShorthandNodes() before calling boundingBox()."
     }
 
     val current = DoubleArray(size = 2)

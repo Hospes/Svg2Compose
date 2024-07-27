@@ -1,8 +1,8 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.domain.PathCommand
-import app.s2c.data.domain.PathNodes
-import app.s2c.data.domain.builder.pathNode
+import app.s2c.data.model.PathCommand
+import app.s2c.data.model.PathNodes
+import app.s2c.data.model.builder.pathNode
 import app.s2c.data.geom.AffineTransformation
 import app.s2c.data.geom.Point2D
 

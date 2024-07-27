@@ -1,11 +1,6 @@
 package app.s2c.data.geom
 
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.pow
-import kotlin.math.round
-import kotlin.math.sign
-import kotlin.math.sqrt
+import kotlin.math.*
 
 data class Point2D(val x: Float, val y: Float) {
     operator fun plus(other: Point2D): FloatArray = floatArrayOf(x, y, other.x, other.y)

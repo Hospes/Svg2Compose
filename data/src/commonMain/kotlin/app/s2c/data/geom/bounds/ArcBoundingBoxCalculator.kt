@@ -3,15 +3,7 @@ package app.s2c.data.geom.bounds
 import app.s2c.data.geom.AffineTransformation
 import app.s2c.data.geom.PrecisePoint2D
 import app.s2c.data.geom.transform
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.atan
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 import kotlin.properties.Delegates
 
 private const val DOUBLE_ZERO_TOLERANCE = 1e-15
@@ -127,7 +119,7 @@ internal class ArcBoundingBoxCalculator(
         // (eq. 6.2)
         // Make sure the radius fit with the arc and correct if necessary
         val ratio = (primedCoordinates.x.pow(n = 2) / rx.pow(n = 2)) +
-            (primedCoordinates.y.pow(n = 2) / ry.pow(n = 2))
+                (primedCoordinates.y.pow(n = 2) / ry.pow(n = 2))
 
         // (eq. 6.3)
         if (ratio > 1) {

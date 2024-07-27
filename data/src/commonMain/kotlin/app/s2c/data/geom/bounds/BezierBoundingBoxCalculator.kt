@@ -170,8 +170,8 @@ internal class BezierBoundingBoxCalculator(
         end: Double,
     ): Double = (1 - t).let { oneMinusT ->
         (oneMinusT.pow(n = 3) * start) +
-            (3 * oneMinusT.pow(n = 2) * t * control1) +
-            (3 * oneMinusT * t.pow(n = 2) * control2) +
-            (t.pow(n = 3) * end)
+                (3 * oneMinusT.pow(n = 2) * t * control1) +
+                (3 * oneMinusT * t.pow(n = 2) * control2) +
+                (t.pow(n = 3) * end)
     }
 }

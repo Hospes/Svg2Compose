@@ -1,16 +1,9 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.domain.PathNodes
+import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.AffineTransformation
 import app.s2c.data.geom.Point2D
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.cos
-import kotlin.math.hypot
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 
 @Suppress("MagicNumber")
 internal data object ArcTransformation : PathTransformation<PathNodes.ArcTo>() {
@@ -183,7 +176,7 @@ internal data object ArcTransformation : PathTransformation<PathNodes.ArcTo>() {
         // x' = ((x * cos(θ) + y * sin(θ)) / 2 * a)
         // y' = ((y * cos(θ) - x * sin(θ)) / 2 * b)
         var scalingFactor = (x * cos + y * sin).pow(2) / (4 * a * a) +
-            (y * cos - x * sin).pow(2) / (4 * b * b)
+                (y * cos - x * sin).pow(2) / (4 * b * b)
 
         if (scalingFactor > 1) {
             // The endpoint is outside the ellipse.

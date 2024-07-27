@@ -1,7 +1,7 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.domain.PathCommand
-import app.s2c.data.domain.PathNodes
+import app.s2c.data.model.PathCommand
+import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.AffineTransformation
 
 internal data object VerticalLineTransformation : PathTransformation<PathNodes.VerticalLineTo>() {

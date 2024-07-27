@@ -1,10 +1,10 @@
 package app.s2c.data.parser
 
-import app.s2c.data.domain.*
-import app.s2c.data.domain.avg.AvgRootNode
-import app.s2c.data.domain.avg.asNodes
-import app.s2c.data.domain.svg.SvgRootNode
-import app.s2c.data.domain.svg.asNodes
+import app.s2c.data.model.*
+import app.s2c.data.model.avg.AvgRootNode
+import app.s2c.data.model.avg.asNodes
+import app.s2c.data.model.svg.SvgRootNode
+import app.s2c.data.model.svg.asNodes
 import okio.FileSystem
 import okio.Path
 

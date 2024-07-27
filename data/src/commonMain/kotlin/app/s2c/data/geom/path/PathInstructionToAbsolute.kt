@@ -1,6 +1,6 @@
 package app.s2c.data.geom.path
 
-import app.s2c.data.domain.PathNodes
+import app.s2c.data.model.PathNodes
 
 /**
  * Converts all relative nodes in the list to absolute nodes.

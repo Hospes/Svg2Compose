@@ -1,18 +1,12 @@
 package app.s2c.data.parser
 
+import app.s2c.data.model.FileType
+import app.s2c.data.model.avg.*
+import app.s2c.data.model.avg.gradient.AvgGradient
+import app.s2c.data.model.xml.XmlNode
+import app.s2c.data.model.xml.XmlParentNode
 import com.fleeksoft.ksoup.nodes.Attributes
 import com.fleeksoft.ksoup.nodes.Element
-import app.s2c.data.domain.FileType
-import app.s2c.data.domain.avg.AvgAttrNode
-import app.s2c.data.domain.avg.AvgClipPath
-import app.s2c.data.domain.avg.AvgGradientItemNode
-import app.s2c.data.domain.avg.AvgGradientNode
-import app.s2c.data.domain.avg.AvgGroupNode
-import app.s2c.data.domain.avg.AvgPathNode
-import app.s2c.data.domain.avg.AvgRootNode
-import app.s2c.data.domain.avg.gradient.AvgGradient
-import app.s2c.data.domain.xml.XmlNode
-import app.s2c.data.domain.xml.XmlParentNode
 
 /**
  * A parser for AVG (Android Vector Graphics) files.

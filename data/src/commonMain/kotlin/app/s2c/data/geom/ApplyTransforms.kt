@@ -1,6 +1,6 @@
 package app.s2c.data.geom
 
-import app.s2c.data.domain.PathNodes
+import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.transform.ArcTransformation.applyTransformation
 import app.s2c.data.geom.transform.CurveTransformation.applyTransformation
 import app.s2c.data.geom.transform.HorizontalLineTransformation.applyTransformation
@@ -38,8 +38,8 @@ sealed class AffineTransformation(
             other: Array<out FloatArray>,
         ): Float {
             return (original[row][0] * other[0][column]) +
-                (original[row][1] * other[1][column]) +
-                (original[row][2] * other[2][column])
+                    (original[row][1] * other[1][column]) +
+                    (original[row][2] * other[2][column])
         }
         return Matrix(
             floatArrayOf(

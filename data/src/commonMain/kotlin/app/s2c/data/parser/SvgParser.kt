@@ -1,36 +1,20 @@
 package app.s2c.data.parser
 
+import app.s2c.data.model.FileType
+import app.s2c.data.model.svg.*
+import app.s2c.data.model.svg.SvgNode.Companion.normalizedId
+import app.s2c.data.model.svg.gradient.SvgLinearGradient
+import app.s2c.data.model.svg.gradient.SvgRadialGradient
+import app.s2c.data.model.xml.XmlChildNode
+import app.s2c.data.model.xml.XmlNode
+import app.s2c.data.model.xml.XmlParentNode
+import app.s2c.data.model.xml.XmlPendingParentElement
+import app.s2c.data.error.ErrorCode
+import app.s2c.data.error.ParserException
 import com.fleeksoft.ksoup.helper.ValidationException
 import com.fleeksoft.ksoup.nodes.Attributes
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
-import app.s2c.data.domain.FileType
-import app.s2c.data.domain.svg.SvgCircleNode
-import app.s2c.data.domain.svg.SvgClipPath
-import app.s2c.data.domain.svg.SvgDefsNode
-import app.s2c.data.domain.svg.SvgEllipseNode
-import app.s2c.data.domain.svg.SvgGradientStopNode
-import app.s2c.data.domain.svg.SvgGroupNode
-import app.s2c.data.domain.svg.SvgLinearGradientNode
-import app.s2c.data.domain.svg.SvgMaskNode
-import app.s2c.data.domain.svg.SvgNode
-import app.s2c.data.domain.svg.SvgNode.Companion.normalizedId
-import app.s2c.data.domain.svg.SvgPathNode
-import app.s2c.data.domain.svg.SvgPolygonNode
-import app.s2c.data.domain.svg.SvgPolylineNode
-import app.s2c.data.domain.svg.SvgRadialGradientNode
-import app.s2c.data.domain.svg.SvgRectNode
-import app.s2c.data.domain.svg.SvgRootNode
-import app.s2c.data.domain.svg.SvgSymbolNode
-import app.s2c.data.domain.svg.SvgUseNode
-import app.s2c.data.domain.svg.gradient.SvgLinearGradient
-import app.s2c.data.domain.svg.gradient.SvgRadialGradient
-import app.s2c.data.domain.xml.XmlChildNode
-import app.s2c.data.domain.xml.XmlNode
-import app.s2c.data.domain.xml.XmlParentNode
-import app.s2c.data.domain.xml.XmlPendingParentElement
-import app.s2c.data.error.ErrorCode
-import app.s2c.data.error.ParserException
 
 /**
  * A parser for SVG (Scalable Vector Graphics) files.
