@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
-import ua.hospes.svg2compose.theme.MyTheme
+import app.s2c.theme.MyTheme
 
 @Composable
 internal fun IconInfoDialog(

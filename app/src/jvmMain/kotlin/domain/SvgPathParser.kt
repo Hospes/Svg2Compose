@@ -11,12 +11,15 @@ import model.SvgData
 object SvgPathParser {
 
     //private val regex = "<path\\s+d=\"(.*?)\"".toRegex()
-    private val regex = "<path\\s+(fill=\"(.*?)\")?(?:\\s+d=\"(.*?)\")".toRegex()
+    private val regex = "<path\\s+(fill-rule=\"(.*?)\")?(fill=\"(.*?)\")?(clip-rule=\"(.*?)\")?(?:\\s+d=\"(.*?)\")".toRegex()
+    //fill-rule="evenodd" clip-rule="evenodd"
 
     fun toSvgData(svgPath: String): SvgData? {
         val matches = regex.findAll(svgPath).mapNotNull { match ->
-            val fillColor = match.groupValues.getOrNull(1) // Access fill color (group 1) or null if not present
-            val pathContent = match.groupValues[2] // Access path content (group 2)
+            val fillType = match.groupValues.getOrNull(1)
+            val fillColor = match.groupValues.getOrNull(2)
+            val clipType = match.groupValues.getOrNull(3)
+            val pathContent = match.groupValues[4]
             buildPathConverted(svgPath = pathContent, pathFillColor = fillColor, onColorsNotFound = {})
         }.toList()
         if (matches.isEmpty()) {
