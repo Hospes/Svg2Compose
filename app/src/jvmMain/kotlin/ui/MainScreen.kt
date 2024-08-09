@@ -25,11 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.FrameWindowScope
-import domain.Export
+import app.s2c.data.builder.MaterialIconSourceBuilder
+import app.s2c.data.model.IconFileContents
+import app.s2c.data.parser.IconParser
+import app.s2c.data.parser.ParserConfig
 import domain.SvgPathParser
 import domain.UnknownColors
 import domain.VectorDrawableParser
-import model.Svg
+import domain.toImageVector
 import model.SvgData
 import ui.IconInfoDialog
 import java.awt.FileDialog
@@ -42,7 +45,7 @@ fun FrameWindowScope.MainScreen() {
 //        var svgFileTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     var vectorDrawableTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     var svgPathTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    var svg: Svg? by remember { mutableStateOf(null) }
+    var svg: IconFileContents? by remember { mutableStateOf(null) }
     var showImageBackground by remember { mutableStateOf(false) }
     var showImageBlackBackground by remember { mutableStateOf(false) }
     var showIconNameDialog by remember { mutableStateOf(false) }
@@ -135,14 +138,28 @@ fun FrameWindowScope.MainScreen() {
                         onColorsNotFound = { unknownColors = it },
                     ) ?: return@Button
 
-                    svg = Svg(
-                        pathDecomposed = svgData.toPathDecomposed(),
-                        imageVectorCode = svgData.toImageVectorCode(),
-                        imageVector = svgData.toImageVector(),
-                        `package` = svgData.toPackage(),
-                        imports = svgData.toImports(),
-                        fileName = null,
+                    svg = IconParser.SvgParser.parse(
+                        content = svgPathTextFieldValue.text, iconName = "TestIcon",
+                        config = ParserConfig(
+                            pkg = "not important",
+                            theme = "WhoppahTheme",
+                            optimize = false,
+                            receiverType = "WhIcons.Action",
+                            addToMaterial = false,
+                            noPreview = false,
+                            makeInternal = false,
+                            minified = true
+                        ),
                     )
+
+//                    svg = Svg(
+//                        pathDecomposed = svgData.toPathDecomposed(),
+//                        imageVectorCode = svgData.toImageVectorCode(),
+//                        imageVector = svgData.toImageVector(),
+//                        `package` = svgData.toPackage(),
+//                        imports = svgData.toImports(),
+//                        fileName = null,
+//                    )
                 },
             ) {
                 Text(text = "Convert".toUpperCase(Locale.current))
@@ -151,8 +168,9 @@ fun FrameWindowScope.MainScreen() {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = LightGray)
-        val pathDecomposed = svg?.pathDecomposed
-        val imageVectorCode = svg?.imageVectorCode
+        val imageVector = remember(svg) { svg?.toImageVector() }
+        val pathDecomposed = remember(svg) { svg?.let { MaterialIconSourceBuilder().materialize(it) } }//svg?.pathDecomposed
+        val imageVectorCode = remember(svg) { svg?.let { MaterialIconSourceBuilder().materialize(it) } }
         if (!pathDecomposed.isNullOrBlank() && !imageVectorCode.isNullOrBlank()) {
             Card(
                 modifier = Modifier
@@ -164,8 +182,8 @@ fun FrameWindowScope.MainScreen() {
                     var showContent by remember { mutableStateOf(false) }
                     ItemHeader(
                         modifier = Modifier.clickable { showContent = !showContent },
-                        imageVector = svg?.imageVector,
-                        selectedFileName = svg?.fileName,
+                        imageVector = imageVector,
+                        selectedFileName = svg?.iconName,
                         onShowIconNameButtonClick = { showIconNameDialog = true },
                         onShowExportButtonClick = { showSaveFileDialog = true },
                         isExpanded = showContent,
@@ -178,17 +196,17 @@ fun FrameWindowScope.MainScreen() {
                                 .padding(horizontal = 16.dp)
                                 .verticalScroll(rememberScrollState()),
                         ) {
-                            Text(
-                                modifier = Modifier
-                                    .weight(1F)
-                                    .wrapContentWidth(Alignment.End),
-                                text = pathDecomposed,
-                                lineHeight = 32.sp,
-                                color = White,
-                            )
+//                            Text(
+//                                modifier = Modifier
+//                                    .weight(1F)
+//                                    .wrapContentWidth(Alignment.End),
+//                                text = pathDecomposed,
+//                                lineHeight = 32.sp,
+//                                color = White,
+//                            )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(text = imageVectorCode, lineHeight = 32.sp, color = White)
-                            svg?.imageVector?.let {
+                            imageVector?.let {
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Column(modifier = Modifier.weight(1F)) {
                                     var imageSizeRatio by remember { mutableStateOf(1F) }
@@ -260,10 +278,11 @@ fun FrameWindowScope.MainScreen() {
         }
     }
     if (showIconNameDialog) {
+        val imageVectorCode = remember(svg) { svg?.let { MaterialIconSourceBuilder().materialize(it) } }
         IconInfoDialog(
             onValidateClick = { parent, group, name ->
-                svg?.let {
-                    clipboardManager.setText(AnnotatedString(Export.getCodeToCopy(parent, group, name, it)))
+                imageVectorCode?.let {
+                    clipboardManager.setText(AnnotatedString(it))
                 }
                 showIconNameDialog = false
                 showCodeCopiedDialog = true
@@ -287,30 +306,30 @@ fun FrameWindowScope.MainScreen() {
                         svgPathValue = svgPathTextFieldValue.text,
                         onColorsNotFound = { unknownColors = it },
                     ) ?: run {
-                        svg = Svg(
-                            pathDecomposed = "",
-                            imageVectorCode = "",
-                            imageVector = null,
-                            `package` = "",
-                            imports = "",
-                            fileName = fileNameWithoutExtension,
-                        )
+//                        svg = Svg(
+//                            pathDecomposed = "",
+//                            imageVectorCode = "",
+//                            imageVector = null,
+//                            `package` = "",
+//                            imports = "",
+//                            fileName = fileNameWithoutExtension,
+//                        )
                         return@ChooseFileDialog
                     }
 
-                    svg = Svg(
-                        pathDecomposed = svgData.toPathDecomposed(),
-                        imageVectorCode = svgData.toImageVectorCode(),
-                        imageVector = svgData.toImageVector(),
-                        `package` = svgData.toPackage(),
-                        imports = svgData.toImports(),
-                        fileName = fileNameWithoutExtension,
-                    )
+//                    svg = Svg(
+//                        pathDecomposed = svgData.toPathDecomposed(),
+//                        imageVectorCode = svgData.toImageVectorCode(),
+//                        imageVector = svgData.toImageVector(),
+//                        `package` = svgData.toPackage(),
+//                        imports = svgData.toImports(),
+//                        fileName = fileNameWithoutExtension,
+//                    )
                 }
             },
         )
     } else if (showSaveFileDialog) {
-        var svgFileName = svg?.fileName?.takeIf { it.isNotBlank() }?.let {
+        var svgFileName = svg?.iconName?.takeIf { it.isNotBlank() }?.let {
             "${it.first().uppercase()}${it.substring(1)}"
         } ?: "Icon"
         var index = svgFileName.indexOf('_')
@@ -325,9 +344,9 @@ fun FrameWindowScope.MainScreen() {
             onCloseRequest = { directoryPath, fileName ->
                 showSaveFileDialog = false
                 if (!directoryPath.isNullOrBlank() && !fileName.isNullOrBlank()) {
-                    svg?.let { Export.exportFile(File(directoryPath, fileName).path, it) }
-                        ?.takeIf { it }
-                        ?.also { svg = svg?.copy(fileName = fileName.substringBeforeLast(".kt")) }
+//                    svg?.let { Export.exportFile(File(directoryPath, fileName).path, it) }
+//                        ?.takeIf { it }
+//                        ?.also { svg = svg?.copy(iconName = fileName.substringBeforeLast(".kt")) }
                 }
             },
             fileName = svgFileName,
@@ -339,23 +358,23 @@ fun FrameWindowScope.MainScreen() {
                 UnknownColors.unknownColors.putAll(validColors)
                 unknownColors = emptySet()
 
-                if (validColors.isNotEmpty()) {
-                    val svgData = buildSvgData(
-                        currentTabIndex = currentTabIndex,
-                        vectorDrawableValue = vectorDrawableTextFieldValue.text,
-                        svgPathValue = svgPathTextFieldValue.text,
-                        onColorsNotFound = { unknownColors = it },
-                    ) ?: return@AskForValidColorDialog
-
-                    svg = Svg(
-                        pathDecomposed = svgData.toPathDecomposed(),
-                        imageVectorCode = svgData.toImageVectorCode(),
-                        imageVector = svgData.toImageVector(),
-                        `package` = svgData.toPackage(),
-                        imports = svgData.toImports(),
-                        fileName = svg?.fileName,
-                    )
-                }
+//                if (validColors.isNotEmpty()) {
+//                    val svgData = buildSvgData(
+//                        currentTabIndex = currentTabIndex,
+//                        vectorDrawableValue = vectorDrawableTextFieldValue.text,
+//                        svgPathValue = svgPathTextFieldValue.text,
+//                        onColorsNotFound = { unknownColors = it },
+//                    ) ?: return@AskForValidColorDialog
+//
+//                    svg = Svg(
+//                        pathDecomposed = svgData.toPathDecomposed(),
+//                        imageVectorCode = svgData.toImageVectorCode(),
+//                        imageVector = svgData.toImageVector(),
+//                        `package` = svgData.toPackage(),
+//                        imports = svgData.toImports(),
+//                        fileName = svg?.fileName,
+//                    )
+//                }
             },
         )
     }

@@ -72,7 +72,7 @@ internal abstract class XmlParser {
             val (node, duration) = measureTimedValue {
                 val xmlParser = Parser.xmlParser()
                 val doc = xmlParser.parseInput(html = strippedXml, baseUri = "")
-                val node = doc.getElementsByTag(tagName = fileType.tag)
+                val node = doc.firstElementChild()!!.getElementsByTag(tagName = fileType.tag)
                 if (node.size != 1) {
                     error("Not a proper ${fileType.extension.uppercase()} file.")
                 }
