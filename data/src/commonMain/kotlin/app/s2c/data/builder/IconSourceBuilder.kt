@@ -8,10 +8,11 @@ import app.s2c.data.model.IconFileContents
 import app.s2c.data.model.ImageVectorNode
 import app.s2c.data.parser.method.MethodSizeAccountable
 import kotlin.math.ceil
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 abstract class IconSourceBuilder {
+
+    open val imports: Set<String> = emptySet()
 
     /**
      * Generates the Kotlin code for the icon.
@@ -23,7 +24,6 @@ abstract class IconSourceBuilder {
             """Parameters:
            |    package=$pkg
            |    icon_name=$iconName
-           |    theme=$theme
            |    width=$width
            |    height=$height
            |    viewport_width=$viewportWidth
@@ -44,6 +44,7 @@ abstract class IconSourceBuilder {
         val visibilityModifier = if (makeInternal) "internal " else ""
 
         val scope = object : IconSourceBuilderScope {
+            override val imports: Set<String> = this@IconSourceBuilder.imports + icon.imports
             override val iconPropertyName: String = iconPropertyName
 
             override val pathNodes: String
@@ -108,22 +109,7 @@ abstract class IconSourceBuilder {
         |
         |@Preview
         |@Composable
-        |private fun IconPreview() {
-        |    $theme {
-        |        Column(
-        |            verticalArrangement = Arrangement.spacedBy(8.dp),
-        |            horizontalAlignment = Alignment.CenterHorizontally,
-        |        ) {
-        |            Image(
-        |                imageVector = $iconPropertyName,
-        |                contentDescription = null,
-        |                modifier = Modifier
-        |                    .width((${max(width, viewportWidth)}).dp)
-        |                    .height((${max(height, viewportHeight)}).dp),
-        |            )
-        |        }
-        |    }
-        |}
+        |private fun Preview() = Icon(imageVector = $iconPropertyName, contentDescription = null)
         """
     }
 
@@ -191,6 +177,7 @@ abstract class IconSourceBuilder {
 }
 
 internal interface IconSourceBuilderScope {
+    val imports: Set<String>
     val iconPropertyName: String
     val pathNodes: String
     val extraContent: String

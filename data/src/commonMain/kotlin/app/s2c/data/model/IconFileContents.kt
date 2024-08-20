@@ -40,9 +40,8 @@ val materialReceiverTypeImport = setOf(
  * @property imports The set of imports to include in the generated code.
  */
 data class IconFileContents(
-    val pkg: String,
+    val pkg: String? = null,
     val iconName: String,
-    val theme: String,
     val width: Float,
     val height: Float,
     val viewportWidth: Float = width,

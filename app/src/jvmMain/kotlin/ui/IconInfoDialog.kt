@@ -26,11 +26,10 @@ import app.s2c.theme.MyTheme
 
 @Composable
 internal fun IconInfoDialog(
-    onValidateClick: (parent: String, group: String, name: String) -> Unit,
+    onValidateClick: (receiverType: String, name: String) -> Unit,
     onCancelClick: () -> Unit,
 ) {
-    val iconParent = remember { mutableStateOf(TextFieldValue("WhIcons")) }
-    val iconGroup = remember { mutableStateOf(TextFieldValue("")) }
+    val iconReceiverType = remember { mutableStateOf(TextFieldValue("WhIcons")) }
     val iconName = remember { mutableStateOf(TextFieldValue("")) }
     var hasError by remember { mutableStateOf(false) }
     DialogWindow(
@@ -56,18 +55,9 @@ internal fun IconInfoDialog(
             ) {
                 val focusManager = LocalFocusManager.current
                 OutlinedTextField(
-                    value = iconParent.value,
-                    onValueChange = { iconParent.value = it },
-                    label = { Text("Icon parent name") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    value = iconGroup.value,
-                    onValueChange = { iconGroup.value = it },
-                    label = { Text("Icon group name") },
+                    value = iconReceiverType.value,
+                    onValueChange = { iconReceiverType.value = it },
+                    label = { Text("Icon receiver type") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
@@ -90,7 +80,7 @@ internal fun IconInfoDialog(
                     .padding(end = 8.dp),
                 onClick = {
                     if (iconName.value.text.isNotBlank()) {
-                        onValidateClick(iconParent.value.text, iconGroup.value.text, iconName.value.text)
+                        onValidateClick(iconReceiverType.value.text, iconName.value.text)
                     } else {
                         hasError = true
                     }
@@ -107,7 +97,7 @@ internal fun IconInfoDialog(
 private fun Preview() {
     MyTheme {
         IconInfoDialog(
-            onValidateClick = { _, _, _ -> },
+            onValidateClick = { _, _ -> },
             onCancelClick = {},
         )
     }

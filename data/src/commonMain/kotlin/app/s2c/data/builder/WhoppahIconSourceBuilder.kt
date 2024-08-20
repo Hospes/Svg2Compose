@@ -8,16 +8,16 @@ class WhoppahIconSourceBuilder : IconSourceBuilder() {
 
     override fun IconSourceBuilderScope.stringify(icon: IconFileContents): String = with(icon) {
         """
-            |package $pkg
+            |${pkg?.let { "package $it" } ?: ""}
             |
-            |${imports.sorted().joinToString("\n") { "import $it" }}
+            |${this@stringify.imports.sorted().joinToString("\n") { "import $it" }}
             |
             |${visibilityModifier}val $iconPropertyName: ImageVector
             |    get() {
             |        if (_${iconName.camelCase()} != null) return _${iconName.camelCase()}!!
             |
             |        _${iconName.camelCase()} = ImageVector.Builder(
-            |            name = "$theme.${iconName.pascalCase()}",
+            |            name = "$receiverType.${iconName.pascalCase()}",
             |            defaultWidth = $width.dp,
             |            defaultHeight = $height.dp,
             |            viewportWidth = ${viewportWidth}f,
@@ -27,9 +27,9 @@ class WhoppahIconSourceBuilder : IconSourceBuilder() {
             |        }.build()
             |        return _${iconName.camelCase()}!!
             |    }
-            |$EXTRA_CONTENT_PLACEHOLDER
             |@Suppress("ObjectPropertyName")
             |private var _${iconName.camelCase()}: ImageVector? = null
+            |$EXTRA_CONTENT_PLACEHOLDER
             |
         """.replace(EXTRA_CONTENT_PLACEHOLDER, extraContent).trimMargin()
     }

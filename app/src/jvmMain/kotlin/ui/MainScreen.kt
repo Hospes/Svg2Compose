@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.FrameWindowScope
+import app.s2c.data.builder.IconSourceBuilder
 import app.s2c.data.builder.MaterialIconSourceBuilder
 import app.s2c.data.model.IconFileContents
 import app.s2c.data.parser.IconParser
@@ -141,10 +142,7 @@ fun FrameWindowScope.MainScreen() {
                     svg = IconParser.SvgParser.parse(
                         content = svgPathTextFieldValue.text, iconName = "TestIcon",
                         config = ParserConfig(
-                            pkg = "not important",
-                            theme = "WhoppahTheme",
                             optimize = false,
-                            receiverType = "WhIcons.Action",
                             addToMaterial = false,
                             noPreview = false,
                             makeInternal = false,
@@ -278,12 +276,11 @@ fun FrameWindowScope.MainScreen() {
         }
     }
     if (showIconNameDialog) {
-        val imageVectorCode = remember(svg) { svg?.let { MaterialIconSourceBuilder().materialize(it) } }
+        val builder: IconSourceBuilder = remember { MaterialIconSourceBuilder() }
         IconInfoDialog(
-            onValidateClick = { parent, group, name ->
-                imageVectorCode?.let {
-                    clipboardManager.setText(AnnotatedString(it))
-                }
+            onValidateClick = { parent, name ->
+                val imageVectorCode = svg?.copy(receiverType = parent, iconName = name)?.let { builder.materialize(it) }
+                imageVectorCode?.let { clipboardManager.setText(AnnotatedString(it)) }
                 showIconNameDialog = false
                 showCodeCopiedDialog = true
             },

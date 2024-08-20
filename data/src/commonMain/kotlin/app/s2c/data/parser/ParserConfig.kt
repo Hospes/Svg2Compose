@@ -33,10 +33,9 @@ package app.s2c.data.parser
  * inlining the path functions parameters
  */
 data class ParserConfig(
-    val pkg: String,
-    val theme: String,
+    val pkg: String? = null,
     val optimize: Boolean,
-    val receiverType: String?,
+    val receiverType: String? = null,
     val addToMaterial: Boolean,
     val noPreview: Boolean,
     val makeInternal: Boolean,

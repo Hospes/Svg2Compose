@@ -155,7 +155,6 @@ sealed interface IconParser {
             return IconFileContents(
                 pkg = config.pkg,
                 iconName = iconName,
-                theme = config.theme,
                 width = svg.width,
                 height = svg.height,
                 viewportWidth = viewportWidth,
@@ -213,7 +212,6 @@ sealed interface IconParser {
             return IconFileContents(
                 pkg = config.pkg,
                 iconName = iconName,
-                theme = config.theme,
                 width = avg.width,
                 height = avg.height,
                 viewportWidth = avg.viewportWidth,
