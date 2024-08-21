@@ -1,11 +1,15 @@
 package app.s2c.data.builder
 
 import app.s2c.data.extensions.camelCase
+import app.s2c.data.extensions.indented
 import app.s2c.data.extensions.pascalCase
 import app.s2c.data.logger.verbose
 import app.s2c.data.logger.warn
 import app.s2c.data.model.IconFileContents
 import app.s2c.data.model.ImageVectorNode
+import app.s2c.data.model.ImageVectorNode.Group.Companion.CLIP_PATH_PARAM_NAME
+import app.s2c.data.model.svg.SvgColor
+import app.s2c.data.model.svg.toBrush
 import app.s2c.data.parser.method.MethodSizeAccountable
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -20,6 +24,32 @@ abstract class IconSourceBuilder {
      * @return The generated Kotlin code.
      */
     fun materialize(icon: IconFileContents): String = with(icon) {
+        val (nodes, chunkFunctions) = chunkNodesIfNeeded()
+
+        val scope = object : IconSourceBuilderScope {
+            override val imports: Set<String> = this@IconSourceBuilder.imports + icon.imports
+            override val iconPropertyName: String = buildIconPropertyName(receiverType)
+
+            override val pathNodes: String
+                get() {
+                    val indentSize = 12
+                    return nodes
+                        .joinToString("\n${" ".repeat(indentSize)}") {
+                            stringifyNode(it)
+                                .replace("\n", "\n${" ".repeat(indentSize)}") // fix indent
+                        }
+                }
+
+            override val extraContent: String
+                get() {
+                    val chunkFunctionsContent = buildChunkFunctionsContent(chunkFunctions)
+                    val preview = buildPreview(iconPropertyName)
+                    return buildExtraContent(chunkFunctionsContent, preview)
+                }
+
+            override val visibilityModifier: String = if (makeInternal) "internal " else ""
+        }
+
         verbose(
             """Parameters:
            |    package=$pkg
@@ -28,45 +58,103 @@ abstract class IconSourceBuilder {
            |    height=$height
            |    viewport_width=$viewportWidth
            |    viewport_height=$viewportHeight
-           |    nodes=${nodes.map { it.materialize() }}
+           |    nodes=${nodes.map { scope.stringifyNode(it) }}
            |    receiver_type=$receiverType
            |    imports=$imports
            |
             """.trimMargin()
         )
-
-        val iconPropertyName = buildIconPropertyName(receiverType)
-        val (nodes, chunkFunctions) = chunkNodesIfNeeded()
-        val chunkFunctionsContent = buildChunkFunctionsContent(chunkFunctions)
-
-        val preview = buildPreview(iconPropertyName)
-        val extraContent = buildExtraContent(chunkFunctionsContent, preview)
-        val visibilityModifier = if (makeInternal) "internal " else ""
-
-        val scope = object : IconSourceBuilderScope {
-            override val imports: Set<String> = this@IconSourceBuilder.imports + icon.imports
-            override val iconPropertyName: String = iconPropertyName
-
-            override val pathNodes: String
-                get() {
-                    val indentSize = 12
-                    return nodes
-                        .joinToString("\n${" ".repeat(indentSize)}") {
-                            it.materialize()
-                                .replace("\n", "\n${" ".repeat(indentSize)}") // fix indent
-                        }
-                }
-
-            override val extraContent: String = extraContent
-
-            override val visibilityModifier: String = visibilityModifier
-        }
-
         return@with scope.stringify(icon)
     }
 
 
     internal abstract fun IconSourceBuilderScope.stringify(icon: IconFileContents): String
+
+    private fun IconSourceBuilderScope.stringifyNode(node: ImageVectorNode): String = when (node) {
+        is ImageVectorNode.Path -> stringifyPath(node)
+        is ImageVectorNode.Group -> stringifyGroup(node)
+        is ImageVectorNode.ChunkFunction -> stringifyChunkFunction(node)
+    }
+
+    internal open fun IconSourceBuilderScope.stringifyPath(path: ImageVectorNode.Path): String = with(path) {
+        val indentSize = 4
+        val pathNodes = wrapper.nodes.joinToString("\n${" ".repeat(indentSize)}") {
+            it.materialize()
+                .replace("\n", "\n${" ".repeat(indentSize)}") // Fix indent
+                .trimEnd()
+        }
+
+        val pathParams = buildParameterList()
+
+        val pathParamsString = if (pathParams.isNotEmpty()) {
+            """(
+                |${pathParams.joinToString("\n") { (param, value) -> "$param = $value,".indented(4) }}
+                |)"""
+        } else {
+            ""
+        }
+
+        val comment = if (minified) "" else "// ${wrapper.normalizedPath}\n|"
+
+        return """
+                |${comment}path$pathParamsString {
+                |    $pathNodes
+                |}
+            """.trimMargin()
+    }
+
+    internal open fun ImageVectorNode.Path.buildParameterList(): List<Pair<String, String>> = buildList {
+        with(params) {
+            params.fill?.let { brush -> brush.toCompose()?.let { add("fill" to it) } }
+            fillAlpha?.let { add("fillAlpha" to "${it}f") }
+            pathFillType?.let { add("pathFillType" to "${it.toCompose()}") }
+            stroke?.let { stroke -> stroke.toCompose()?.let { add("stroke" to it) } }
+            strokeAlpha?.let { add("strokeAlpha" to "${it}f") }
+            strokeLineCap?.let { add("strokeLineCap" to "${it.toCompose()}") }
+            strokeLineJoin?.let { add("strokeLineJoin" to "${it.toCompose()}") }
+            strokeMiterLimit?.let { add("strokeLineMiter" to "${it}f") }
+            strokeLineWidth?.let { add("strokeLineWidth" to "${it}f") }
+
+            if (params.fill == null && params.stroke == null) {
+                add("fill" to requireNotNull(SvgColor.Default.toBrush().toCompose()))
+            }
+        }
+    }
+
+    internal open fun IconSourceBuilderScope.stringifyGroup(group: ImageVectorNode.Group): String = with(group) {
+        val indentSize = 4
+        val groupPaths = commands
+            .joinToString("\n${" ".repeat(indentSize)}") {
+                stringifyNode(it)
+                    .replace("\n", "\n${" ".repeat(indentSize)}")
+                    .trimEnd()
+            }
+
+        val groupParams = buildParameters(indentSize)
+
+        val groupParamsString = if (groupParams.isNotEmpty()) {
+            val params = groupParams.joinToString("\n") { (param, value) ->
+                if (param == CLIP_PATH_PARAM_NAME && minified.not() && params.clipPath != null) {
+                    "${"// ${params.clipPath.normalizedPath}".indented(4)}\n"
+                } else {
+                    ""
+                } + "$param = $value,".indented(indentSize)
+            }
+            """(
+                |$params
+                |)"""
+        } else {
+            ""
+        }
+
+        return """
+                |group$groupParamsString {
+                |    $groupPaths
+                |}
+            """.trimMargin()
+    }
+
+    internal open fun IconSourceBuilderScope.stringifyChunkFunction(func: ImageVectorNode.ChunkFunction): String = with(func) { "$functionName()" }
 
 
     /**
@@ -75,14 +163,32 @@ abstract class IconSourceBuilder {
      * @param chunkFunctions The list of `ChunkFunction` objects.
      * @return The content of the `chunkFunctions` property as a string.
      */
-    private fun buildChunkFunctionsContent(chunkFunctions: List<ImageVectorNode.ChunkFunction>?) =
+    private fun IconSourceBuilderScope.buildChunkFunctionsContent(chunkFunctions: List<ImageVectorNode.ChunkFunction>?) =
         if (!chunkFunctions.isNullOrEmpty()) {
             """|
-               |${chunkFunctions.joinToString("\n\n") { it.createChunkFunction() }}
+               |${chunkFunctions.joinToString("\n\n") { createChunkFunction(it) }}
                """
         } else {
             ""
         }
+
+    /**
+     * Create the chunk function wrapping the `path`/`group` instructions
+     * within a smaller method.
+     */
+    private fun IconSourceBuilderScope.createChunkFunction(func: ImageVectorNode.ChunkFunction): String = with(func) {
+        val indentSize = 4
+        val bodyFunction = nodes.joinToString("\n${" ".repeat(indentSize)}") {
+            stringifyNode(it)
+                .replace("\n", "\n${" ".repeat(indentSize)}") // fix indent
+        }
+
+        return """
+                    |private fun ImageVector.Builder.$functionName() {
+                    |    $bodyFunction
+                    |}
+            """.trimMargin()
+    }
 
     private fun IconFileContents.buildIconPropertyName(receiverType: String?) = when {
         receiverType?.isNotEmpty() == true -> {

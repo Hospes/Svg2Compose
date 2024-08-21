@@ -1,11 +1,5 @@
 package app.s2c.data.model
 
-import app.s2c.data.model.compose.ComposeBrush
-import app.s2c.data.model.compose.PathFillType
-import app.s2c.data.model.compose.StrokeCap
-import app.s2c.data.model.compose.StrokeJoin
-import app.s2c.data.model.svg.SvgColor
-import app.s2c.data.model.svg.toBrush
 import app.s2c.data.error.ErrorCode
 import app.s2c.data.error.ExitProgramException
 import app.s2c.data.extensions.EMPTY
@@ -16,14 +10,18 @@ import app.s2c.data.logger.debug
 import app.s2c.data.logger.debugSection
 import app.s2c.data.logger.verbose
 import app.s2c.data.logger.verboseSection
+import app.s2c.data.model.compose.ComposeBrush
+import app.s2c.data.model.compose.PathFillType
+import app.s2c.data.model.compose.StrokeCap
+import app.s2c.data.model.compose.StrokeJoin
+import app.s2c.data.model.svg.SvgColor
+import app.s2c.data.model.svg.toBrush
 import app.s2c.data.parser.method.MethodSizeAccountable
 import app.s2c.data.parser.method.MethodSizeAccountable.Companion.FLOAT_APPROXIMATE_BYTE_SIZE
 
 sealed interface ImageVectorNode : MethodSizeAccountable {
     val transformations: List<AffineTransformation>?
     val imports: Set<String>
-
-    fun materialize(): String
 
     fun applyTransformation(): ImageVectorNode {
         return transformations?.let { transformations ->
@@ -115,69 +113,6 @@ sealed interface ImageVectorNode : MethodSizeAccountable {
             get() = PATH_APPROXIMATE_BYTE_SIZE +
                     params.approximateByteSize +
                     wrapper.nodes.approximateByteSize
-
-        override fun materialize(): String {
-            val indentSize = 4
-            val pathNodes = wrapper.nodes.joinToString("\n${" ".repeat(indentSize)}") {
-                it.materialize()
-                    .replace("\n", "\n${" ".repeat(indentSize)}") // Fix indent
-                    .trimEnd()
-            }
-
-            val pathParams = buildParameterList()
-
-            val pathParamsString = if (pathParams.isNotEmpty()) {
-                """(
-                |${pathParams.joinToString("\n") { (param, value) -> "$param = $value,".indented(4) }}
-                |)"""
-            } else {
-                ""
-            }
-
-            val comment = if (minified) "" else "// ${wrapper.normalizedPath}\n|"
-
-            return """
-                |${comment}path$pathParamsString {
-                |    $pathNodes
-                |}
-            """.trimMargin()
-        }
-
-        private fun buildParameterList(): List<Pair<String, String>> = buildList {
-            with(params) {
-                params.fill?.let { brush ->
-                    brush.toCompose()?.let { add("fill" to it) }
-                }
-                fillAlpha?.let {
-                    add("fillAlpha" to "${it}f")
-                }
-                pathFillType?.let {
-                    add("pathFillType" to "${it.toCompose()}")
-                }
-                stroke?.let { stroke ->
-                    stroke.toCompose()?.let { add("stroke" to it) }
-                }
-                strokeAlpha?.let {
-                    add("strokeAlpha" to "${it}f")
-                }
-                strokeLineCap?.let {
-                    add("strokeLineCap" to "${it.toCompose()}")
-                }
-                strokeLineJoin?.let {
-                    add("strokeLineJoin" to "${it.toCompose()}")
-                }
-                strokeMiterLimit?.let {
-                    add("strokeLineMiter" to "${it}f")
-                }
-                strokeLineWidth?.let {
-                    add("strokeLineWidth" to "${it}f")
-                }
-
-                if (params.fill == null && params.stroke == null) {
-                    add("fill" to requireNotNull(SvgColor.Default.toBrush().toCompose()))
-                }
-            }
-        }
     }
 
     data class Group(
@@ -189,7 +124,7 @@ sealed interface ImageVectorNode : MethodSizeAccountable {
         companion object {
             private const val GROUP_APPROXIMATE_BYTE_SIZE = 90
             private const val CLIP_PATH_APPROXIMATE_BYTE_SIZE = 30
-            private const val CLIP_PATH_PARAM_NAME = "clipPathData"
+            internal const val CLIP_PATH_PARAM_NAME = "clipPathData"
             private const val ROTATE_PARAM_NAME = "rotate"
             private const val PIVOT_X_PARAM_NAME = "pivotX"
             private const val PIVOT_Y_PARAM_NAME = "pivotY"
@@ -250,7 +185,7 @@ sealed interface ImageVectorNode : MethodSizeAccountable {
                     commands.sumOf { it.approximateByteSize + 1 }
 
         @Suppress("SameParameterValue")
-        private fun buildParameters(indentSize: Int): Set<Pair<String, String>> = with(params) {
+        internal fun buildParameters(indentSize: Int): Set<Pair<String, String>> = with(params) {
             buildSet {
                 clipPath?.let {
                     val clipPathData = clipPath.nodes
@@ -275,39 +210,6 @@ sealed interface ImageVectorNode : MethodSizeAccountable {
                 translationY?.let { add(TRANSLATION_Y_PARAM_NAME to "${translationY}f") }
             }
         }
-
-        override fun materialize(): String {
-            val indentSize = 4
-            val groupPaths = commands
-                .joinToString("\n${" ".repeat(indentSize)}") {
-                    it.materialize()
-                        .replace("\n", "\n${" ".repeat(indentSize)}")
-                        .trimEnd()
-                }
-
-            val groupParams = buildParameters(indentSize)
-
-            val groupParamsString = if (groupParams.isNotEmpty()) {
-                val params = groupParams.joinToString("\n") { (param, value) ->
-                    if (param == CLIP_PATH_PARAM_NAME && minified.not() && params.clipPath != null) {
-                        "${"// ${params.clipPath.normalizedPath}".indented(4)}\n"
-                    } else {
-                        ""
-                    } + "$param = $value,".indented(indentSize)
-                }
-                """(
-                |$params
-                |)"""
-            } else {
-                ""
-            }
-
-            return """
-                |group$groupParamsString {
-                |    $groupPaths
-                |}
-            """.trimMargin()
-        }
     }
 
     /**
@@ -326,26 +228,6 @@ sealed interface ImageVectorNode : MethodSizeAccountable {
         init {
             check(nodes.none { it is ChunkFunction })
         }
-
-        /**
-         * Create the chunk function wrapping the `path`/`group` instructions
-         * within a smaller method.
-         */
-        fun createChunkFunction(): String {
-            val indentSize = 4
-            val bodyFunction = nodes.joinToString("\n${" ".repeat(indentSize)}") {
-                it.materialize()
-                    .replace("\n", "\n${" ".repeat(indentSize)}") // fix indent
-            }
-
-            return """
-                    |private fun ImageVector.Builder.$functionName() {
-                    |    $bodyFunction
-                    |}
-            """.trimMargin()
-        }
-
-        override fun materialize(): String = "$functionName()"
     }
 
     data class NodeWrapper(
