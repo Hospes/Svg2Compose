@@ -1,5 +1,7 @@
 package app.s2c.data.parser
 
+import app.s2c.data.error.ErrorCode
+import app.s2c.data.error.ParserException
 import app.s2c.data.model.FileType
 import app.s2c.data.model.svg.*
 import app.s2c.data.model.svg.SvgNode.Companion.normalizedId
@@ -9,12 +11,10 @@ import app.s2c.data.model.xml.XmlChildNode
 import app.s2c.data.model.xml.XmlNode
 import app.s2c.data.model.xml.XmlParentNode
 import app.s2c.data.model.xml.XmlPendingParentElement
-import app.s2c.data.error.ErrorCode
-import app.s2c.data.error.ParserException
-import com.fleeksoft.ksoup.helper.ValidationException
 import com.fleeksoft.ksoup.nodes.Attributes
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
+import com.fleeksoft.ksoup.ported.exception.ValidationException
 
 /**
  * A parser for SVG (Scalable Vector Graphics) files.

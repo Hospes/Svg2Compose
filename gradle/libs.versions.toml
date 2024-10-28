@@ -1,14 +1,14 @@
 [versions]
-kotlin = "2.0.10"
+kotlin = "2.0.21"
 kotlinx-serialization = "1.7.1"
-kotlinx-coroutines = "1.9.0-RC"
-compose = "1.6.11"
-circuit = "0.22.2"
-ksp = "2.0.10-1.0.24"
-kotlininject = "0.7.1"
-multiplatformsettings = "1.1.1"
+kotlinx-coroutines = "1.9.0"
+compose = "1.7.0"
+circuit = "0.25.0"
+ksp = "2.0.21-1.0.26"
+kotlininject = "0.7.2"
+multiplatformsettings = "1.2.0"
 kermit = "2.0.4"
-ksoup = "0.1.2"
+ksoup = "0.1.9"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -36,6 +36,6 @@ multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", 
 multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }
 
 kermit-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
-fleeksoft-ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup"}
+fleeksoft-ksoup = { module = "com.fleeksoft.ksoup:ksoup-okio", version.ref = "ksoup"}
 
 [bundles]
