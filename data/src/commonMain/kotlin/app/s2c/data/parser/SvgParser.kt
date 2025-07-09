@@ -11,10 +11,10 @@ import app.s2c.data.model.xml.XmlChildNode
 import app.s2c.data.model.xml.XmlNode
 import app.s2c.data.model.xml.XmlParentNode
 import app.s2c.data.model.xml.XmlPendingParentElement
+import com.fleeksoft.ksoup.exception.ValidationException
 import com.fleeksoft.ksoup.nodes.Attributes
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
-import com.fleeksoft.ksoup.ported.exception.ValidationException
 
 /**
  * A parser for SVG (Scalable Vector Graphics) files.
