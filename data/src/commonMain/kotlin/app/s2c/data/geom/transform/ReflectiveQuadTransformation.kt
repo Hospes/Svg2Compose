@@ -1,7 +1,7 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.AffineTransformation
+import app.s2c.data.model.PathNodes
 
 internal data object ReflectiveQuadTransformation : PathTransformation<PathNodes.ReflectiveQuadTo>() {
     override fun PathNodes.ReflectiveQuadTo.applyTransformation(

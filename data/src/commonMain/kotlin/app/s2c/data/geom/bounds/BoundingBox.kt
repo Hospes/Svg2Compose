@@ -1,8 +1,8 @@
 package app.s2c.data.geom.bounds
 
-import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.PrecisePoint2D
 import app.s2c.data.geom.bounds.BoundingBox.NoBoundingBox
+import app.s2c.data.model.PathNodes
 import kotlin.math.max
 import kotlin.math.min
 

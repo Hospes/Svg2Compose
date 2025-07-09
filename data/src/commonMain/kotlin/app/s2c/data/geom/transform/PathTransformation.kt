@@ -1,10 +1,10 @@
 package app.s2c.data.geom.transform
 
+import app.s2c.data.geom.AffineTransformation
+import app.s2c.data.geom.Point2D
 import app.s2c.data.model.PathCommand
 import app.s2c.data.model.PathNodes
 import app.s2c.data.model.builder.pathNode
-import app.s2c.data.geom.AffineTransformation
-import app.s2c.data.geom.Point2D
 
 // TODO(https://github.com/rafaeltonholo/svg-to-compose/issues/44): migrate from FloatArray to DoubleArray
 internal sealed class PathTransformation<T : PathNodes> {

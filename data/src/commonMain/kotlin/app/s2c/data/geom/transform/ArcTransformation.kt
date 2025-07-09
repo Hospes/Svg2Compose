@@ -1,8 +1,8 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.AffineTransformation
 import app.s2c.data.geom.Point2D
+import app.s2c.data.model.PathNodes
 import kotlin.math.*
 
 @Suppress("MagicNumber")

@@ -1,7 +1,7 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.AffineTransformation
+import app.s2c.data.model.PathNodes
 
 internal data object ReflectiveCurveTransformation : PathTransformation<PathNodes.ReflectiveCurveTo>() {
     override fun PathNodes.ReflectiveCurveTo.applyTransformation(

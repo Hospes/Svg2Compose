@@ -1,5 +1,6 @@
 package app.s2c.data.model.svg.gradient
 
+import app.s2c.data.geom.bounds.boundingBox
 import app.s2c.data.model.PathNodes
 import app.s2c.data.model.compose.ComposeBrush
 import app.s2c.data.model.delegate.attribute
@@ -7,7 +8,6 @@ import app.s2c.data.model.svg.*
 import app.s2c.data.model.svg.transform.SvgTransform
 import app.s2c.data.model.xml.XmlNode
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.geom.bounds.boundingBox
 import kotlin.math.max
 
 sealed class SvgGradient<out T>(

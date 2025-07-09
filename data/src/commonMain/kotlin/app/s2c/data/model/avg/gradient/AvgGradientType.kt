@@ -1,6 +1,6 @@
 package app.s2c.data.model.avg.gradient
 
-import app.s2c.data.logger.warn
+import app.s2c.core.logs.Log
 
 enum class AvgGradientType {
     Linear,
@@ -16,7 +16,7 @@ enum class AvgGradientType {
             Radial.toString() -> Radial
             Sweep.toString() -> Sweep
             else -> {
-                warn("'$value' is an unsupported type of type for ${AvgGradient.TAG_NAME} tag. Using default to '$Linear")
+                Log.warn("'$value' is an unsupported type of type for ${AvgGradient.TAG_NAME} tag. Using default to '$Linear")
                 Linear
             }
         }

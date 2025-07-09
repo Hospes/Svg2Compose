@@ -1,5 +1,6 @@
 package app.s2c.data.model.svg
 
+import app.s2c.data.geom.Point2D
 import app.s2c.data.model.ImageVectorNode
 import app.s2c.data.model.PathCommand
 import app.s2c.data.model.PathNodes
@@ -7,7 +8,6 @@ import app.s2c.data.model.builder.pathNode
 import app.s2c.data.model.delegate.attribute
 import app.s2c.data.model.xml.XmlChildNode
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.geom.Point2D
 
 abstract class SvgGraphicNodeWithListOfPoints<T>(
     parent: XmlParentNode,

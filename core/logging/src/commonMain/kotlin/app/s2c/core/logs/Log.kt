@@ -1,6 +1,8 @@
 package app.s2c.core.logs
 
 object Log {
+    fun verbose(message: String = "", throwable: Throwable? = null) = saschpe.log4k.Log.verbose(message = message, throwable = throwable, tag = tag)
+    fun verbose(throwable: Throwable? = null, message: () -> String) = saschpe.log4k.Log.verbose(throwable = throwable, tag = tag, message = message)
     fun debug(message: String = "", throwable: Throwable? = null) = saschpe.log4k.Log.debug(message = message, throwable = throwable, tag = tag)
     fun debug(throwable: Throwable? = null, message: () -> String) = saschpe.log4k.Log.debug(throwable = throwable, tag = tag, message = message)
     fun info(message: String = "", throwable: Throwable? = null) = saschpe.log4k.Log.info(message = message, throwable = throwable, tag = tag)
@@ -28,4 +30,16 @@ object Log {
                         it.className != Thread::class.java.name
             }
             ?.let(::createStackElementTag) ?: ""
+}
+
+fun <T> debugSection(title: String, block: Log.() -> T): T {
+    val sectionStart = "=".repeat(25 - (title.length / 2))
+    Log.debug("$sectionStart $title $sectionStart")
+    return block(Log).also { Log.debug("=".repeat(n = 50)) }
+}
+
+fun <T> verboseSection(title: String, block: Log.() -> T): T {
+    val sectionStart = "=".repeat(25 - (title.length / 2))
+    Log.verbose("$sectionStart $title $sectionStart")
+    return block(Log).also { Log.verbose("=".repeat(n = 50)) }
 }

@@ -4,7 +4,6 @@
 
 package app.s2c.data.model
 
-import app.s2c.data.model.PathNodes.*
 import app.s2c.data.extensions.indented
 import app.s2c.data.extensions.removeTrailingZero
 import app.s2c.data.extensions.toInt

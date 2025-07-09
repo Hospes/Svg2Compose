@@ -1,8 +1,8 @@
 package app.s2c.data.geom.transform
 
-import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.AffineTransformation
 import app.s2c.data.geom.plus
+import app.s2c.data.model.PathNodes
 
 internal data object CurveTransformation : PathTransformation<PathNodes.CurveTo>() {
     override fun PathNodes.CurveTo.applyTransformation(

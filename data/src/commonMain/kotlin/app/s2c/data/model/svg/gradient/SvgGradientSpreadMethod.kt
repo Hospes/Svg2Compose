@@ -1,7 +1,7 @@
 package app.s2c.data.model.svg.gradient
 
+import app.s2c.core.logs.Log
 import app.s2c.data.model.compose.GradientTileMode
-import app.s2c.data.logger.warn
 
 enum class SvgGradientSpreadMethod {
     Pad,
@@ -23,7 +23,7 @@ enum class SvgGradientSpreadMethod {
             Reflect.toString() -> Reflect
             Repeat.toString() -> Repeat
             else -> {
-                warn(
+                Log.warn(
                     "'$value' is an unsupported type of spreadMethod. Using default to '$Pad'",
                 )
                 Pad

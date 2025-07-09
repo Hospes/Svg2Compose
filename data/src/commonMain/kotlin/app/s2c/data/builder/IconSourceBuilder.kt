@@ -1,10 +1,9 @@
 package app.s2c.data.builder
 
+import app.s2c.core.logs.Log
 import app.s2c.data.extensions.camelCase
 import app.s2c.data.extensions.indented
 import app.s2c.data.extensions.pascalCase
-import app.s2c.data.logger.verbose
-import app.s2c.data.logger.warn
 import app.s2c.data.model.IconFileContents
 import app.s2c.data.model.ImageVectorNode
 import app.s2c.data.model.ImageVectorNode.Group.Companion.CLIP_PATH_PARAM_NAME
@@ -50,7 +49,7 @@ abstract class IconSourceBuilder {
             override val visibilityModifier: String = if (makeInternal) "internal " else ""
         }
 
-        verbose(
+        Log.verbose(
             """Parameters:
            |    package=$pkg
            |    icon_name=$iconName
@@ -253,7 +252,7 @@ abstract class IconSourceBuilder {
             val chunks = ceil(byteSize.toFloat() / MethodSizeAccountable.METHOD_SIZE_THRESHOLD)
                 .roundToInt()
             val chunkSize = nodes.size / chunks
-            warn(
+            Log.warn(
                 "Potential large icon detected. Splitting icon's content in $chunks chunks to avoid " +
                         "compilation issues. However, that won't affect the performance of displaying this icon."
             )

@@ -1,10 +1,10 @@
 package app.s2c.data.model.svg
 
+import app.s2c.core.logs.Log
 import app.s2c.data.model.*
 import app.s2c.data.model.builder.pathNode
 import app.s2c.data.model.delegate.attribute
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.logger.warn
 
 class SvgRectNode(
     parent: XmlParentNode,
@@ -89,7 +89,7 @@ private fun SvgRectNode.createDashedRect(
     y: Int,
     isMinified: Boolean,
 ): List<PathNodes> {
-    warn(
+    Log.warn(
         "Parsing a `stroke-dasharray` attribute is experimental and " +
                 "might differ a little from the original."
     )

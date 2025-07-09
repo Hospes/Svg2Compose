@@ -1,6 +1,6 @@
 package app.s2c.data.model.avg.gradient
 
-import app.s2c.data.logger.warn
+import app.s2c.core.logs.Log
 
 enum class AvgGradientTileMode {
     Clamp,
@@ -18,7 +18,7 @@ enum class AvgGradientTileMode {
             Repeat.toString().lowercase() -> Repeat
             Disabled.toString().lowercase() -> Disabled
             else -> {
-                warn(
+                Log.warn(
                     "'$value' is an unsupported type of tileMode for ${AvgGradient.TAG_NAME} tag. " +
                             "Using default to '$Clamp",
                 )

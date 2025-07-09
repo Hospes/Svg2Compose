@@ -1,13 +1,13 @@
 package app.s2c.data.model.svg
 
+import app.s2c.core.logs.Log
+import app.s2c.data.extensions.toLengthFloat
 import app.s2c.data.model.ImageVectorNode
 import app.s2c.data.model.PathCommand
 import app.s2c.data.model.PathNodes
 import app.s2c.data.model.builder.pathNode
 import app.s2c.data.model.delegate.attribute
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.extensions.toLengthFloat
-import app.s2c.data.logger.warn
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -42,7 +42,7 @@ fun SvgCircleNode.asNode(
     minified: Boolean,
 ): ImageVectorNode = when {
     strokeDashArray != null -> {
-        warn(
+        Log.warn(
             "Parsing a `stroke-dasharray` attribute is experimental and " +
                     "might differ a little from the original."
         )

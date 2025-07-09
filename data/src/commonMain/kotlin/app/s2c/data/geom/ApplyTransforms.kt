@@ -1,6 +1,5 @@
 package app.s2c.data.geom
 
-import app.s2c.data.model.PathNodes
 import app.s2c.data.geom.transform.ArcTransformation.applyTransformation
 import app.s2c.data.geom.transform.CurveTransformation.applyTransformation
 import app.s2c.data.geom.transform.HorizontalLineTransformation.applyTransformation
@@ -10,6 +9,7 @@ import app.s2c.data.geom.transform.QuadTransformation.applyTransformation
 import app.s2c.data.geom.transform.ReflectiveCurveTransformation.applyTransformation
 import app.s2c.data.geom.transform.ReflectiveQuadTransformation.applyTransformation
 import app.s2c.data.geom.transform.VerticalLineTransformation.applyTransformation
+import app.s2c.data.model.PathNodes
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

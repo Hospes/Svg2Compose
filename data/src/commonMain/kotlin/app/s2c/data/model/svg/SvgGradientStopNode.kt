@@ -1,8 +1,8 @@
 package app.s2c.data.model.svg
 
+import app.s2c.data.extensions.toPercentage
 import app.s2c.data.model.delegate.attribute
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.extensions.toPercentage
 import kotlin.math.roundToInt
 
 /**

@@ -1,11 +1,11 @@
 package app.s2c.data.model.delegate
 
+import app.s2c.core.logs.Log
 import app.s2c.data.model.svg.SvgLength
 import app.s2c.data.model.svg.toSvgLengthOrNull
 import app.s2c.data.model.xml.XmlChildNode
 import app.s2c.data.model.xml.XmlParentNode
 import app.s2c.data.model.xml.XmlRootNode
-import app.s2c.data.logger.debug
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -65,9 +65,7 @@ class AttributeDelegate<in TAttribute : Any?, out TTransform : Any?>(
     }
 
     private fun findInheritedValue(element: XmlChildNode, key: String): String? {
-        debug(
-            "The current element '${element.tagName}' doesn't have the attribute '$key'. Looking for inherited value.",
-        )
+        Log.debug { "The current element '${element.tagName}' doesn't have the attribute '$key'. Looking for inherited value." }
         var parent: XmlParentNode? = element.parent
         var attr: String?
         do {

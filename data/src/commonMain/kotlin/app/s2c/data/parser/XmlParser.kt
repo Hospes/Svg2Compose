@@ -1,10 +1,9 @@
 package app.s2c.data.parser
 
+import app.s2c.core.logs.Log
+import app.s2c.core.logs.verboseSection
 import app.s2c.data.model.FileType
 import app.s2c.data.model.xml.*
-import app.s2c.data.logger.verbose
-import app.s2c.data.logger.verboseSection
-import app.s2c.data.logger.warn
 import com.fleeksoft.ksoup.nodes.*
 import com.fleeksoft.ksoup.parser.Parser
 import kotlin.time.measureTimedValue
@@ -80,7 +79,7 @@ internal abstract class XmlParser {
                 val rootNode = node.single()
                 traverseXmlTree(rootNode)
             }
-            verbose("Parsed ${fileType.extension.uppercase()} within ${duration.inWholeMilliseconds}ms")
+            Log.verbose("Parsed ${fileType.extension.uppercase()} within ${duration.inWholeMilliseconds}ms")
             node
         }
 
@@ -166,7 +165,7 @@ internal abstract class XmlParser {
         rootNode.traverse { node, depth ->
             if (currentDepth > depth) {
                 repeat(currentDepth - depth) {
-                    stack.removeLast().also { verbose("removed ${it.tagName} from stack") }
+                    stack.removeLast().also { Log.verbose("removed ${it.tagName} from stack") }
                 }
                 stack.lastOrNull()?.let { current = it }
             }
@@ -218,10 +217,10 @@ internal abstract class XmlParser {
             // Ignored elements
             is TextNode,
             is Comment,
-            -> null
+                -> null
 
             else -> {
-                warn("not supported node '${node.nodeName()}'.")
+                Log.warn("not supported node '${node.nodeName()}'.")
                 null
             }
         }

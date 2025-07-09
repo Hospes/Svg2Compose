@@ -1,15 +1,14 @@
 package app.s2c.data.model
 
+import app.s2c.core.logs.Log
+import app.s2c.core.logs.debugSection
+import app.s2c.core.logs.verboseSection
 import app.s2c.data.error.ErrorCode
 import app.s2c.data.error.ExitProgramException
 import app.s2c.data.extensions.EMPTY
 import app.s2c.data.extensions.indented
 import app.s2c.data.geom.AffineTransformation
 import app.s2c.data.geom.applyTransformations
-import app.s2c.data.logger.debug
-import app.s2c.data.logger.debugSection
-import app.s2c.data.logger.verbose
-import app.s2c.data.logger.verboseSection
 import app.s2c.data.model.compose.ComposeBrush
 import app.s2c.data.model.compose.PathFillType
 import app.s2c.data.model.compose.StrokeCap
@@ -240,7 +239,7 @@ fun String.asNodeWrapper(minified: Boolean): ImageVectorNode.NodeWrapper {
     val normalizedPath = normalizePath(this)
     val nodes = verboseSection("Starting path") {
         val commands = normalizedPath.split(" ").filter { it.isNotEmpty() }.toMutableList()
-        verbose("commands=$commands")
+        Log.verbose("commands=$commands")
         var lastCommand = Char.EMPTY
         val nodes = mutableListOf<PathNodes>()
         while (commands.size > 0) {
@@ -263,8 +262,8 @@ fun String.asNodeWrapper(minified: Boolean): ImageVectorNode.NodeWrapper {
                 current = currentCommand + current
             }
 
-            verbose("current commands list=$commands")
-            verbose("current=$current, currentCommand=$currentCommand")
+            Log.verbose("current commands list=$commands")
+            Log.verbose("current=$current, currentCommand=$currentCommand")
 
             val isRelative = currentCommand.isLowerCase()
             current = current.lowercase()
@@ -302,7 +301,7 @@ private fun createNode(
         )
     }
 } catch (e: NumberFormatException) {
-    debug(
+    Log.debug(
         """
         |Error while parsing Path command. Received parameters:
         |current = $current,
@@ -315,7 +314,7 @@ private fun createNode(
     )
     throw e
 } catch (e: NoSuchElementException) {
-    debug(
+    Log.debug(
         """
         |Error while parsing Path command. 
         |Path string must not be empty.

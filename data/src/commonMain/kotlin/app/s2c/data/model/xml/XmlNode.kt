@@ -1,8 +1,8 @@
 package app.s2c.data.model.xml
 
+import app.s2c.core.logs.Log
 import app.s2c.data.AppConfig
 import app.s2c.data.model.delegate.attribute
-import app.s2c.data.logger.warn
 
 interface XmlNode {
     val tagName: String
@@ -87,7 +87,7 @@ abstract class XmlChildNode(
         if (this.parent == XmlPendingParentElement) {
             this.parent = parent
         } else {
-            warn(
+            Log.warn(
                 "Trying to attach $parent to a node that already has a parent. Current parent: ${this.parent}",
             )
         }

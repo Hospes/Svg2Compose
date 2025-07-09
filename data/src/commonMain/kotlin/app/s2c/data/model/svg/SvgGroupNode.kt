@@ -1,11 +1,11 @@
 package app.s2c.data.model.svg
 
+import app.s2c.data.extensions.firstInstanceOfOrNull
 import app.s2c.data.model.ImageVectorNode
 import app.s2c.data.model.asNodeWrapper
 import app.s2c.data.model.delegate.attribute
 import app.s2c.data.model.xml.XmlNode
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.extensions.firstInstanceOfOrNull
 
 class SvgGroupNode(
     parent: XmlParentNode,

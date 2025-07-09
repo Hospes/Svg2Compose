@@ -1,16 +1,16 @@
 package app.s2c.data.model.svg
 
+import app.s2c.data.extensions.removeTrailingZero
+import app.s2c.data.extensions.toLengthFloatOrNull
+import app.s2c.data.geom.applyTransformations
+import app.s2c.data.geom.path.removeShorthandNodes
+import app.s2c.data.geom.path.toAbsolute
 import app.s2c.data.model.PathNodes
 import app.s2c.data.model.StrokeDashArray
 import app.s2c.data.model.compose.*
 import app.s2c.data.model.delegate.attribute
 import app.s2c.data.model.xml.XmlChildNode
 import app.s2c.data.model.xml.XmlParentNode
-import app.s2c.data.extensions.removeTrailingZero
-import app.s2c.data.extensions.toLengthFloatOrNull
-import app.s2c.data.geom.applyTransformations
-import app.s2c.data.geom.path.removeShorthandNodes
-import app.s2c.data.geom.path.toAbsolute
 
 abstract class SvgGraphicNode<out T>(
     parent: XmlParentNode,
