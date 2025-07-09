@@ -3,21 +3,18 @@ package app.s2c.preferences
 interface AppPreferences {
 
     val theme: Preference<Theme>
-    val useDynamicColors: Preference<Boolean>
 
-    val useLessData: Preference<Boolean>
+    val loglevel: Preference<LogLevel>
+    val fileLoglevel: Preference<LogLevel>
 
-    val libraryFollowedActive: Preference<Boolean>
+    enum class LogLevel {
+        DEBUG, INFO, WARNING, ERROR;
 
-    val upNextFollowedOnly: Preference<Boolean>
-
-    val ignoreSpecials: Preference<Boolean>
-    val reportAppCrashes: Preference<Boolean>
-    val reportAnalytics: Preference<Boolean>
-
-    val developerHideArtwork: Preference<Boolean>
-
-    val episodeAiringNotificationsEnabled: Preference<Boolean>
+        companion object {
+            internal fun toInt(level: LogLevel): Int = level.ordinal
+            internal fun fromInt(ordinal: Int): LogLevel = LogLevel.entries[ordinal % LogLevel.entries.size]
+        }
+    }
 
     enum class Theme {
         LIGHT,

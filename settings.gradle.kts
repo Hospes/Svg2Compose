@@ -1,7 +1,10 @@
+rootProject.name = "svg2compose"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google {
-            content {
+            mavenContent {
                 includeGroupByRegex(".*google.*")
                 includeGroupByRegex(".*android.*")
             }
@@ -21,7 +24,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         google {
-            content {
+            mavenContent {
                 includeGroupByRegex(".*google.*")
                 includeGroupByRegex(".*android.*")
             }
@@ -38,15 +41,15 @@ dependencyResolutionManagement {
     }
 }
 
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "svg2compose"
-
 include(
-    "app",
     ":core:base",
+    ":core:logging",
     ":core:preferences",
-    ":core:logging:api",
-    ":core:logging:implementation",
+    ":core:compose-inject",
+
+    ":common:ui:compose",
+    ":common:ui:resources",
+
     ":data",
+    "app",
 )

@@ -3,16 +3,13 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     jvm()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                api(libs.kotlinx.coroutines.core)
-                api(libs.kotlininject.runtime)
-            }
+        commonMain.dependencies {
+            api(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.atomicfu)
+            api(libs.kotlininject.runtime)
         }
     }
 }

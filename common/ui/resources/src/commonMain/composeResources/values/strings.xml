@@ -1,0 +1,8 @@
+<resources>
+    <string name="rail_screen_home">Home</string>
+    <string name="rail_screen_configs">BotConfig</string>
+    <string name="rail_screen_services">Services</string>
+    <string name="rail_screen_balance">Balance</string>
+    <string name="rail_screen_orders">Orders</string>
+    <string name="rail_screen_settings">Settings</string>
+</resources>

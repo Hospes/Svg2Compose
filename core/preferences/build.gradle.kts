@@ -5,17 +5,13 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     jvm()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(projects.core.base)
-                api(libs.multiplatformsettings.core)
-                api(libs.multiplatformsettings.coroutines)
-            }
+        commonMain.dependencies {
+            implementation(projects.core.base)
+            api(libs.multiplatformsettings.core)
+            api(libs.multiplatformsettings.coroutines)
         }
     }
 

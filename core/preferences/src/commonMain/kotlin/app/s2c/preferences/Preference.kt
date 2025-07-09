@@ -8,6 +8,8 @@ interface Preference<T> {
     val flow: Flow<T>
     suspend fun set(value: T)
     suspend fun get(): T
+    suspend fun update(block: suspend (T) -> T)
+    fun getNotSuspended(): T
 }
 
 suspend fun Preference<Boolean>.toggle() = set(!get())
