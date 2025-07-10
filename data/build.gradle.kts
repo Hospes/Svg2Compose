@@ -1,5 +1,12 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.build.config)
+}
+
+buildConfig {
+    packageName("app.s2c.data")
+
+    buildConfigField("DEBUG", false)
 }
 
 kotlin {

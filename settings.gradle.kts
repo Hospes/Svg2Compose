@@ -45,11 +45,13 @@ include(
     ":core:base",
     ":core:logging",
     ":core:preferences",
-    ":core:compose-inject",
 
     ":common:ui:compose",
     ":common:ui:resources",
 
     ":data",
+
+    ":ui:converter",
+
     "app",
 )

@@ -1,7 +1,7 @@
 package app.s2c.data.model.xml
 
 import app.s2c.core.logs.Log
-import app.s2c.data.AppConfig
+import app.s2c.data.BuildConfig
 import app.s2c.data.model.delegate.attribute
 
 interface XmlNode {
@@ -65,7 +65,7 @@ abstract class XmlChildNode(
     }
 
     private fun buildParentName(): String {
-        return if (AppConfig.debug) {
+        return if (BuildConfig.DEBUG) {
             var parentTag = parent.tagName
             var currentParent: XmlParentNode? = (parent as? XmlChildNode)?.parent
             var deep = 0
