@@ -19,28 +19,27 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.common.ui.compose)
+                implementation(projects.data)
+                implementation(projects.ui.converter)
 
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)
                 implementation(compose.materialIconsExtended)
-                //implementation(libs.kotlinx.coroutines.swing)
-
-                implementation(projects.data)
 
                 implementation(libs.kotlininject.viewmodel.runtime)
                 implementation(libs.kotlininject.viewmodel.compose)
 
+                implementation(libs.androidx.navigation.compose)
                 implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
 
         jvmMain {
             dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation(compose.material)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.preview)
-                //implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.kotlinx.coroutines.swing)
             }
         }
     }

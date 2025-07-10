@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
-import app.s2c.theme.MyTheme
 
 @Composable
 internal fun IconInfoDialog(
@@ -95,7 +94,7 @@ internal fun IconInfoDialog(
 @Preview
 @Composable
 private fun Preview() {
-    MyTheme {
+    MaterialTheme {
         IconInfoDialog(
             onValidateClick = { _, _ -> },
             onCancelClick = {},

@@ -1,16 +1,18 @@
 package app.s2c
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.TrayState
 
 @Composable
-fun rememberApplicationState(exitApp: () -> Unit) = remember {
-    MyApplicationState(exitApp = exitApp)
+fun rememberAppState(exitApp: () -> Unit) = remember {
+    AppState(exitApp = exitApp)
 }
 
-class MyApplicationState(
+@Stable
+class AppState(
     private val exitApp: () -> Unit
 ) {
     val tray = TrayState()

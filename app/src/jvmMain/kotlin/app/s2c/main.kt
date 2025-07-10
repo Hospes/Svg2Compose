@@ -24,8 +24,8 @@ fun main() {
                 override val viewModelFactory: ViewModelProvider.Factory get() = appComponent.vmFactory
             },
         ) {
-            MyApplication(
-                state = rememberApplicationState(exitApp = ::exitApplication)
+            App(
+                state = rememberAppState(exitApp = ::exitApplication)
             )
         }
     }
