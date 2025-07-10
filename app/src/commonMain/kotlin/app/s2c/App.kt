@@ -3,10 +3,8 @@ package app.s2c
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.window.ApplicationScope
-import androidx.compose.ui.window.MenuScope
-import androidx.compose.ui.window.Tray
-import androidx.compose.ui.window.Window
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 import app.s2c.common.LocalAppResources
 import app.s2c.ui.common.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -17,6 +15,7 @@ fun ApplicationScope.App(state: AppState) {
 
     AppTheme {
         Window(
+            state = rememberWindowState(width = 1280.dp, height = 800.dp),
             title = "Svg2Compose",
             icon = painterResource("icon.png"),
             onCloseRequest = state::exit,

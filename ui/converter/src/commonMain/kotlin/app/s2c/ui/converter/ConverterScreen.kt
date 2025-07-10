@@ -1,23 +1,28 @@
 package app.s2c.ui.converter
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.s2c.ui.common.theme.AppTheme
-import app.s2c.ui.resources.Res
-import app.s2c.ui.resources.rail_screen_balance
 import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Serializable
@@ -40,7 +45,7 @@ private fun ConverterScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun ConverterScreen(
     state: ConverterViewState,
@@ -48,14 +53,275 @@ private fun ConverterScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(Res.string.rail_screen_balance)) },
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sync, // Placeholder for custom icon
+                            contentDescription = "App Icon",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Text("Svg2Compose")
+                    }
+                },
+                subtitle = { Text(text = "Convert Android Vector Drawables and SVG Paths to Jetpack Compose `ImageVector` code.") },
             )
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddings ->
         Column(
-            modifier = Modifier.padding(paddings),
+            modifier = Modifier.padding(paddings).padding(24.dp),
         ) {
+            // State to toggle between placeholder and result view
+            var showResult by remember { mutableStateOf(false) }
+
+            // Use BoxWithConstraints to create a responsive layout
+            BoxWithConstraints {
+                val isLandscape = maxWidth > 1100.dp // Breakpoint for side-by-side layout
+                if (isLandscape) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.spacedBy(32.dp)
+                    ) {
+                        Box(Modifier.weight(1f)) {
+                            InputPanel(onConvertClicked = { showResult = true })
+                        }
+                        Box(Modifier.weight(1f)) {
+                            OutputPanel(showResult)
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(32.dp)
+                    ) {
+                        InputPanel(onConvertClicked = { showResult = true })
+                        OutputPanel(showResult)
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+// --- INPUT PANEL ---
+@Composable
+private fun InputPanel(onConvertClicked: () -> Unit) {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val tabs = listOf("Vector Drawable (.xml)", "SVG Path Data (d=\"\")")
+    var inputText by remember { mutableStateOf("<vector ...>") }
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxHeight()) {
+        Text("1. Provide Input", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    height = 3.dp,
+                )
+            }
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(title) },
+                )
+            }
+        }
+
+        OutlinedTextField(
+            value = inputText,
+            onValueChange = { inputText = it },
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            shape = RoundedCornerShape(12.dp),
+            textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace)
+        )
+
+        Button(
+            onClick = onConvertClicked,
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            shape = CircleShape,
+        ) {
+            Icon(Icons.Default.ArrowForward, contentDescription = "Convert")
+            Spacer(Modifier.width(8.dp))
+            Text("CONVERT", fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+// --- OUTPUT PANEL ---
+@Composable
+private fun OutputPanel(showResult: Boolean) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxHeight()) {
+        Text("2. Get Result", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (showResult) {
+                ResultView()
+            } else {
+                PlaceholderView()
+            }
+        }
+    }
+}
+
+// --- PLACEHOLDER VIEW ---
+@Composable
+private fun PlaceholderView() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Star, // Placeholder for wand icon
+            contentDescription = "Placeholder",
+            modifier = Modifier.size(48.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+        )
+        Spacer(Modifier.height(16.dp))
+        Text("Your generated code will appear here.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+// --- RESULT VIEW ---
+@Composable
+private fun ResultView() {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Responsive layout for Preview and Code cards
+        BoxWithConstraints(modifier = Modifier.weight(1f)) {
+            if (maxWidth > 600.dp) { // Breakpoint for side-by-side cards
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) { IconPreviewCard() }
+                    Box(Modifier.weight(1f)) { GeneratedCodeCard() }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    IconPreviewCard()
+                    GeneratedCodeCard()
+                }
+            }
+        }
+
+        Button(
+            onClick = { /* TODO: Export logic */ },
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            shape = CircleShape,
+        ) {
+            Icon(Icons.Default.Download, contentDescription = "Export")
+            Spacer(Modifier.width(8.dp))
+            Text("Export to .kt file", fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+// --- ICON PREVIEW CARD ---
+@Composable
+private fun IconPreviewCard(modifier: Modifier = Modifier) {
+    var previewBgColor = true
+    var zoom by remember { mutableStateOf(1f) }
+
+    Card(
+        modifier = modifier.fillMaxSize(),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Icon Preview", fontWeight = FontWeight.SemiBold)
+                Row {
+                    IconButton(onClick = { zoom = (zoom - 0.2f).coerceAtLeast(0.4f) }) {
+                        Icon(Icons.Default.ZoomOut, "Zoom Out")
+                    }
+                    IconButton(onClick = { zoom = (zoom + 0.2f).coerceAtMost(2f) }) {
+                        Icon(Icons.Default.ZoomIn, "Zoom In")
+                    }
+                    IconButton(onClick = { previewBgColor = !previewBgColor }) {
+                        Icon(Icons.Default.Contrast, "Toggle Background")
+                    }
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (previewBgColor) MaterialTheme.colorScheme.surfaceBright else MaterialTheme.colorScheme.surfaceDim),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = "Preview Icon",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size((64 * zoom).dp)
+                )
+            }
+        }
+    }
+}
+
+// --- GENERATED CODE CARD ---
+@Composable
+private fun GeneratedCodeCard(modifier: Modifier = Modifier) {
+    val generatedCode = """
+public val MyIcons.Filled.CheckCircle: ImageVector
+    get() {
+        if (_checkCircle != null) {
+            return _checkCircle!!
+        }
+        _checkCircle = Builder(
+            name = "CheckCircle", 
+            defaultWidth = 24.0.dp,
+            ...
+        ).build()
+        return _checkCircle!!
+    }
+    """.trimIndent()
+
+    Card(
+        modifier = modifier.fillMaxSize(),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text("Generated Code", fontWeight = FontWeight.SemiBold)
+                TextButton(onClick = { /* TODO: Copy logic */ }) {
+                    Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Copy")
+                }
+            }
+            OutlinedTextField(
+                value = generatedCode,
+                onValueChange = {},
+                readOnly = true,
+                modifier = Modifier.fillMaxSize(),
+                textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, fontFamily = FontFamily.Monospace),
+            )
         }
     }
 }
