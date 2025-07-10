@@ -1,12 +1,14 @@
+package app.s2c
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.MenuScope
 import androidx.compose.ui.window.Tray
 import app.s2c.common.LocalAppResources
-import kotlinx.coroutines.launch
 import app.s2c.theme.MyTheme
-import ui.MainWindow
+import app.s2c.ui.MainWindow
+import kotlinx.coroutines.launch
 
 @Composable
 fun ApplicationScope.MyApplication(state: MyApplicationState) {

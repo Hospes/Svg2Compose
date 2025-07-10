@@ -1,4 +1,4 @@
-package ui
+package app.s2c.ui
 
 import MainScreen
 import androidx.compose.runtime.Composable

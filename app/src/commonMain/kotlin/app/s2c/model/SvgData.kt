@@ -1,4 +1,4 @@
-package model
+package app.s2c.model
 
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.*

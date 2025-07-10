@@ -1,4 +1,4 @@
-package domain
+package app.s2c.domain
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.*
-import model.SvgData
+import app.s2c.model.SvgData
 
 object SvgPathParser {
 

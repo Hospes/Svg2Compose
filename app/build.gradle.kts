@@ -29,7 +29,7 @@ kotlin {
 
                 implementation(libs.kotlininject.viewmodel.runtime)
                 implementation(libs.kotlininject.viewmodel.compose)
-                
+
                 implementation(libs.androidx.lifecycle.viewmodel.compose)
             }
         }
@@ -83,10 +83,10 @@ version = v
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "app.s2c.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
-            packageName = "ua.hospes.svg2compose"
+            packageName = "app.s2c"
             packageVersion = v
             windows {
                 iconFile.set(File("icon.ico"))

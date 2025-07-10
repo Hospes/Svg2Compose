@@ -1,6 +1,11 @@
-package domain
+package app.s2c.domain
 
 import androidx.compose.ui.graphics.Color
+import java.lang.Long
+import kotlin.NumberFormatException
+import kotlin.String
+import kotlin.text.substring
+import kotlin.text.toList
 
 object UnknownColors {
 
@@ -27,7 +32,7 @@ object UnknownColors {
             }
             9 -> {//#FFFFFFFF format
                 try {
-                    val i = java.lang.Long.decode(color).toInt()
+                    val i = Long.decode(color).toInt()
                     val javaColor = java.awt.Color(
                         i shr 16 and 0xFF,
                         i shr 8 and 0xFF,

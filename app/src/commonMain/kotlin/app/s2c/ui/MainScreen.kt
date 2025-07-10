@@ -30,12 +30,12 @@ import app.s2c.data.builder.MaterialIconSourceBuilder
 import app.s2c.data.model.IconFileContents
 import app.s2c.data.parser.IconParser
 import app.s2c.data.parser.ParserConfig
-import domain.SvgPathParser
-import domain.UnknownColors
-import domain.VectorDrawableParser
-import domain.toImageVector
-import model.SvgData
-import ui.IconInfoDialog
+import app.s2c.domain.SvgPathParser
+import app.s2c.domain.UnknownColors
+import app.s2c.domain.VectorDrawableParser
+import app.s2c.domain.toImageVector
+import app.s2c.model.SvgData
+import app.s2c.ui.IconInfoDialog
 import java.awt.FileDialog
 import java.io.File
 

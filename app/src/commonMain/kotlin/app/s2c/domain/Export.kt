@@ -1,6 +1,6 @@
-package domain
+package app.s2c.domain
 
-import model.Svg
+import app.s2c.model.Svg
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException

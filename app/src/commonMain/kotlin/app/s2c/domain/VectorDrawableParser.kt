@@ -1,10 +1,10 @@
-package domain
+package app.s2c.domain
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import model.SvgData
-import model.SvgData.Companion.DEFAULT_SIZE
-import model.SvgData.Companion.DEFAULT_VIEWPORT_SIZE
+import app.s2c.model.SvgData
+import app.s2c.model.SvgData.Companion.DEFAULT_SIZE
+import app.s2c.model.SvgData.Companion.DEFAULT_VIEWPORT_SIZE
 import org.w3c.dom.Node
 import org.xml.sax.InputSource
 import java.io.StringReader

@@ -1,4 +1,4 @@
-package ui
+package app.s2c.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background

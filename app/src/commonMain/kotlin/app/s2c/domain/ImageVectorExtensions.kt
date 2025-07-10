@@ -1,4 +1,4 @@
-package domain
+package app.s2c.domain
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color

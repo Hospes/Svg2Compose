@@ -1,3 +1,5 @@
+package app.s2c
+
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.application
 import androidx.lifecycle.ViewModelProvider
