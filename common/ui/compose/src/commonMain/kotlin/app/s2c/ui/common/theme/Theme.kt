@@ -8,10 +8,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 @Composable
 fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     // For now we not gonna support dark theme
-    val localAppColors: AppColorsScheme = if (darkTheme) AppDarkColorsScheme else AppLightColorsScheme
+    //val localAppColors: AppColorsScheme = if (darkTheme) AppDarkColorsScheme else AppLightColorsScheme
 
     CompositionLocalProvider(
-        LocalAppColor provides localAppColors,
+        LocalAppColor provides AppDarkColorsScheme,
         LocalAppTypography provides AppTypography,
         LocalAppShapes provides AppShapes,
     ) {

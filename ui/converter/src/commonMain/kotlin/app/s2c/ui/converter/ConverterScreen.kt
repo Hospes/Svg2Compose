@@ -4,13 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +62,7 @@ private fun ConverterScreen(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(32.dp)
                         )
-                        Text("Svg2Compose")
+                        Text(text = "Svg2Compose", fontWeight = FontWeight.Bold)
                     }
                 },
                 subtitle = { Text(text = "Convert Android Vector Drawables and SVG Paths to Jetpack Compose `ImageVector` code.") },
@@ -73,7 +71,7 @@ private fun ConverterScreen(
         modifier = Modifier.fillMaxSize(),
     ) { paddings ->
         Column(
-            modifier = Modifier.padding(paddings).padding(24.dp),
+            modifier = Modifier.padding(paddings).padding(16.dp),
         ) {
             // State to toggle between placeholder and result view
             var showResult by remember { mutableStateOf(false) }
@@ -84,22 +82,38 @@ private fun ConverterScreen(
                 if (isLandscape) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp)
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Box(Modifier.weight(1f)) {
-                            InputPanel(onConvertClicked = { showResult = true })
-                        }
-                        Box(Modifier.weight(1f)) {
-                            OutputPanel(showResult)
-                        }
+                        InputPanel(
+                            onConvertClicked = { showResult = true },
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(1f),
+                        )
+                        OutputPanel(
+                            showResult = showResult,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(1f),
+                        )
                     }
                 } else {
                     Column(
                         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(32.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        InputPanel(onConvertClicked = { showResult = true })
-                        OutputPanel(showResult)
+                        InputPanel(
+                            onConvertClicked = { showResult = true },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 300.dp, max = 600.dp),
+                        )
+                        OutputPanel(
+                            showResult = showResult,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 300.dp, max = 600.dp),
+                        )
                     }
                 }
             }
@@ -110,44 +124,44 @@ private fun ConverterScreen(
 
 // --- INPUT PANEL ---
 @Composable
-private fun InputPanel(onConvertClicked: () -> Unit) {
+private fun InputPanel(
+    onConvertClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Vector Drawable (.xml)", "SVG Path Data (d=\"\")")
     var inputText by remember { mutableStateOf("<vector ...>") }
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxHeight()) {
-        Text("1. Provide Input", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier,
+    ) {
+        Text("1. Provide Input", style = MaterialTheme.typography.titleMedium)
 
-        TabRow(
+        SecondaryTabRow(
             selectedTabIndex = selectedTabIndex,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    height = 3.dp,
-                )
+            modifier = Modifier.fillMaxWidth(),
+            tabs = {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = { Text(title) },
+                    )
+                }
             }
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = { Text(title) },
-                )
-            }
-        }
+        )
 
         OutlinedTextField(
             value = inputText,
             onValueChange = { inputText = it },
             modifier = Modifier.fillMaxWidth().weight(1f),
-            shape = RoundedCornerShape(12.dp),
             textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace)
         )
 
         Button(
             onClick = onConvertClicked,
-            modifier = Modifier.fillMaxWidth().height(48.dp),
-            shape = CircleShape,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(Icons.Default.ArrowForward, contentDescription = "Convert")
             Spacer(Modifier.width(8.dp))
@@ -158,9 +172,15 @@ private fun InputPanel(onConvertClicked: () -> Unit) {
 
 // --- OUTPUT PANEL ---
 @Composable
-private fun OutputPanel(showResult: Boolean) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxHeight()) {
-        Text("2. Get Result", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+private fun OutputPanel(
+    showResult: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier,
+    ) {
+        Text("2. Get Result", style = MaterialTheme.typography.titleMedium)
 
         Box(
             modifier = Modifier
@@ -223,7 +243,6 @@ private fun ResultView() {
         Button(
             onClick = { /* TODO: Export logic */ },
             modifier = Modifier.fillMaxWidth().height(48.dp),
-            shape = CircleShape,
         ) {
             Icon(Icons.Default.Download, contentDescription = "Export")
             Spacer(Modifier.width(8.dp))
@@ -240,7 +259,6 @@ private fun IconPreviewCard(modifier: Modifier = Modifier) {
 
     Card(
         modifier = modifier.fillMaxSize(),
-        shape = RoundedCornerShape(12.dp),
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(
@@ -300,7 +318,6 @@ public val MyIcons.Filled.CheckCircle: ImageVector
 
     Card(
         modifier = modifier.fillMaxSize(),
-        shape = RoundedCornerShape(12.dp),
     ) {
         Column {
             Row(
