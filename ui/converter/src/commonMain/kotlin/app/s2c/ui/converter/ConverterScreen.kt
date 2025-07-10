@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -18,7 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
+import app.s2c.ui.common.ui.AppTextField
 import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -40,6 +43,7 @@ private fun ConverterScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     ConverterScreen(
         state = state,
+        sourceCodeInputState = viewModel.sourceCodeInputState,
     )
 }
 
@@ -47,6 +51,7 @@ private fun ConverterScreen(
 @Composable
 private fun ConverterScreen(
     state: ConverterViewState,
+    sourceCodeInputState: TextInputState,
 ) {
     Scaffold(
         topBar = {
@@ -85,6 +90,7 @@ private fun ConverterScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         InputPanel(
+                            sourceCodeInputState = sourceCodeInputState,
                             onConvertClicked = { showResult = true },
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -103,6 +109,7 @@ private fun ConverterScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         InputPanel(
+                            sourceCodeInputState = sourceCodeInputState,
                             onConvertClicked = { showResult = true },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -125,12 +132,12 @@ private fun ConverterScreen(
 // --- INPUT PANEL ---
 @Composable
 private fun InputPanel(
+    sourceCodeInputState: TextInputState,
     onConvertClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Vector Drawable (.xml)", "SVG Path Data (d=\"\")")
-    var inputText by remember { mutableStateOf("<vector ...>") }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -152,11 +159,11 @@ private fun InputPanel(
             }
         )
 
-        OutlinedTextField(
-            value = inputText,
-            onValueChange = { inputText = it },
+        AppTextField(
+            state = sourceCodeInputState,
+            textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+            lineLimits = TextFieldLineLimits.MultiLine(),
             modifier = Modifier.fillMaxWidth().weight(1f),
-            textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace)
         )
 
         Button(
@@ -350,6 +357,7 @@ private fun Preview() {
     AppTheme {
         ConverterScreen(
             state = ConverterViewState.Init,
+            sourceCodeInputState = TextInputState.Preview,
         )
     }
 }

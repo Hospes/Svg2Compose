@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
 import app.s2c.preferences.AppPreferences
+import app.s2c.ui.common.input.DefaultTextInputStateHelper
 import com.teobaranga.kotlin.inject.viewmodel.runtime.ContributesViewModel
 import kotlinx.coroutines.flow.*
 import me.tatarka.inject.annotations.Inject
@@ -15,6 +16,9 @@ class ConverterViewModel(
     dispatchers: AppCoroutineDispatchers,
     prefs: AppPreferences,
 ) : ViewModel() {
+
+    private val sourceCodeInputHelper = DefaultTextInputStateHelper()
+    val sourceCodeInputState = sourceCodeInputHelper.state
 
     val state: StateFlow<ConverterViewState> = combine(
         flowOf(12), flowOf(12)

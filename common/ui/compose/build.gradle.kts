@@ -12,17 +12,13 @@ kotlin {
 
         commonMain.dependencies {
             implementation(projects.core.base)
-            //implementation(projects.data.models)
+            implementation(projects.common.ui.resources)
 
-//            implementation(compose.runtime)
-//            implementation(compose.foundation)
             implementation(compose.material3)
             api(compose.materialIconsExtended)
-//            implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 //
-//            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.navigation.compose)
         }

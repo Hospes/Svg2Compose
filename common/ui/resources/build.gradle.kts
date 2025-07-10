@@ -22,5 +22,5 @@ kotlin {
 compose.resources {
     publicResClass = true
     packageOfResClass = "app.s2c.ui.resources"
-    generateResClass = auto
+    generateResClass = always
 }

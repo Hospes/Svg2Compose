@@ -1,106 +1,114 @@
 package app.s2c.ui.common.input
 
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import app.s2c.ui.resources.Res
+import app.s2c.ui.resources.common_error_invalid
+import app.s2c.ui.resources.common_error_required
+import org.jetbrains.compose.resources.stringResource
 
-interface TextInputState : InputState<TextFieldValue> {
-    val isValidating: Boolean
-    val enabled: Boolean
-    override val error: Error?
-
+@Stable
+interface TextInputState : InputState<TextInputState.Error> {
+    @Immutable
     interface Error : InputState.Error {
-        data object Required : Error
-        data object Invalid : Error
+        data object Required : Error {
+            @Composable
+            override fun asLabel(): String = stringResource(Res.string.common_error_required)
+        }
+
+        data object Invalid : Error {
+            @Composable
+            override fun asLabel(): String = stringResource(Res.string.common_error_invalid)
+        }
+
+        data class Custom(val message: String) : Error {
+            @Composable
+            override fun asLabel(): String = message
+        }
+    }
+
+    companion object {
+        val Preview = DefaultTextInputState(
+            fieldState = TextFieldState(initialText = "Some text"),
+            errorState = mutableStateOf(null)
+        )
     }
 }
 
-interface TextInputStateHelper<out S : TextInputState> : InputStateHelper<TextFieldValue, S> {
-    val isValidating: MutableStateFlow<Boolean>
-    val enabled: MutableStateFlow<Boolean>
+@Stable
+interface TextInputStateHelper : InputStateHelper<TextInputState, TextInputState.Error> {
+    fun validate(onValidate: ((String) -> TextInputState.Error?)? = null): TextInputState.Error?
+    suspend fun validateSuspend(onValidate: (suspend (String) -> TextInputState.Error?)? = null): TextInputState.Error?
 
-    fun setValue(s: String) = with(value) { update { it.copy(text = s, selection = TextRange(s.length)) } }
-    fun setValue(s: TextFieldValue) = with(value) { value = s }
+    companion object {
+        val Required: (String) -> TextInputState.Error? = {
+            when {
+                it.isBlank() -> TextInputState.Error.Required
+                else -> null
+            }
+        }
+    }
 }
 
-
+@Stable
 data class DefaultTextInputState(
-    override val value: TextFieldValue = TextFieldValue(),
-    override val isValidating: Boolean = false,
-    override val enabled: Boolean = true,
-    override val error: TextInputState.Error? = null
+    override val fieldState: TextFieldState,
+    override val errorState: MutableState<TextInputState.Error?> = mutableStateOf(null),
+    override val enabledState: MutableState<Boolean> = mutableStateOf(true),
 ) : TextInputState {
 
     constructor(
-        value: String,
-        isValidating: Boolean = false,
-        enabled: Boolean = true,
-        error: TextInputState.Error? = null,
+        initialText: String = "",
+        initialError: TextInputState.Error? = null,
+        initialEnabled: Boolean = true,
     ) : this(
-        value = TextFieldValue(value, selection = TextRange(value.length)),
-        isValidating = isValidating,
-        enabled = enabled,
-        error = error,
+        fieldState = TextFieldState(initialText = initialText),
+        errorState = mutableStateOf(initialError),
+        enabledState = mutableStateOf(initialEnabled),
     )
 
     companion object {
-        val Init = DefaultTextInputState()
+        /**
+         * A Saver for [DefaultTextInputState] that handles process death and configuration changes.
+         * Note: Validation error state is not saved/restored as it should be re-validated.
+         */
+        fun Saver(): Saver<DefaultTextInputState, Any> = Saver(
+            save = {
+                with(TextFieldState.Saver) { save(it.fieldState) }
+            },
+            restore = {
+                DefaultTextInputState(
+                    fieldState = TextFieldState.Saver.restore(it)!!,
+                    errorState = mutableStateOf(null)
+                )
+            }
+        )
     }
 }
 
+@Stable
 class DefaultTextInputStateHelper(
-    override val value: MutableStateFlow<TextFieldValue> = MutableStateFlow(TextFieldValue()),
-    override val isValidating: MutableStateFlow<Boolean> = MutableStateFlow(false),
-    override val enabled: MutableStateFlow<Boolean> = MutableStateFlow(true),
-    override val error: MutableStateFlow<TextInputState.Error?> = MutableStateFlow(null),
-) : TextInputStateHelper<DefaultTextInputState> {
+    initialText: String = "",
+    private val onValidate: (String) -> TextInputState.Error? = { null }
+) : TextInputStateHelper {
+    /**
+     * The UI-facing state object. Pass this to your `ViewState` data class.
+     */
+    override val state: TextInputState = DefaultTextInputState(initialText = initialText)
 
-    constructor(
-        initValue: String,
-        initIsValidating: Boolean = false,
-        initEnabled: Boolean = true,
-        initError: TextInputState.Error? = null,
-    ) : this(
-        value = MutableStateFlow(TextFieldValue(initValue, selection = TextRange(initValue.length))),
-        isValidating = MutableStateFlow(initIsValidating),
-        enabled = MutableStateFlow(initEnabled),
-        error = MutableStateFlow(initError),
-    )
+    /**
+     * Runs the validation logic against the current text and updates the error state.
+     *
+     * @return `true` if the input is valid, `false` otherwise.
+     */
+    override fun validate(onValidate: ((String) -> TextInputState.Error?)?): TextInputState.Error? = when (onValidate) {
+        null -> onValidate(text)
+        else -> onValidate(text)
+    }.also(::setError)
 
-    constructor(
-        initValue: TextFieldValue,
-        initIsValidating: Boolean = false,
-        initEnabled: Boolean = true,
-        initError: TextInputState.Error? = null,
-    ) : this(
-        value = MutableStateFlow(initValue),
-        isValidating = MutableStateFlow(initIsValidating),
-        enabled = MutableStateFlow(initEnabled),
-        error = MutableStateFlow(initError),
-    )
-
-
-    override val state: Flow<DefaultTextInputState> = combine(
-        value, isValidating, enabled, error
-    ) { value, validating, enabled, error ->
-        DefaultTextInputState(
-            value = value,
-            isValidating = validating,
-            enabled = enabled,
-            error = error,
-        )
-    }
-
-    override fun setValue(s: String) {
-        super.setValue(s)
-        error.value = null
-    }
-
-    override fun setValue(s: TextFieldValue) {
-        super.setValue(s)
-        error.value = null
-    }
+    override suspend fun validateSuspend(onValidate: (suspend (String) -> TextInputState.Error?)?): TextInputState.Error? = when (onValidate) {
+        null -> onValidate(text)
+        else -> onValidate(text)
+    }.also(::setError)
 }
