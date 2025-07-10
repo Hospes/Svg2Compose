@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -78,9 +79,6 @@ private fun ConverterScreen(
         Column(
             modifier = Modifier.padding(paddings).padding(16.dp),
         ) {
-            // State to toggle between placeholder and result view
-            var showResult by remember { mutableStateOf(false) }
-
             // Use BoxWithConstraints to create a responsive layout
             BoxWithConstraints {
                 val isLandscape = maxWidth > 1100.dp // Breakpoint for side-by-side layout
@@ -91,13 +89,13 @@ private fun ConverterScreen(
                     ) {
                         InputPanel(
                             sourceCodeInputState = sourceCodeInputState,
-                            onConvertClicked = { showResult = true },
+                            onConvertClicked = {},
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .weight(1f),
                         )
                         OutputPanel(
-                            showResult = showResult,
+                            state = state.output,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .weight(1f),
@@ -110,13 +108,13 @@ private fun ConverterScreen(
                     ) {
                         InputPanel(
                             sourceCodeInputState = sourceCodeInputState,
-                            onConvertClicked = { showResult = true },
+                            onConvertClicked = {},
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 300.dp, max = 600.dp),
                         )
                         OutputPanel(
-                            showResult = showResult,
+                            state = state.output,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 300.dp, max = 600.dp),
@@ -163,6 +161,12 @@ private fun InputPanel(
             state = sourceCodeInputState,
             textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
             lineLimits = TextFieldLineLimits.MultiLine(),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+            ),
             modifier = Modifier.fillMaxWidth().weight(1f),
         )
 
@@ -180,7 +184,7 @@ private fun InputPanel(
 // --- OUTPUT PANEL ---
 @Composable
 private fun OutputPanel(
-    showResult: Boolean,
+    state: ConverterViewState.Output?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -197,8 +201,10 @@ private fun OutputPanel(
                 .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
-            if (showResult) {
-                ResultView()
+            if (state != null) {
+                ResultView(
+                    state = state,
+                )
             } else {
                 PlaceholderView()
             }
@@ -227,7 +233,10 @@ private fun PlaceholderView() {
 
 // --- RESULT VIEW ---
 @Composable
-private fun ResultView() {
+private fun ResultView(
+    state: ConverterViewState.Output,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -236,12 +245,19 @@ private fun ResultView() {
         BoxWithConstraints(modifier = Modifier.weight(1f)) {
             if (maxWidth > 600.dp) { // Breakpoint for side-by-side cards
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Box(Modifier.weight(1f)) { IconPreviewCard() }
+                    if (state.preview != null)
+                        IconPreviewCard(
+                            icon = state.preview,
+                            modifier = Modifier.weight(1f),
+                        )
                     Box(Modifier.weight(1f)) { GeneratedCodeCard() }
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    IconPreviewCard()
+                    if (state.preview != null)
+                        IconPreviewCard(
+                            icon = state.preview,
+                        )
                     GeneratedCodeCard()
                 }
             }
@@ -260,7 +276,10 @@ private fun ResultView() {
 
 // --- ICON PREVIEW CARD ---
 @Composable
-private fun IconPreviewCard(modifier: Modifier = Modifier) {
+private fun IconPreviewCard(
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+) {
     var previewBgColor = true
     var zoom by remember { mutableStateOf(1f) }
 
@@ -295,7 +314,7 @@ private fun IconPreviewCard(modifier: Modifier = Modifier) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Filled.CheckCircle,
+                    imageVector = icon,
                     contentDescription = "Preview Icon",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size((64 * zoom).dp)

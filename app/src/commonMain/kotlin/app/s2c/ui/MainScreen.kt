@@ -148,7 +148,7 @@ fun FrameWindowScope.MainScreen() {
                             makeInternal = false,
                             minified = true
                         ),
-                    )
+                    ).getOrNull()
 
 //                    svg = Svg(
 //                        pathDecomposed = svgData.toPathDecomposed(),

@@ -40,7 +40,7 @@ sealed interface IconParser {
         content: String,
         iconName: String,
         config: ParserConfig,
-    ): IconFileContents
+    ): Result<IconFileContents>
 
     /**
      * This function generates the Icon's imports for the provided list of
@@ -141,7 +141,7 @@ sealed interface IconParser {
             content: String,
             iconName: String,
             config: ParserConfig,
-        ): IconFileContents {
+        ): Result<IconFileContents> = Result.runCatching {
             val root = XmlParser.parse(content = content, fileType = FileType.Svg)
             val svg = root.children.single { it is SvgRootNode } as SvgRootNode
             svg.resolveUseNodes()
@@ -152,7 +152,7 @@ sealed interface IconParser {
                     it.applyTransformation()
                 }
 
-            return IconFileContents(
+            IconFileContents(
                 pkg = config.pkg,
                 iconName = iconName,
                 width = svg.width,
@@ -204,12 +204,12 @@ sealed interface IconParser {
             content: String,
             iconName: String,
             config: ParserConfig,
-        ): IconFileContents {
+        ): Result<IconFileContents> = Result.runCatching {
             val root = XmlParser.parse(content = content, fileType = FileType.Avg)
             val avg = root.children.single { it is AvgRootNode } as AvgRootNode
             val nodes = avg.asNodes(minified = config.minified)
 
-            return IconFileContents(
+            IconFileContents(
                 pkg = config.pkg,
                 iconName = iconName,
                 width = avg.width,
