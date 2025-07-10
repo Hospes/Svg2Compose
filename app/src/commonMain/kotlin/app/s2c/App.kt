@@ -8,7 +8,6 @@ import androidx.compose.ui.window.MenuScope
 import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.Window
 import app.s2c.common.LocalAppResources
-import app.s2c.ui.MainNavigation
 import app.s2c.ui.common.theme.AppTheme
 import kotlinx.coroutines.launch
 
@@ -23,7 +22,7 @@ fun ApplicationScope.App(state: AppState) {
             onCloseRequest = state::exit,
         ) {
             //MainScreen()
-            MainNavigation()
+            AppNavigation()
         }
     }
 }

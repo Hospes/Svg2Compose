@@ -1,4 +1,4 @@
-package app.s2c.ui
+package app.s2c
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,7 +9,7 @@ import app.s2c.ui.converter.ConverterScreen
 import app.s2c.ui.converter.addConverterScreen
 
 @Composable
-internal fun MainNavigation(
+internal fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {

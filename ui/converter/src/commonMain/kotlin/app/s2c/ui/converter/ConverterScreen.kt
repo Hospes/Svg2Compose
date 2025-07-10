@@ -4,11 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.resources.Res
 import app.s2c.ui.resources.rail_screen_balance
 import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
@@ -60,7 +64,7 @@ private fun ConverterScreen(
 @Preview
 @Composable
 private fun Preview() {
-    MaterialTheme {
+    AppTheme {
         ConverterScreen(
             state = ConverterViewState.Init,
         )

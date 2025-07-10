@@ -19,6 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.core.preferences)
                 implementation(projects.common.ui.compose)
                 implementation(projects.data)
                 implementation(projects.ui.converter)
