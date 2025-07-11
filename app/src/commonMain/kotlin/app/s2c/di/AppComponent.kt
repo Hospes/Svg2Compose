@@ -19,6 +19,9 @@ interface AppComponent {
     @ForScope(AppScope::class)
     val vmFactory: ViewModelProvider.Factory
 
+    @ForScope(AppScope::class)
+    val initializers: AppInitializers
+
 
     val dispatchers: AppCoroutineDispatchers
 

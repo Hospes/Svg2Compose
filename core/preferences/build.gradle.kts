@@ -1,9 +1,7 @@
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import kotlin.sequences.forEach
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)

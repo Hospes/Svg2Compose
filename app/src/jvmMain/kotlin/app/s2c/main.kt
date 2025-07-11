@@ -15,6 +15,7 @@ fun main() {
 
     // Create an injection graph
     val appComponent = AppComponent::class.create()
+    appComponent.initializers.initialize()
 
     application {
         CompositionLocalProvider(
