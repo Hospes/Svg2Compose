@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -89,7 +88,6 @@ private fun ConverterScreen(
                     ) {
                         InputPanel(
                             sourceCodeInputState = sourceCodeInputState,
-                            onConvertClicked = {},
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .weight(1f),
@@ -108,7 +106,6 @@ private fun ConverterScreen(
                     ) {
                         InputPanel(
                             sourceCodeInputState = sourceCodeInputState,
-                            onConvertClicked = {},
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 300.dp, max = 600.dp),
@@ -131,31 +128,13 @@ private fun ConverterScreen(
 @Composable
 private fun InputPanel(
     sourceCodeInputState: TextInputState,
-    onConvertClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Vector Drawable (.xml)", "SVG Path Data (d=\"\")")
-
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier,
     ) {
         Text("1. Provide Input", style = MaterialTheme.typography.titleMedium)
-
-        SecondaryTabRow(
-            selectedTabIndex = selectedTabIndex,
-            modifier = Modifier.fillMaxWidth(),
-            tabs = {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(title) },
-                    )
-                }
-            }
-        )
 
         AppTextField(
             state = sourceCodeInputState,
@@ -169,22 +148,13 @@ private fun InputPanel(
             ),
             modifier = Modifier.fillMaxWidth().weight(1f),
         )
-
-        Button(
-            onClick = onConvertClicked,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(Icons.Default.ArrowForward, contentDescription = "Convert")
-            Spacer(Modifier.width(8.dp))
-            Text("CONVERT", fontWeight = FontWeight.Bold)
-        }
     }
 }
 
 // --- OUTPUT PANEL ---
 @Composable
 private fun OutputPanel(
-    state: ConverterViewState.Output?,
+    state: ConverterViewState.Output,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -201,12 +171,11 @@ private fun OutputPanel(
                 .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
-            if (state != null) {
-                ResultView(
-                    state = state,
-                )
-            } else {
-                PlaceholderView()
+            when (state) {
+                is ConverterViewState.Output.Error -> Unit
+                is ConverterViewState.Output.Code -> Unit
+                is ConverterViewState.Output.Preview -> IconPreviewCard(state = state)
+                is ConverterViewState.Output.Placeholder -> PlaceholderView()
             }
         }
     }
@@ -241,27 +210,7 @@ private fun ResultView(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Responsive layout for Preview and Code cards
-        BoxWithConstraints(modifier = Modifier.weight(1f)) {
-            if (maxWidth > 600.dp) { // Breakpoint for side-by-side cards
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    if (state.preview != null)
-                        IconPreviewCard(
-                            icon = state.preview,
-                            modifier = Modifier.weight(1f),
-                        )
-                    Box(Modifier.weight(1f)) { GeneratedCodeCard() }
-                }
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    if (state.preview != null)
-                        IconPreviewCard(
-                            icon = state.preview,
-                        )
-                    GeneratedCodeCard()
-                }
-            }
-        }
+        GeneratedCodeCard()
 
         Button(
             onClick = { /* TODO: Export logic */ },
@@ -277,7 +226,7 @@ private fun ResultView(
 // --- ICON PREVIEW CARD ---
 @Composable
 private fun IconPreviewCard(
-    icon: ImageVector,
+    state: ConverterViewState.Output.Preview,
     modifier: Modifier = Modifier,
 ) {
     var previewBgColor = true
@@ -314,7 +263,7 @@ private fun IconPreviewCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = icon,
+                    imageVector = state.icon,
                     contentDescription = "Preview Icon",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size((64 * zoom).dp)

@@ -39,7 +39,7 @@ class ConverterViewModel(
     )
 
     private val result = combine(
-        sourceCodeInputHelper.textFlow.debounce(500L).distinctUntilChanged(),
+        sourceCodeInputHelper.textFlow.debounce(500L).distinctUntilChanged().filterNot { it.isBlank() },
         parser, parserConfig,
     ) { text, parser, config ->
         IconParser.SvgParser.parse(
@@ -58,18 +58,20 @@ class ConverterViewModel(
         initialValue = null,
     )
 
-    private val resultPreview = result.map { it?.getOrNull()?.toImageVector() }
-
     private val outputState = combine(
-        flowOf(12), resultPreview,
-    ) { _, preview ->
-        ConverterViewState.Output(
-            preview = preview,
-        )
-    }.stateIn(
+        result, flowOf(12),
+    ) { result, _ ->
+        result?.fold(
+            onSuccess = {
+                // TODO: Refactor, ot have switcher between Preview and Code
+                ConverterViewState.Output.Preview(icon = it.toImageVector())
+            },
+            onFailure = { ConverterViewState.Output.Error(it.message ?: "Unknown error") },
+        ) ?: ConverterViewState.Output.Placeholder
+    }.flowOn(dispatchers.computation).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = null,
+        initialValue = ConverterViewState.Output.Placeholder,
     )
 
     val state: StateFlow<ConverterViewState> = combine(
