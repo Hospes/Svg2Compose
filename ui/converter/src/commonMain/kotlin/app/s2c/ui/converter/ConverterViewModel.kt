@@ -38,6 +38,24 @@ class ConverterViewModel(
         )
     )
 
+    private val inputState = combine(
+        flowOf(12),
+        parser.map {
+            when (it) {
+                is IconParser.SvgParser -> ConverterViewState.Input.Parser.SVG
+                is IconParser.AndroidVectorParser -> ConverterViewState.Input.Parser.VECTOR
+            }
+        }.flowOn(dispatchers.computation),
+    ) { _, parser ->
+        ConverterViewState.Input(
+            parser = parser,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ConverterViewState.Input.Init,
+    )
+
     private val result = combine(
         sourceCodeInputHelper.textFlow.debounce(500L).distinctUntilChanged().filterNot { it.isBlank() },
         parser, parserConfig,
@@ -71,13 +89,14 @@ class ConverterViewModel(
     }.flowOn(dispatchers.computation).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ConverterViewState.Output.Placeholder,
+        initialValue = ConverterViewState.Output.Init,
     )
 
     val state: StateFlow<ConverterViewState> = combine(
-        flowOf(12), outputState,
-    ) { _, output ->
+        inputState, outputState,
+    ) { input, output ->
         ConverterViewState(
+            input = input,
             output = output,
         )
     }.stateIn(
@@ -92,4 +111,7 @@ class ConverterViewModel(
 //            result.mapNotNull { it?. }.collectLatest { }
 //        }
     }
+
+
+    fun onSelectParser(parser: ConverterViewState.Input.Parser) = with(this.parser) { value = parser.p }
 }

@@ -1,12 +1,11 @@
 package app.s2c.ui.converter
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -22,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.common.ui.AppTextField
+import app.s2c.ui.common.ui.spaceBetween
 import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -44,6 +44,7 @@ private fun ConverterScreen(
     ConverterScreen(
         state = state,
         sourceCodeInputState = viewModel.sourceCodeInputState,
+        onSelectParser = viewModel::onSelectParser,
     )
 }
 
@@ -52,6 +53,7 @@ private fun ConverterScreen(
 private fun ConverterScreen(
     state: ConverterViewState,
     sourceCodeInputState: TextInputState,
+    onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -87,7 +89,9 @@ private fun ConverterScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         InputPanel(
+                            state = state.input,
                             sourceCodeInputState = sourceCodeInputState,
+                            onSelectParser = onSelectParser,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .weight(1f),
@@ -105,7 +109,9 @@ private fun ConverterScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         InputPanel(
+                            state = state.input,
                             sourceCodeInputState = sourceCodeInputState,
+                            onSelectParser = onSelectParser,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 300.dp, max = 600.dp),
@@ -125,10 +131,15 @@ private fun ConverterScreen(
 
 
 // --- INPUT PANEL ---
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun InputPanel(
+    state: ConverterViewState.Input,
     sourceCodeInputState: TextInputState,
+    onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
     modifier: Modifier = Modifier,
+    shape: CornerBasedShape = MaterialTheme.shapes.large,
+    border: BorderStroke = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -136,18 +147,91 @@ private fun InputPanel(
     ) {
         Text("1. Provide Input", style = MaterialTheme.typography.titleMedium)
 
-        AppTextField(
-            state = sourceCodeInputState,
-            textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
-            lineLimits = TextFieldLineLimits.MultiLine(),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-            ),
-            modifier = Modifier.fillMaxWidth().weight(1f),
-        )
+        Column(
+            modifier = Modifier,
+        ) {
+            val topElementShape = remember(shape) {
+                RoundedCornerShape(topStart = shape.topStart, topEnd = shape.topEnd, bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+            }
+            val bottomElementShape = remember(shape) {
+                RoundedCornerShape(topStart = ZeroCornerSize, topEnd = ZeroCornerSize, bottomStart = shape.bottomStart, bottomEnd = shape.bottomEnd)
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spaceBetween(minSpace = 16.dp),
+                modifier = Modifier.fillMaxWidth()
+                    .clip(topElementShape)
+                    .border(border = border, shape = topElementShape)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
+                    .padding(8.dp),
+            ) {
+                CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 40.dp) {
+                    TextButton(
+                        onClick = {},
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                    ) {
+                        Icon(imageVector = Icons.Default.FileOpen, contentDescription = "Open file")
+                        Spacer(Modifier.width(8.dp))
+                        Text(text = "Load from file...")
+                    }
+                    ParserSwitcher(
+                        selected = state.parser,
+                        onSelectParser = onSelectParser,
+                    )
+                }
+            }
+
+            AppTextField(
+                state = sourceCodeInputState,
+                textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+                lineLimits = TextFieldLineLimits.MultiLine(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
+                shape = bottomElementShape,
+                modifier = Modifier.fillMaxWidth().weight(1f),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun ParserSwitcher(
+    selected: ConverterViewState.Input.Parser,
+    onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
+    modifier: Modifier = Modifier,
+    shape: CornerBasedShape = MaterialTheme.shapes.extraExtraLarge,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+    ) {
+        val leftButtonShape = remember(shape) {
+            RoundedCornerShape(topStart = shape.topStart, topEnd = ZeroCornerSize, bottomStart = shape.bottomStart, bottomEnd = ZeroCornerSize)
+        }
+        val rightButtonShape = remember(shape) {
+            RoundedCornerShape(topStart = ZeroCornerSize, topEnd = shape.topEnd, bottomStart = ZeroCornerSize, bottomEnd = shape.bottomEnd)
+        }
+        val leftButtonShapes = remember(leftButtonShape) {
+            ToggleButtonShapes(shape = leftButtonShape, pressedShape = leftButtonShape, checkedShape = leftButtonShape)
+        }
+        val rightButtonShapes = remember(rightButtonShape) {
+            ToggleButtonShapes(shape = rightButtonShape, pressedShape = rightButtonShape, checkedShape = rightButtonShape)
+        }
+        OutlinedToggleButton(
+            checked = selected == ConverterViewState.Input.Parser.SVG,
+            onCheckedChange = { if (it) onSelectParser(ConverterViewState.Input.Parser.SVG) },
+            shapes = leftButtonShapes,
+        ) { Text("SVG") }
+        OutlinedToggleButton(
+            checked = selected == ConverterViewState.Input.Parser.VECTOR,
+            onCheckedChange = { if (it) onSelectParser(ConverterViewState.Input.Parser.VECTOR) },
+            shapes = rightButtonShapes,
+        ) { Text("VECTOR") }
     }
 }
 
@@ -326,6 +410,7 @@ private fun Preview() {
         ConverterScreen(
             state = ConverterViewState.Init,
             sourceCodeInputState = TextInputState.Preview,
+            onSelectParser = {},
         )
     }
 }
