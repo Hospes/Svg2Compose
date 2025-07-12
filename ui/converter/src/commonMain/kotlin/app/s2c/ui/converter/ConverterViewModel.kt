@@ -63,16 +63,7 @@ class ConverterViewModel(
         sourceCodeInputHelper.textFlow.debounce(500L).distinctUntilChanged().filterNot { it.isBlank() },
         parser, parserConfig,
     ) { text, parser, config ->
-        IconParser.SvgParser.parse(
-            content = text, iconName = "TestIcon",
-            config = ParserConfig(
-                optimize = false,
-                addToMaterial = false,
-                noPreview = false,
-                makeInternal = false,
-                minified = true
-            ),
-        )
+        parser.parse(content = text, iconName = "TestIcon", config = config)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
