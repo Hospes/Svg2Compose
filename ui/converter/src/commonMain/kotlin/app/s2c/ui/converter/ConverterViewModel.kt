@@ -3,10 +3,13 @@ package app.s2c.ui.converter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
+import app.s2c.data.builder.MaterialIconSourceBuilder
 import app.s2c.data.parser.IconParser
 import app.s2c.data.parser.ParserConfig
 import app.s2c.preferences.AppPreferences
 import app.s2c.ui.common.input.DefaultTextInputStateHelper
+import app.s2c.ui.converter.ConverterViewState.Input
+import app.s2c.ui.converter.ConverterViewState.Output
 import app.s2c.ui.converter.utils.toImageVector
 import com.teobaranga.kotlin.inject.viewmodel.runtime.ContributesViewModel
 import kotlinx.coroutines.FlowPreview
@@ -42,18 +45,18 @@ class ConverterViewModel(
         flowOf(12),
         parser.map {
             when (it) {
-                is IconParser.SvgParser -> ConverterViewState.Input.Parser.SVG
-                is IconParser.AndroidVectorParser -> ConverterViewState.Input.Parser.VECTOR
+                is IconParser.SvgParser -> Input.Parser.SVG
+                is IconParser.AndroidVectorParser -> Input.Parser.VECTOR
             }
         }.flowOn(dispatchers.computation),
     ) { _, parser ->
-        ConverterViewState.Input(
+        Input(
             parser = parser,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ConverterViewState.Input.Init,
+        initialValue = Input.Init,
     )
 
     private val result = combine(
@@ -76,20 +79,23 @@ class ConverterViewModel(
         initialValue = null,
     )
 
+    private val resultType = MutableStateFlow(Output.Result.Type.PREVIEW)
     private val outputState = combine(
-        result, flowOf(12),
-    ) { result, _ ->
+        result, resultType,
+    ) { result, type ->
         result?.fold(
             onSuccess = {
-                // TODO: Refactor, ot have switcher between Preview and Code
-                ConverterViewState.Output.Preview(icon = it.toImageVector())
+                when (type) {
+                    Output.Result.Type.PREVIEW -> Output.Result.Preview(icon = it.toImageVector())
+                    Output.Result.Type.CODE -> Output.Result.Code(code = MaterialIconSourceBuilder().materialize(it))
+                }
             },
-            onFailure = { ConverterViewState.Output.Error(it.message ?: "Unknown error") },
-        ) ?: ConverterViewState.Output.Placeholder
+            onFailure = { Output.Error(it.message ?: "Unknown error") },
+        ) ?: Output.Placeholder
     }.flowOn(dispatchers.computation).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ConverterViewState.Output.Init,
+        initialValue = Output.Init,
     )
 
     val state: StateFlow<ConverterViewState> = combine(
@@ -113,5 +119,7 @@ class ConverterViewModel(
     }
 
 
-    fun onSelectParser(parser: ConverterViewState.Input.Parser) = with(this.parser) { value = parser.p }
+    fun onSelectParser(parser: Input.Parser) = with(this.parser) { value = parser.p }
+
+    fun onSelectedPreviewType(type: Output.Result.Type) = with(this.resultType) { value = type }
 }

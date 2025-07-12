@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.common.ui.AppTextField
+import app.s2c.ui.common.ui.AppToggleGroup
 import app.s2c.ui.common.ui.spaceBetween
 import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
 import kotlinx.serialization.Serializable
@@ -45,6 +46,7 @@ private fun ConverterScreen(
         state = state,
         sourceCodeInputState = viewModel.sourceCodeInputState,
         onSelectParser = viewModel::onSelectParser,
+        onSelectedPreviewType = viewModel::onSelectedPreviewType,
     )
 }
 
@@ -54,6 +56,7 @@ private fun ConverterScreen(
     state: ConverterViewState,
     sourceCodeInputState: TextInputState,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
+    onSelectedPreviewType: (ConverterViewState.Output.Result.Type) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -98,6 +101,7 @@ private fun ConverterScreen(
                         )
                         OutputPanel(
                             state = state.output,
+                            onSelectedPreviewType = onSelectedPreviewType,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .weight(1f),
@@ -118,6 +122,7 @@ private fun ConverterScreen(
                         )
                         OutputPanel(
                             state = state.output,
+                            onSelectedPreviewType = onSelectedPreviewType,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 300.dp, max = 600.dp),
@@ -204,33 +209,19 @@ private fun ParserSwitcher(
     selected: ConverterViewState.Input.Parser,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
     modifier: Modifier = Modifier,
-    shape: CornerBasedShape = MaterialTheme.shapes.extraExtraLarge,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    AppToggleGroup(
         modifier = modifier,
     ) {
-        val leftButtonShape = remember(shape) {
-            RoundedCornerShape(topStart = shape.topStart, topEnd = ZeroCornerSize, bottomStart = shape.bottomStart, bottomEnd = ZeroCornerSize)
-        }
-        val rightButtonShape = remember(shape) {
-            RoundedCornerShape(topStart = ZeroCornerSize, topEnd = shape.topEnd, bottomStart = ZeroCornerSize, bottomEnd = shape.bottomEnd)
-        }
-        val leftButtonShapes = remember(leftButtonShape) {
-            ToggleButtonShapes(shape = leftButtonShape, pressedShape = leftButtonShape, checkedShape = leftButtonShape)
-        }
-        val rightButtonShapes = remember(rightButtonShape) {
-            ToggleButtonShapes(shape = rightButtonShape, pressedShape = rightButtonShape, checkedShape = rightButtonShape)
-        }
         OutlinedToggleButton(
             checked = selected == ConverterViewState.Input.Parser.SVG,
             onCheckedChange = { if (it) onSelectParser(ConverterViewState.Input.Parser.SVG) },
-            shapes = leftButtonShapes,
+            shapes = firstShapes,
         ) { Text("SVG") }
         OutlinedToggleButton(
             checked = selected == ConverterViewState.Input.Parser.VECTOR,
             onCheckedChange = { if (it) onSelectParser(ConverterViewState.Input.Parser.VECTOR) },
-            shapes = rightButtonShapes,
+            shapes = lastShapes,
         ) { Text("VECTOR") }
     }
 }
@@ -239,6 +230,7 @@ private fun ParserSwitcher(
 @Composable
 private fun OutputPanel(
     state: ConverterViewState.Output,
+    onSelectedPreviewType: (ConverterViewState.Output.Result.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -247,31 +239,35 @@ private fun OutputPanel(
     ) {
         Text("2. Get Result", style = MaterialTheme.typography.titleMedium)
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            when (state) {
-                is ConverterViewState.Output.Error -> Unit
-                is ConverterViewState.Output.Code -> Unit
-                is ConverterViewState.Output.Preview -> IconPreviewCard(state = state)
-                is ConverterViewState.Output.Placeholder -> PlaceholderView()
-            }
+        when (state) {
+            is ConverterViewState.Output.Error -> Unit
+
+            is ConverterViewState.Output.Result -> ResultView(
+                state = state,
+                onSelectedPreviewType = onSelectedPreviewType,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            is ConverterViewState.Output.Placeholder -> PlaceholderView(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = MaterialTheme.shapes.large)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
+                    .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = MaterialTheme.shapes.large),
+            )
         }
     }
 }
 
 // --- PLACEHOLDER VIEW ---
 @Composable
-private fun PlaceholderView() {
+private fun PlaceholderView(
+    modifier: Modifier = Modifier,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(16.dp)
+        modifier = modifier.padding(16.dp)
     ) {
         Icon(
             imageVector = Icons.Default.Star, // Placeholder for wand icon
@@ -287,14 +283,49 @@ private fun PlaceholderView() {
 // --- RESULT VIEW ---
 @Composable
 private fun ResultView(
-    state: ConverterViewState.Output,
+    state: ConverterViewState.Output.Result,
+    onSelectedPreviewType: (ConverterViewState.Output.Result.Type) -> Unit,
     modifier: Modifier = Modifier,
+    shape: CornerBasedShape = MaterialTheme.shapes.large,
+    border: BorderStroke = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        GeneratedCodeCard()
+    Column(modifier = modifier) {
+        val topElementShape = remember(shape) {
+            RoundedCornerShape(topStart = shape.topStart, topEnd = shape.topEnd, bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+        }
+        val bottomElementShape = remember(shape) {
+            RoundedCornerShape(topStart = ZeroCornerSize, topEnd = ZeroCornerSize, bottomStart = shape.bottomStart, bottomEnd = shape.bottomEnd)
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spaceBetween(minSpace = 16.dp),
+            modifier = Modifier.fillMaxWidth()
+                .clip(topElementShape)
+                .border(border = border, shape = topElementShape)
+                .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
+                .padding(8.dp),
+        ) {
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 40.dp) {
+                TextButton(
+                    onClick = {},
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                ) {
+                    Icon(imageVector = Icons.Default.FileOpen, contentDescription = "Open file")
+                    Spacer(Modifier.width(8.dp))
+                    Text(text = "Load from file...")
+                }
+                PreviewTypeSwitcher(
+                    selected = state,
+                    onSelected = onSelectedPreviewType,
+                )
+            }
+        }
+
+        when (state) {
+            is ConverterViewState.Output.Result.Code -> GeneratedCodeCard()
+            is ConverterViewState.Output.Result.Preview -> IconPreviewCard(state = state, modifier = modifier)
+        }
+
 
         Button(
             onClick = { /* TODO: Export logic */ },
@@ -307,10 +338,33 @@ private fun ResultView(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun PreviewTypeSwitcher(
+    selected: ConverterViewState.Output.Result,
+    onSelected: (ConverterViewState.Output.Result.Type) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AppToggleGroup(
+        modifier = modifier,
+    ) {
+        OutlinedToggleButton(
+            checked = selected is ConverterViewState.Output.Result.Preview,
+            onCheckedChange = { if (it) onSelected(ConverterViewState.Output.Result.Type.PREVIEW) },
+            shapes = firstShapes,
+        ) { Text("PREVIEW") }
+        OutlinedToggleButton(
+            checked = selected is ConverterViewState.Output.Result.Code,
+            onCheckedChange = { if (it) onSelected(ConverterViewState.Output.Result.Type.CODE) },
+            shapes = lastShapes,
+        ) { Text("CODE") }
+    }
+}
+
 // --- ICON PREVIEW CARD ---
 @Composable
 private fun IconPreviewCard(
-    state: ConverterViewState.Output.Preview,
+    state: ConverterViewState.Output.Result.Preview,
     modifier: Modifier = Modifier,
 ) {
     var previewBgColor = true
@@ -411,6 +465,7 @@ private fun Preview() {
             state = ConverterViewState.Init,
             sourceCodeInputState = TextInputState.Preview,
             onSelectParser = {},
+            onSelectedPreviewType = {},
         )
     }
 }
