@@ -52,6 +52,7 @@ include(
     ":data",
 
     ":ui:converter",
+    ":ui:config",
 
     "app",
 )

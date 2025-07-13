@@ -38,19 +38,24 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 data object ConverterScreen
 
 @Composable
-internal fun ConverterScreen() {
+internal fun ConverterScreen(
+    navigateConfig: () -> Unit,
+) {
     ConverterScreen(
         viewModel = injectedViewModel(),
+        navigateConfig = navigateConfig,
     )
 }
 
 @Composable
 private fun ConverterScreen(
     viewModel: ConverterViewModel,
+    navigateConfig: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     ConverterScreen(
         state = state,
+        navigateConfig = navigateConfig,
         sourceCodeInputState = viewModel.sourceCodeInputState,
         onSelectParser = viewModel::onSelectParser,
         onShowPreview = viewModel::onShowPreview,
@@ -62,6 +67,7 @@ private fun ConverterScreen(
 @Composable
 private fun ConverterScreen(
     state: ConverterViewState,
+    navigateConfig: () -> Unit,
     sourceCodeInputState: TextInputState,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
     onShowPreview: (Boolean) -> Unit,
@@ -110,6 +116,7 @@ private fun ConverterScreen(
                         )
                         OutputPanel(
                             state = state.output,
+                            navigateConfig = navigateConfig,
                             onShowPreview = onShowPreview,
                             outputCodeInputState = outputCodeInputState,
                             modifier = Modifier
@@ -132,6 +139,7 @@ private fun ConverterScreen(
                         )
                         OutputPanel(
                             state = state.output,
+                            navigateConfig = navigateConfig,
                             onShowPreview = onShowPreview,
                             outputCodeInputState = outputCodeInputState,
                             modifier = Modifier
@@ -244,6 +252,7 @@ private fun ParserSwitcher(
 @Composable
 private fun OutputPanel(
     state: ConverterViewState.Output,
+    navigateConfig: () -> Unit,
     onShowPreview: (Boolean) -> Unit,
     outputCodeInputState: TextInputState,
     modifier: Modifier = Modifier,
@@ -257,6 +266,7 @@ private fun OutputPanel(
         when (state) {
             is ConverterViewState.Output.Result -> ResultView(
                 state = state,
+                navigateConfig = navigateConfig,
                 onShowPreview = onShowPreview,
                 outputCodeInputState = outputCodeInputState,
                 modifier = Modifier.fillMaxSize()
@@ -298,6 +308,7 @@ private fun PlaceholderView(
 @Composable
 private fun ResultView(
     state: ConverterViewState.Output.Result,
+    navigateConfig: () -> Unit,
     onShowPreview: (Boolean) -> Unit,
     outputCodeInputState: TextInputState,
     modifier: Modifier = Modifier,
@@ -322,7 +333,7 @@ private fun ResultView(
         ) {
             CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 40.dp) {
                 TextButton(
-                    onClick = {},
+                    onClick = navigateConfig,
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                 ) {
@@ -404,6 +415,7 @@ private fun Preview() {
     AppTheme {
         ConverterScreen(
             state = ConverterViewState.Init,
+            navigateConfig = {},
             sourceCodeInputState = TextInputState.Preview,
             onSelectParser = {},
             onShowPreview = {},

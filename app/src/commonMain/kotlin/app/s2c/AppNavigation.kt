@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import app.s2c.ui.config.ConfigDialog
+import app.s2c.ui.config.addConfigDialog
 import app.s2c.ui.converter.ConverterScreen
 import app.s2c.ui.converter.addConverterScreen
 
@@ -18,6 +20,10 @@ internal fun AppNavigation(
         startDestination = ConverterScreen,
         modifier = modifier,
     ) {
-        addConverterScreen(navController = navController)
+        addConverterScreen(
+            navController = navController,
+            navigateConfig = { navController.navigate(ConfigDialog) },
+        )
+        addConfigDialog(navController = navController)
     }
 }

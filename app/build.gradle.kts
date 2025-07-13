@@ -24,6 +24,7 @@ kotlin {
                 implementation(projects.common.ui.compose)
                 implementation(projects.data)
                 implementation(projects.ui.converter)
+                implementation(projects.ui.config)
 
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material)

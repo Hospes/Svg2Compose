@@ -6,8 +6,11 @@ import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.addConverterScreen(
     navController: NavController,
+    navigateConfig: () -> Unit,
 ) {
     composable<ConverterScreen> {
-        ConverterScreen()
+        ConverterScreen(
+            navigateConfig = navigateConfig,
+        )
     }
 }
