@@ -1,6 +1,5 @@
 import app.s2c.gradle.addKspDependencyForAllTargets
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import kotlin.math.absoluteValue
 
 plugins {
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
@@ -54,12 +53,11 @@ compose.desktop {
     application {
         mainClass = "app.s2c.MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
-            packageName = "app.s2c"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
+            packageName = "Svg2Compose"
             packageVersion = gitDescribe(project.providers).get()
             windows {
                 iconFile.set(File("../icon.ico"))
-                menuGroup = "start-menu-group"
                 upgradeUuid = "0DFB0005-59B7-4702-BD47-CED700CEB37C"
             }
             linux {
