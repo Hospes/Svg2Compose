@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.build.config)
 }
 
@@ -19,6 +20,7 @@ kotlin {
             implementation(projects.core.logging)
 
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.fleeksoft.ksoup)
 
             implementation(libs.kotlininject.runtime)

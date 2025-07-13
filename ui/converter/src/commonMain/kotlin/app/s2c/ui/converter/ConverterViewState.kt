@@ -23,16 +23,12 @@ data class ConverterViewState(
     @Immutable
     sealed interface Output {
         data object Placeholder : Output
-        data class Error(val message: String) : Output
-        sealed interface Result : Output {
-            data class Preview(val icon: ImageVector) : Result
-            data class Code(val code: String) : Result
-
-            enum class Type { PREVIEW, CODE }
-        }
+        data class Result(
+            val preview: ImageVector? = null,
+        ) : Output
 
         companion object {
-            val Init = Output.Placeholder
+            val Init = Placeholder
         }
     }
 

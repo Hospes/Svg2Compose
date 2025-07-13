@@ -8,12 +8,14 @@ import app.s2c.data.parser.IconParser
 import app.s2c.data.parser.ParserConfig
 import app.s2c.preferences.AppPreferences
 import app.s2c.ui.common.input.DefaultTextInputStateHelper
+import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.converter.ConverterViewState.Input
 import app.s2c.ui.converter.ConverterViewState.Output
 import app.s2c.ui.converter.utils.toImageVector
 import com.teobaranga.kotlin.inject.viewmodel.runtime.ContributesViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -70,18 +72,16 @@ class ConverterViewModel(
         initialValue = null,
     )
 
-    private val resultType = MutableStateFlow(Output.Result.Type.PREVIEW)
+    private val showPreview = MutableStateFlow(true)
+    private val iconBuilder = MutableStateFlow(MaterialIconSourceBuilder())
     private val outputState = combine(
-        result, resultType,
-    ) { result, type ->
+        result, showPreview,
+    ) { result, showPreview ->
         result?.fold(
             onSuccess = {
-                when (type) {
-                    Output.Result.Type.PREVIEW -> Output.Result.Preview(icon = it.toImageVector())
-                    Output.Result.Type.CODE -> Output.Result.Code(code = MaterialIconSourceBuilder().materialize(it))
-                }
+                Output.Result(preview = if (showPreview) it.toImageVector() else null)
             },
-            onFailure = { Output.Error(it.message ?: "Unknown error") },
+            onFailure = { Output.Result(preview = null) },
         ) ?: Output.Placeholder
     }.flowOn(dispatchers.computation).stateIn(
         scope = viewModelScope,
@@ -104,13 +104,26 @@ class ConverterViewModel(
 
 
     init {
-//        viewModelScope.launch {
-//            result.mapNotNull { it?. }.collectLatest { }
-//        }
+        // Update output TextField with the latest parsed icon code
+        viewModelScope.launch {
+            combine(result, iconBuilder) { result, builder -> result?.mapCatching { builder.materialize(it) } }
+                .flowOn(dispatchers.computation)
+                .collectLatest { result ->
+                    result
+                        ?.onSuccess { outputCodeInputHelper.setText(it); sourceCodeInputHelper.clearError() }
+                        ?.onFailure {
+                            outputCodeInputHelper.setText(it.message ?: "Unknown error")
+                            sourceCodeInputHelper.setError(TextInputState.Error.Custom(it.message ?: "Unknown error"))
+                        }
+                        ?: outputCodeInputHelper.setText("")
+                }
+        }
+
+        viewModelScope.launch { sourceCodeInputHelper.clearErrorOnInputUpdate() }
     }
 
 
     fun onSelectParser(parser: Input.Parser) = with(this.parser) { value = parser.p }
 
-    fun onSelectedPreviewType(type: Output.Result.Type) = with(this.resultType) { value = type }
+    fun onShowPreview(show: Boolean) = with(showPreview) { value = show }
 }

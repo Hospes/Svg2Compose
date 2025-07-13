@@ -7,19 +7,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
+import app.s2c.ui.common.ui.AppSwitch
 import app.s2c.ui.common.ui.AppTextField
 import app.s2c.ui.common.ui.AppToggleGroup
 import app.s2c.ui.common.ui.spaceBetween
@@ -46,7 +49,8 @@ private fun ConverterScreen(
         state = state,
         sourceCodeInputState = viewModel.sourceCodeInputState,
         onSelectParser = viewModel::onSelectParser,
-        onSelectedPreviewType = viewModel::onSelectedPreviewType,
+        onShowPreview = viewModel::onShowPreview,
+        outputCodeInputState = viewModel.outputCodeInputState,
     )
 }
 
@@ -56,7 +60,8 @@ private fun ConverterScreen(
     state: ConverterViewState,
     sourceCodeInputState: TextInputState,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
-    onSelectedPreviewType: (ConverterViewState.Output.Result.Type) -> Unit,
+    onShowPreview: (Boolean) -> Unit,
+    outputCodeInputState: TextInputState,
 ) {
     Scaffold(
         topBar = {
@@ -101,7 +106,8 @@ private fun ConverterScreen(
                         )
                         OutputPanel(
                             state = state.output,
-                            onSelectedPreviewType = onSelectedPreviewType,
+                            onShowPreview = onShowPreview,
+                            outputCodeInputState = outputCodeInputState,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .weight(1f),
@@ -122,7 +128,8 @@ private fun ConverterScreen(
                         )
                         OutputPanel(
                             state = state.output,
-                            onSelectedPreviewType = onSelectedPreviewType,
+                            onShowPreview = onShowPreview,
+                            outputCodeInputState = outputCodeInputState,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 300.dp, max = 600.dp),
@@ -188,7 +195,7 @@ private fun InputPanel(
 
             AppTextField(
                 state = sourceCodeInputState,
-                textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+                textStyle = AppTheme.typography.sourceCode, //LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
                 lineLimits = TextFieldLineLimits.MultiLine(),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -230,7 +237,8 @@ private fun ParserSwitcher(
 @Composable
 private fun OutputPanel(
     state: ConverterViewState.Output,
-    onSelectedPreviewType: (ConverterViewState.Output.Result.Type) -> Unit,
+    onShowPreview: (Boolean) -> Unit,
+    outputCodeInputState: TextInputState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -240,11 +248,10 @@ private fun OutputPanel(
         Text("2. Get Result", style = MaterialTheme.typography.titleMedium)
 
         when (state) {
-            is ConverterViewState.Output.Error -> Unit
-
             is ConverterViewState.Output.Result -> ResultView(
                 state = state,
-                onSelectedPreviewType = onSelectedPreviewType,
+                onShowPreview = onShowPreview,
+                outputCodeInputState = outputCodeInputState,
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -284,7 +291,8 @@ private fun PlaceholderView(
 @Composable
 private fun ResultView(
     state: ConverterViewState.Output.Result,
-    onSelectedPreviewType: (ConverterViewState.Output.Result.Type) -> Unit,
+    onShowPreview: (Boolean) -> Unit,
+    outputCodeInputState: TextInputState,
     modifier: Modifier = Modifier,
     shape: CornerBasedShape = MaterialTheme.shapes.large,
     border: BorderStroke = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
@@ -310,147 +318,101 @@ private fun ResultView(
                     onClick = {},
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
                 ) {
-                    Icon(imageVector = Icons.Default.FileOpen, contentDescription = "Open file")
+                    Icon(imageVector = Icons.Default.Settings, contentDescription = "Open file")
                     Spacer(Modifier.width(8.dp))
-                    Text(text = "Load from file...")
+                    Text(text = "Config")
                 }
-                PreviewTypeSwitcher(
-                    selected = state,
-                    onSelected = onSelectedPreviewType,
-                )
+                AppSwitch(
+                    checked = state.preview != null,
+                    onCheckedChange = { onShowPreview(it) },
+                ) { Text("PREVIEW") }
             }
         }
 
-        when (state) {
-            is ConverterViewState.Output.Result.Code -> GeneratedCodeCard()
-            is ConverterViewState.Output.Result.Preview -> IconPreviewCard(state = state, modifier = modifier)
-        }
-
-
-        Button(
-            onClick = { /* TODO: Export logic */ },
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+        Box(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            Icon(Icons.Default.Download, contentDescription = "Export")
-            Spacer(Modifier.width(8.dp))
-            Text("Export to .kt file", fontWeight = FontWeight.Bold)
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+//        ) {
+//            Text("Generated Code", fontWeight = FontWeight.SemiBold)
+//            TextButton(onClick = { /* TODO: Copy logic */ }) {
+//                Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
+//                Spacer(modifier = Modifier.width(8.dp))
+//                Text("Copy")
+//            }
+//        }
+            AppTextField(
+                state = outputCodeInputState,
+                readOnly = true,
+                textStyle = AppTheme.typography.sourceCode, //LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+                lineLimits = TextFieldLineLimits.MultiLine(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
+                shape = bottomElementShape,
+                modifier = Modifier.matchParentSize(),
+            )
+            if (state.preview != null)
+                IconPreviewCard(
+                    icon = state.preview,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                        .size(64.dp),
+                )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun PreviewTypeSwitcher(
-    selected: ConverterViewState.Output.Result,
-    onSelected: (ConverterViewState.Output.Result.Type) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AppToggleGroup(
-        modifier = modifier,
-    ) {
-        OutlinedToggleButton(
-            checked = selected is ConverterViewState.Output.Result.Preview,
-            onCheckedChange = { if (it) onSelected(ConverterViewState.Output.Result.Type.PREVIEW) },
-            shapes = firstShapes,
-        ) { Text("PREVIEW") }
-        OutlinedToggleButton(
-            checked = selected is ConverterViewState.Output.Result.Code,
-            onCheckedChange = { if (it) onSelected(ConverterViewState.Output.Result.Type.CODE) },
-            shapes = lastShapes,
-        ) { Text("CODE") }
     }
 }
 
 // --- ICON PREVIEW CARD ---
 @Composable
 private fun IconPreviewCard(
-    state: ConverterViewState.Output.Result.Preview,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
 ) {
     var previewBgColor = true
     var zoom by remember { mutableStateOf(1f) }
 
-    Card(
-        modifier = modifier.fillMaxSize(),
+    Box(
+        modifier = modifier,
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Icon Preview", fontWeight = FontWeight.SemiBold)
-                Row {
-                    IconButton(onClick = { zoom = (zoom - 0.2f).coerceAtLeast(0.4f) }) {
-                        Icon(Icons.Default.ZoomOut, "Zoom Out")
-                    }
-                    IconButton(onClick = { zoom = (zoom + 0.2f).coerceAtMost(2f) }) {
-                        Icon(Icons.Default.ZoomIn, "Zoom In")
-                    }
-                    IconButton(onClick = { previewBgColor = !previewBgColor }) {
-                        Icon(Icons.Default.Contrast, "Toggle Background")
-                    }
-                }
-            }
-            Spacer(Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(if (previewBgColor) MaterialTheme.colorScheme.surfaceBright else MaterialTheme.colorScheme.surfaceDim),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = state.icon,
-                    contentDescription = "Preview Icon",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size((64 * zoom).dp)
-                )
-            }
-        }
-    }
-}
-
-// --- GENERATED CODE CARD ---
-@Composable
-private fun GeneratedCodeCard(modifier: Modifier = Modifier) {
-    val generatedCode = """
-public val MyIcons.Filled.CheckCircle: ImageVector
-    get() {
-        if (_checkCircle != null) {
-            return _checkCircle!!
-        }
-        _checkCircle = Builder(
-            name = "CheckCircle", 
-            defaultWidth = 24.0.dp,
-            ...
-        ).build()
-        return _checkCircle!!
-    }
-    """.trimIndent()
-
-    Card(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Text("Generated Code", fontWeight = FontWeight.SemiBold)
-                TextButton(onClick = { /* TODO: Copy logic */ }) {
-                    Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Copy")
-                }
-            }
-            OutlinedTextField(
-                value = generatedCode,
-                onValueChange = {},
-                readOnly = true,
-                modifier = Modifier.fillMaxSize(),
-                textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, fontFamily = FontFamily.Monospace),
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text("Icon Preview", fontWeight = FontWeight.SemiBold)
+//            Row {
+//                IconButton(onClick = { zoom = (zoom - 0.2f).coerceAtLeast(0.4f) }) {
+//                    Icon(Icons.Default.ZoomOut, "Zoom Out")
+//                }
+//                IconButton(onClick = { zoom = (zoom + 0.2f).coerceAtMost(2f) }) {
+//                    Icon(Icons.Default.ZoomIn, "Zoom In")
+//                }
+//                IconButton(onClick = { previewBgColor = !previewBgColor }) {
+//                    Icon(Icons.Default.Contrast, "Toggle Background")
+//                }
+//            }
+//        }
+//        Spacer(Modifier.height(8.dp))
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(RoundedCornerShape(8.dp))
+                .background(if (previewBgColor) MaterialTheme.colorScheme.surfaceBright else MaterialTheme.colorScheme.surfaceDim),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "Preview Icon",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size((64 * zoom).dp)
             )
         }
     }
@@ -465,7 +427,8 @@ private fun Preview() {
             state = ConverterViewState.Init,
             sourceCodeInputState = TextInputState.Preview,
             onSelectParser = {},
-            onSelectedPreviewType = {},
+            onShowPreview = {},
+            outputCodeInputState = TextInputState.Preview,
         )
     }
 }

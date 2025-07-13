@@ -1,5 +1,12 @@
 package app.s2c.ui.common.theme
 
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.sp
+
 //private object Family {
 //    val FilsonPro = FontFamily(
 //        Font(R.font.filson_pro_regular, weight = FontWeight.Normal),
@@ -103,4 +110,11 @@ object AppTypography {
 //        button = button,
 //        caption = helper,
 //    )
+
+    val sourceCode = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontStyle = FontStyle.Normal,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+    )
 }

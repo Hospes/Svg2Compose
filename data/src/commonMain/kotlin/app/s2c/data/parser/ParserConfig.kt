@@ -1,5 +1,7 @@
 package app.s2c.data.parser
 
+import kotlinx.serialization.Serializable
+
 /**
  * Configuration parameters for the Parser class.
  *
@@ -32,6 +34,7 @@ package app.s2c.data.parser
  * @property minified if `true`, minifies the output removing all generated comments and
  * inlining the path functions parameters
  */
+@Serializable
 data class ParserConfig(
     val pkg: String? = null,
     val optimize: Boolean,
