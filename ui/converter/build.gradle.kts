@@ -3,6 +3,7 @@ import app.s2c.gradle.addKspDependencyForAllTargets
 plugins {
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
     id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ksp)
 }
 
@@ -20,6 +21,7 @@ kotlin {
             implementation(projects.common.ui.resources)
 
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlininject.runtime)
             implementation(libs.kotlininject.viewmodel.runtime)
             implementation(libs.kotlininject.viewmodel.compose)

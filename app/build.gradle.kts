@@ -1,5 +1,6 @@
 import app.s2c.gradle.addKspDependencyForAllTargets
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import kotlin.math.absoluteValue
 
 plugins {
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
@@ -57,7 +58,7 @@ compose.desktop {
             packageName = "app.s2c"
             packageVersion = gitDescribe(project.providers).get()
             windows {
-                iconFile.set(File("icon.ico"))
+                iconFile.set(File("../icon.ico"))
                 menuGroup = "start-menu-group"
                 upgradeUuid = "0DFB0005-59B7-4702-BD47-CED700CEB37C"
             }
@@ -87,6 +88,7 @@ fun versionSuffix(providers: ProviderFactory): Provider<String> {
 
 fun gitDescribe(providers: ProviderFactory): Provider<String> {
     return providers.exec {
-        commandLine("git", "describe", "--tags", "--always")
-    }.standardOutput.asText.map { it.split("\n").first().trim() }
+        // --abbrev=0 removes the commit hash suffix
+        commandLine("git", "describe", "--tags", "--abbrev=0")
+    }.standardOutput.asText.map { it.trim().replace(Regex("[^0-9.]"), "") }
 }
