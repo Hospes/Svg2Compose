@@ -18,6 +18,7 @@ kotlin {
             implementation(projects.core.base)
             implementation(projects.core.preferences)
             implementation(projects.core.logging)
+            api(projects.models)
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)

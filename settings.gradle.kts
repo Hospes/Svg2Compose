@@ -49,6 +49,7 @@ include(
     ":common:ui:compose",
     ":common:ui:resources",
 
+    ":models",
     ":data",
 
     ":ui:converter",

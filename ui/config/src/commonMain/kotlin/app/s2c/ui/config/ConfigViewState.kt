@@ -4,7 +4,11 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class ConfigViewState(
-    val isLoading: Boolean = false,
+    val optimize: Boolean = false,
+    val addToMaterial: Boolean = false,
+    val noPreview: Boolean = false,
+    val makeInternal: Boolean = false,
+    val minified: Boolean = false,
 ) {
     companion object {
         val Init = ConfigViewState()

@@ -2,74 +2,78 @@ package app.s2c.ui.common.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.dp
 
 @Composable
-fun AppDialog(
-    title: @Composable RowScope.() -> Unit,
+fun AppColumnDialog(
+    title: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    titleVerticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    contentVerticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    onClose: (() -> Unit)? = null,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable ColumnScope.() -> Unit,
-) = AppDialog(
-    modifier = Modifier
-        .width(IntrinsicSize.Max)
-        .then(modifier),
+) = AppColumnDialog(
+    onClose = onClose,
+    modifier = modifier,
+    contentPadding = contentPadding,
+    verticalArrangement = verticalArrangement,
 ) {
-    Row(
-        verticalAlignment = titleVerticalAlignment,
-        horizontalArrangement = titleHorizontalArrangement,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(contentPadding)
-    ) {
-        ProvideTextStyle(value = MaterialTheme.typography.titleMedium) {
-            title()
-        }
+    ProvideTextStyle(value = MaterialTheme.typography.titleLarge) {
+        title()
     }
-    HorizontalDivider()
-    Column(
-        verticalArrangement = contentVerticalArrangement,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(contentPadding),
+    content()
+}
+
+@Composable
+fun AppColumnDialog(
+    modifier: Modifier = Modifier,
+    onClose: (() -> Unit)? = null,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    contentPadding: PaddingValues = PaddingValues(),
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    AppDialog(
+        onClose = onClose,
+        modifier = modifier,
     ) {
-        content()
+        Column(
+            verticalArrangement = verticalArrangement,
+            horizontalAlignment = horizontalAlignment,
+            modifier = Modifier.padding(contentPadding),
+        ) {
+            content()
+        }
     }
 }
 
 @Composable
 fun AppDialog(
     modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    contentPadding: PaddingValues = PaddingValues(),
-    content: @Composable ColumnScope.() -> Unit,
+    onClose: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    Column(
-        verticalArrangement = verticalArrangement,
+    Box(
         modifier = modifier
-            .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
-            .padding(contentPadding),
+            .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium),
     ) {
-        /**
-         * Provides a composition local value for [LocalUriHandler] that is guaranteed to be the same instance
-         * throughout the composition hierarchy. This is important because [LocalUriHandler] is typically replaced
-         * with a new instance each time the content is rendered, leading to potential issues. By using this provider,
-         * you can ensure that the original [UriHandler] created by your application is used consistently.
-         */
-//        CompositionLocalProvider(
-//            LocalUriHandler provides (LocalWhUriHandler.current ?: LocalUriHandler.current)
-//        ) {
-        content()
-//        }
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+        ) {
+            onClose?.let {
+                IconButton(
+                    onClick = it,
+                    modifier = Modifier.align(Alignment.TopEnd),
+                ) { Icon(imageVector = Icons.Default.Close, contentDescription = null) }
+            }
+
+            content()
+        }
     }
 }

@@ -1,14 +1,20 @@
 package app.s2c.ui.config
 
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
-import app.s2c.ui.common.ui.AppDialog
+import app.s2c.ui.common.ui.AppColumnDialog
+import app.s2c.ui.common.ui.AppSwitch
+import app.s2c.ui.common.ui.AppTextField
 import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -35,8 +41,13 @@ private fun ConfigDialog(
     ConfigDialog(
         state = state,
         navigateUp = navigateUp,
-        sourceCodeInputState = viewModel.sourceCodeInputState,
-        outputCodeInputState = viewModel.outputCodeInputState,
+        packageInputState = viewModel.packageInputState,
+        receiverTypeInputState = viewModel.receiverTypeInputState,
+        onOptimizeChanged = viewModel::onOptimizeChanged,
+        onAddToMaterialChanged = viewModel::onAddToMaterialChanged,
+        onNoPreviewChanged = viewModel::onNoPreviewChanged,
+        onMakeInternalChanged = viewModel::onMakeInternalChanged,
+        onMinifiedChanged = viewModel::onMinifiedChanged,
     )
 }
 
@@ -45,13 +56,68 @@ private fun ConfigDialog(
 private fun ConfigDialog(
     state: ConfigViewState,
     navigateUp: () -> Unit,
-    sourceCodeInputState: TextInputState,
-    outputCodeInputState: TextInputState,
+    packageInputState: TextInputState,
+    receiverTypeInputState: TextInputState,
+    onOptimizeChanged: (Boolean) -> Unit = {},
+    onAddToMaterialChanged: (Boolean) -> Unit = {},
+    onNoPreviewChanged: (Boolean) -> Unit = {},
+    onMakeInternalChanged: (Boolean) -> Unit = {},
+    onMinifiedChanged: (Boolean) -> Unit = {},
 ) {
-    AppDialog(
-        title = { Text(text = "Config") },
+    AppColumnDialog(
+        title = {
+            Text(text = "Config", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp))
+        },
+        onClose = navigateUp,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.widthIn(min = 240.dp, max = 360.dp),
     ) {
-        Text(text = "body of config dialog")
+        AppTextField(
+            state = packageInputState,
+            label = { Text("Package Name") },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        AppTextField(
+            state = receiverTypeInputState,
+            label = { Text("Receiver Type") },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            AppSwitch(
+                checked = state.optimize,
+                onCheckedChange = onOptimizeChanged,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("Optimize") }
+
+            AppSwitch(
+                checked = state.addToMaterial,
+                onCheckedChange = onAddToMaterialChanged,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("Add to Material") }
+
+            AppSwitch(
+                checked = state.noPreview,
+                onCheckedChange = onNoPreviewChanged,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("No Preview") }
+
+            AppSwitch(
+                checked = state.makeInternal,
+                onCheckedChange = onMakeInternalChanged,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("Make Internal") }
+
+            AppSwitch(
+                checked = state.minified,
+                onCheckedChange = onMinifiedChanged,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("Minified") }
+        }
     }
 }
 
@@ -63,8 +129,13 @@ private fun Preview() {
         ConfigDialog(
             state = ConfigViewState.Init,
             navigateUp = {},
-            sourceCodeInputState = TextInputState.Preview,
-            outputCodeInputState = TextInputState.Preview,
+            packageInputState = TextInputState.Preview,
+            receiverTypeInputState = TextInputState.Preview,
+            onOptimizeChanged = {},
+            onAddToMaterialChanged = {},
+            onNoPreviewChanged = {},
+            onMakeInternalChanged = {},
+            onMinifiedChanged = {},
         )
     }
 }

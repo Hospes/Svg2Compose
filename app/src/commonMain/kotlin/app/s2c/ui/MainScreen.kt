@@ -29,7 +29,7 @@ import app.s2c.data.builder.IconSourceBuilder
 import app.s2c.data.builder.MaterialIconSourceBuilder
 import app.s2c.data.model.IconFileContents
 import app.s2c.data.parser.IconParser
-import app.s2c.data.parser.ParserConfig
+import app.s2c.models.ParserConfig
 import app.s2c.domain.SvgPathParser
 import app.s2c.domain.UnknownColors
 import app.s2c.domain.VectorDrawableParser
@@ -141,13 +141,7 @@ fun FrameWindowScope.MainScreen() {
 
                     svg = IconParser.SvgParser.parse(
                         content = svgPathTextFieldValue.text, iconName = "TestIcon",
-                        config = ParserConfig(
-                            optimize = false,
-                            addToMaterial = false,
-                            noPreview = false,
-                            makeInternal = false,
-                            minified = true
-                        ),
+                        config = ParserConfig(),
                     ).getOrNull()
 
 //                    svg = Svg(

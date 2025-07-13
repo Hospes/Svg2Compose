@@ -1,4 +1,4 @@
-package app.s2c.data.parser
+package app.s2c.models
 
 import kotlinx.serialization.Serializable
 
@@ -37,10 +37,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ParserConfig(
     val pkg: String? = null,
-    val optimize: Boolean,
+    val optimize: Boolean = false,
     val receiverType: String? = null,
-    val addToMaterial: Boolean,
-    val noPreview: Boolean,
-    val makeInternal: Boolean,
-    val minified: Boolean,
+    val addToMaterial: Boolean = false,
+    val noPreview: Boolean = false,
+    val makeInternal: Boolean = false,
+    val minified: Boolean = true,
 )

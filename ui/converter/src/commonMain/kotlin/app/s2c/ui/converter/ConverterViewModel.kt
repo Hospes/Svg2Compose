@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
 import app.s2c.data.builder.MaterialIconSourceBuilder
 import app.s2c.data.parser.IconParser
-import app.s2c.data.parser.ParserConfig
 import app.s2c.preferences.AppPreferences
 import app.s2c.ui.common.input.DefaultTextInputStateHelper
 import app.s2c.ui.common.input.TextInputState
@@ -33,15 +32,7 @@ class ConverterViewModel(
     val outputCodeInputState = outputCodeInputHelper.state
 
     private val parser = MutableStateFlow<IconParser>(IconParser.SvgParser)
-    private val parserConfig = MutableStateFlow<ParserConfig>(
-        ParserConfig(
-            optimize = false,
-            addToMaterial = false,
-            noPreview = false,
-            makeInternal = false,
-            minified = true
-        )
-    )
+    private val parserConfig = prefs.parserConfig.flow
 
     private val inputState = combine(
         flowOf(12),

@@ -5,6 +5,7 @@ import app.s2c.data.model.avg.AvgRootNode
 import app.s2c.data.model.avg.asNodes
 import app.s2c.data.model.svg.SvgRootNode
 import app.s2c.data.model.svg.asNodes
+import app.s2c.models.ParserConfig
 import okio.FileSystem
 import okio.Path
 
@@ -31,7 +32,7 @@ sealed interface IconParser {
      * needs to be parsed into an icon.
      * @param iconName This is a String parameter that serves as the identifier
      * for the icon that will be generated after parsing the file.
-     * @param config An instance of the [ParserConfig] class, which contains
+     * @param config An instance of the [app.s2c.models.ParserConfig] class, which contains
      * configurations required for parsing the file into an icon.
      * @return An [IconFileContents] object instance which contains information
      * about the icon parsed from the file.

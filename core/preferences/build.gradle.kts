@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ksp)
 }
 
@@ -16,6 +17,8 @@ kotlin {
             implementation(projects.core.base)
             api(libs.multiplatformsettings.core)
             api(libs.multiplatformsettings.coroutines)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(projects.models)
         }
     }
 

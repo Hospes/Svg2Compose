@@ -2,6 +2,7 @@ package app.s2c.preferences
 
 import app.s2c.core.base.inject.ApplicationCoroutineScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
+import app.s2c.models.ParserConfig
 import app.s2c.preferences.AppPreferences.LogLevel
 import app.s2c.preferences.AppPreferences.Theme
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -10,6 +11,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -32,6 +34,14 @@ class AppPreferencesImpl(
     }
     override val fileLoglevel: Preference<LogLevel> by lazy {
         MappingIntPreference(KEY_FILE_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt)
+    }
+
+    override val parserConfig: Preference<ParserConfig> by lazy {
+        MappingPreference(
+            key = KEY_FILE_LOG_LEVEL, defaultValue = ParserConfig(),
+            toValue = { Json.decodeFromString(it) },
+            fromValue = { Json.encodeToString(it) },
+        )
     }
 
 
