@@ -59,6 +59,7 @@ private fun ConverterScreen(
         sourceCodeInputState = viewModel.sourceCodeInputState,
         onSelectParser = viewModel::onSelectParser,
         onShowPreview = viewModel::onShowPreview,
+        iconNameInputState = viewModel.iconNameInputState,
         outputCodeInputState = viewModel.outputCodeInputState,
     )
 }
@@ -71,6 +72,7 @@ private fun ConverterScreen(
     sourceCodeInputState: TextInputState,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
     onShowPreview: (Boolean) -> Unit,
+    iconNameInputState: TextInputState,
     outputCodeInputState: TextInputState,
 ) {
     Scaffold(
@@ -118,6 +120,7 @@ private fun ConverterScreen(
                             state = state.output,
                             navigateConfig = navigateConfig,
                             onShowPreview = onShowPreview,
+                            iconNameInputState = iconNameInputState,
                             outputCodeInputState = outputCodeInputState,
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -141,6 +144,7 @@ private fun ConverterScreen(
                             state = state.output,
                             navigateConfig = navigateConfig,
                             onShowPreview = onShowPreview,
+                            iconNameInputState = iconNameInputState,
                             outputCodeInputState = outputCodeInputState,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -254,6 +258,7 @@ private fun OutputPanel(
     state: ConverterViewState.Output,
     navigateConfig: () -> Unit,
     onShowPreview: (Boolean) -> Unit,
+    iconNameInputState: TextInputState,
     outputCodeInputState: TextInputState,
     modifier: Modifier = Modifier,
 ) {
@@ -268,6 +273,7 @@ private fun OutputPanel(
                 state = state,
                 navigateConfig = navigateConfig,
                 onShowPreview = onShowPreview,
+                iconNameInputState = iconNameInputState,
                 outputCodeInputState = outputCodeInputState,
                 modifier = Modifier.fillMaxSize()
             )
@@ -310,6 +316,7 @@ private fun ResultView(
     state: ConverterViewState.Output.Result,
     navigateConfig: () -> Unit,
     onShowPreview: (Boolean) -> Unit,
+    iconNameInputState: TextInputState,
     outputCodeInputState: TextInputState,
     modifier: Modifier = Modifier,
     shape: CornerBasedShape = MaterialTheme.shapes.large,
@@ -342,19 +349,27 @@ private fun ResultView(
                     Text(text = "Config")
                 }
 
-                val clipboard = LocalClipboardManager.current
-                TextButton(
-                    onClick = {
-                        outputCodeInputState.fieldState.text.toString().let { clipboard.setText(AnnotatedString(it)) }
-                        //TODO: Let user know that code was copied!
+                AppTextField(
+                    state = iconNameInputState,
+                    placeholder = { Text("Icon name here...") },
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                    trailingIcon = {
+                        val clipboard = LocalClipboardManager.current
+                        TextButton(
+                            onClick = {
+                                outputCodeInputState.fieldState.text.toString().let { clipboard.setText(AnnotatedString(it)) }
+                                //TODO: Let user know that code was copied!
+                            },
+                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                        ) {
+                            Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Copy")
+                        }
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                ) {
-                    Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Copy")
-                }
+                    modifier = Modifier.height(40.dp).weight(1f),
+                )
 
                 AppSwitch(
                     checked = state.preview != null,
@@ -419,6 +434,7 @@ private fun Preview() {
             sourceCodeInputState = TextInputState.Preview,
             onSelectParser = {},
             onShowPreview = {},
+            iconNameInputState = TextInputState.Preview,
             outputCodeInputState = TextInputState.Preview,
         )
     }

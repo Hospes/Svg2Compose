@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun AppColumnDialog(
@@ -69,7 +71,7 @@ fun AppDialog(
             onClose?.let {
                 IconButton(
                     onClick = it,
-                    modifier = Modifier.align(Alignment.TopEnd),
+                    modifier = Modifier.align(Alignment.TopEnd).pointerHoverIcon(PointerIcon.Hand),
                 ) { Icon(imageVector = Icons.Default.Close, contentDescription = null) }
             }
 

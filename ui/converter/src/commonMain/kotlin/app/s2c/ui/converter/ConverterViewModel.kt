@@ -28,6 +28,8 @@ class ConverterViewModel(
 
     private val sourceCodeInputHelper = DefaultTextInputStateHelper()
     val sourceCodeInputState = sourceCodeInputHelper.state
+    private val iconNameInputHelper = DefaultTextInputStateHelper(initialText = "TestIcon")
+    val iconNameInputState = iconNameInputHelper.state
     private val outputCodeInputHelper = DefaultTextInputStateHelper()
     val outputCodeInputState = outputCodeInputHelper.state
 
@@ -54,9 +56,10 @@ class ConverterViewModel(
 
     private val result = combine(
         sourceCodeInputHelper.textFlow.debounce(500L).distinctUntilChanged().filterNot { it.isBlank() },
+        iconNameInputHelper.textFlow.debounce(500L).distinctUntilChanged(),
         parser, parserConfig,
-    ) { text, parser, config ->
-        parser.parse(content = text, iconName = "TestIcon", config = config)
+    ) { text, iconName, parser, config ->
+        parser.parse(content = text, iconName = iconName, config = config)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
