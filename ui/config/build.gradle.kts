@@ -1,12 +1,8 @@
-import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import app.s2c.gradle.addKspDependencyForAllTargets
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.kotlinx.serialization)
+    id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
+    id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.ksp)
 }
 
@@ -23,7 +19,6 @@ kotlin {
             implementation(projects.common.ui.compose)
             implementation(projects.common.ui.resources)
 
-            implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlininject.runtime)
             implementation(libs.kotlininject.viewmodel.runtime)
@@ -43,28 +38,3 @@ kotlin {
 addKspDependencyForAllTargets(libs.kotlininject.compiler)
 addKspDependencyForAllTargets(libs.kotlininject.anvil.compiler)
 addKspDependencyForAllTargets(libs.kotlininject.viewmodel.compiler)
-
-
-fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) =
-    addKspDependencyForAllTargets("", dependencyNotation)
-
-private fun Project.addKspDependencyForAllTargets(
-    configurationNameSuffix: String,
-    dependencyNotation: Any,
-) {
-    val kmpExtension = extensions.getByType<KotlinMultiplatformExtension>()
-    dependencies {
-        kmpExtension.targets
-            .asSequence()
-            .filter { target ->
-                // Don't add KSP for common target, only final platforms
-                target.platformType != KotlinPlatformType.common
-            }
-            .forEach { target ->
-                add(
-                    "ksp${target.targetName.capitalized()}$configurationNameSuffix",
-                    dependencyNotation,
-                )
-            }
-    }
-}
