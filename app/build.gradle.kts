@@ -46,10 +46,8 @@ addKspDependencyForAllTargets(libs.kotlininject.compiler)
 addKspDependencyForAllTargets(libs.kotlininject.anvil.compiler)
 addKspDependencyForAllTargets(libs.kotlininject.viewmodel.compiler)
 
-
-val v = "1.1.0"
 group = "svg2compose"
-version = v
+version = gitDescribe(project.providers).get()
 
 compose.desktop {
     application {
@@ -57,7 +55,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
             packageName = "app.s2c"
-            packageVersion = v
+            packageVersion = gitDescribe(project.providers).get()
             windows {
                 iconFile.set(File("icon.ico"))
                 menuGroup = "start-menu-group"
@@ -71,4 +69,24 @@ compose.desktop {
             }
         }
     }
+}
+
+
+fun versionSuffix(providers: ProviderFactory): Provider<String> {
+    return providers.exec {
+        commandLine("git", "branch", "--show-current")
+    }.standardOutput.asText.map { branch ->
+        val branchName = branch.trim()
+        when {
+            branchName.matches("""release/(.+)""".toRegex()) -> "-RC"
+            branchName.matches("""feature/(.+)""".toRegex()) -> "-FEATURE"
+            else -> ""
+        }
+    }
+}
+
+fun gitDescribe(providers: ProviderFactory): Provider<String> {
+    return providers.exec {
+        commandLine("git", "describe", "--tags", "--always")
+    }.standardOutput.asText.map { it.split("\n").first().trim() }
 }
