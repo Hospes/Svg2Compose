@@ -7,16 +7,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -181,6 +185,7 @@ private fun InputPanel(
                     TextButton(
                         onClick = {},
                         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Icon(imageVector = Icons.Default.FileOpen, contentDescription = "Open file")
                         Spacer(Modifier.width(8.dp))
@@ -224,11 +229,13 @@ private fun ParserSwitcher(
             checked = selected == ConverterViewState.Input.Parser.SVG,
             onCheckedChange = { if (it) onSelectParser(ConverterViewState.Input.Parser.SVG) },
             shapes = firstShapes,
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         ) { Text("SVG") }
         OutlinedToggleButton(
             checked = selected == ConverterViewState.Input.Parser.VECTOR,
             onCheckedChange = { if (it) onSelectParser(ConverterViewState.Input.Parser.VECTOR) },
             shapes = lastShapes,
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         ) { Text("VECTOR") }
     }
 }
@@ -317,11 +324,27 @@ private fun ResultView(
                 TextButton(
                     onClick = {},
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                 ) {
                     Icon(imageVector = Icons.Default.Settings, contentDescription = "Open file")
                     Spacer(Modifier.width(8.dp))
                     Text(text = "Config")
                 }
+
+                val clipboard = LocalClipboardManager.current
+                TextButton(
+                    onClick = {
+                        outputCodeInputState.fieldState.text.toString().let { clipboard.setText(AnnotatedString(it)) }
+                        //TODO: Let user know that code was copied!
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                ) {
+                    Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Copy")
+                }
+
                 AppSwitch(
                     checked = state.preview != null,
                     onCheckedChange = { onShowPreview(it) },
@@ -332,18 +355,6 @@ private fun ResultView(
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
-//        ) {
-//            Text("Generated Code", fontWeight = FontWeight.SemiBold)
-//            TextButton(onClick = { /* TODO: Copy logic */ }) {
-//                Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(18.dp))
-//                Spacer(modifier = Modifier.width(8.dp))
-//                Text("Copy")
-//            }
-//        }
             AppTextField(
                 state = outputCodeInputState,
                 readOnly = true,
@@ -376,46 +387,14 @@ private fun IconPreviewCard(
     icon: ImageVector,
     modifier: Modifier = Modifier,
 ) {
-    var previewBgColor = true
-    var zoom by remember { mutableStateOf(1f) }
-
-    Box(
-        modifier = modifier,
-    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text("Icon Preview", fontWeight = FontWeight.SemiBold)
-//            Row {
-//                IconButton(onClick = { zoom = (zoom - 0.2f).coerceAtLeast(0.4f) }) {
-//                    Icon(Icons.Default.ZoomOut, "Zoom Out")
-//                }
-//                IconButton(onClick = { zoom = (zoom + 0.2f).coerceAtMost(2f) }) {
-//                    Icon(Icons.Default.ZoomIn, "Zoom In")
-//                }
-//                IconButton(onClick = { previewBgColor = !previewBgColor }) {
-//                    Icon(Icons.Default.Contrast, "Toggle Background")
-//                }
-//            }
-//        }
-//        Spacer(Modifier.height(8.dp))
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (previewBgColor) MaterialTheme.colorScheme.surfaceBright else MaterialTheme.colorScheme.surfaceDim),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = "Preview Icon",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size((64 * zoom).dp)
-            )
-        }
-    }
+    Icon(
+        imageVector = icon,
+        contentDescription = "Preview Icon",
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = modifier
+            .clip(shape = MaterialTheme.shapes.medium)
+            .background(color = MaterialTheme.colorScheme.surfaceBright, shape = MaterialTheme.shapes.medium)
+    )
 }
 
 
