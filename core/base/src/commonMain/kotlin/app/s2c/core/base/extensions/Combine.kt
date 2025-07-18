@@ -5,6 +5,21 @@ package app.s2c.core.base.extensions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
+/**
+ * Combines six flows into a single flow using the provided transform function.
+ *
+ * This is an extension of Kotlin's built-in combine function to support six input flows.
+ * The transform function is called whenever any of the input flows emit a new value.
+ *
+ * @param flow The first input flow
+ * @param flow2 The second input flow
+ * @param flow3 The third input flow
+ * @param flow4 The fourth input flow
+ * @param flow5 The fifth input flow
+ * @param flow6 The sixth input flow
+ * @param transform The function to transform the combined values
+ * @return A flow that emits the result of the transform function
+ */
 fun <T1, T2, T3, T4, T5, T6, R> combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
