@@ -58,7 +58,10 @@ compose.desktop {
             packageVersion = gitDescribe(project.providers).get()
             windows {
                 iconFile.set(File("../icon.ico"))
+                menu = true
+                perUserInstall = true
                 upgradeUuid = "0DFB0005-59B7-4702-BD47-CED700CEB37C"
+                includeAllModules = true
             }
             linux {
                 iconFile.set(File("icon.png"))
