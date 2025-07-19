@@ -48,6 +48,7 @@ include(
     ":core:logging",
     ":core:preferences",
 
+    ":common:ui:di",
     ":common:ui:compose",
     ":common:ui:resources",
 

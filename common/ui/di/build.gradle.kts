@@ -1,6 +1,7 @@
 plugins {
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
     id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -8,14 +9,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.base)
 
-            implementation(compose.runtime)
-            implementation(compose.components.resources)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
         }
     }
-}
-
-compose.resources {
-    publicResClass = true
-    packageOfResClass = "app.s2c.ui.resources"
-    generateResClass = always
 }

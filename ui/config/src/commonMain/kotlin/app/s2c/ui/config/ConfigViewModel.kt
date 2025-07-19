@@ -5,16 +5,18 @@ import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
 import app.s2c.preferences.AppPreferences
 import app.s2c.ui.common.input.DefaultTextInputStateHelper
-import com.teobaranga.kotlin.inject.viewmodel.runtime.ContributesViewModel
+import app.s2c.ui.di.ViewModelKey
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 @OptIn(FlowPreview::class)
+@ContributesIntoMap(AppScope::class)
+@ViewModelKey(ConfigViewModel::class)
 @Inject
-@ContributesViewModel(scope = AppScope::class)
 class ConfigViewModel(
     dispatchers: AppCoroutineDispatchers,
     prefs: AppPreferences,

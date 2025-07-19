@@ -1,15 +1,10 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.compose.multiplatform)
+    id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
+    id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
 }
 
 kotlin {
-    jvm()
-
     sourceSets {
-        val jvmMain by getting
-
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.common.ui.resources)

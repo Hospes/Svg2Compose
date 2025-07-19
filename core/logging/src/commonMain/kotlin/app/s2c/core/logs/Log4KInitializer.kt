@@ -1,7 +1,7 @@
 package app.s2c.core.logs
 
 import app.s2c.core.base.appinitializers.AppInitializer
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import saschpe.log4k.slf4j.SLF4JLogger
 
 @Inject

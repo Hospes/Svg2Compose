@@ -11,8 +11,6 @@ buildConfig {
 }
 
 kotlin {
-    jvm()
-
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core.base)
@@ -23,8 +21,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.fleeksoft.ksoup)
-
-            implementation(libs.kotlininject.runtime)
         }
     }
 }

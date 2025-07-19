@@ -15,7 +15,7 @@ import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.common.ui.AppColumnDialog
 import app.s2c.ui.common.ui.AppSwitch
 import app.s2c.ui.common.ui.AppTextField
-import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
+import app.s2c.ui.di.injectedViewModel
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

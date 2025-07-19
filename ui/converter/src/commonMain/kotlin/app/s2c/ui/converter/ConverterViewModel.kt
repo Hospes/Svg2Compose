@@ -11,16 +11,18 @@ import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.converter.ConverterViewState.Input
 import app.s2c.ui.converter.ConverterViewState.Output
 import app.s2c.ui.converter.utils.toImageVector
-import com.teobaranga.kotlin.inject.viewmodel.runtime.ContributesViewModel
+import app.s2c.ui.di.ViewModelKey
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 @OptIn(FlowPreview::class)
+@ContributesIntoMap(AppScope::class)
+@ViewModelKey(ConverterViewModel::class)
 @Inject
-@ContributesViewModel(scope = AppScope::class)
 class ConverterViewModel(
     dispatchers: AppCoroutineDispatchers,
     prefs: AppPreferences,

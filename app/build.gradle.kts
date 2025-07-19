@@ -1,50 +1,38 @@
-import app.s2c.gradle.addKspDependencyForAllTargets
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
     id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.preferences)
-                implementation(projects.core.logging)
-                implementation(projects.common.ui.compose)
-                implementation(projects.data)
-                implementation(projects.ui.converter)
-                implementation(projects.ui.config)
+        commonMain.dependencies {
+            implementation(projects.core.base)
+            implementation(projects.core.preferences)
+            implementation(projects.core.logging)
+            implementation(projects.common.ui.compose)
+            implementation(projects.common.ui.di)
+            implementation(projects.data)
+            implementation(projects.ui.converter)
+            implementation(projects.ui.config)
 
-                implementation(compose.desktop.currentOs)
-                implementation(compose.material)
-                implementation(compose.materialIconsExtended)
+            implementation(compose.desktop.currentOs)
+            implementation(compose.material)
+            implementation(compose.materialIconsExtended)
 
-                implementation(libs.kotlininject.viewmodel.runtime)
-                implementation(libs.kotlininject.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-                implementation(libs.androidx.navigation.compose)
-                implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-                implementation(libs.kotlinx.coroutines.core)
-            }
+            implementation(libs.kotlinx.coroutines.core)
         }
 
-        jvmMain {
-            dependencies {
-                implementation(libs.kotlinx.coroutines.swing)
-            }
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }
-
-
-addKspDependencyForAllTargets(libs.kotlininject.compiler)
-addKspDependencyForAllTargets(libs.kotlininject.anvil.compiler)
-addKspDependencyForAllTargets(libs.kotlininject.viewmodel.compiler)
 
 group = "svg2compose"
 version = gitDescribe(project.providers).get()

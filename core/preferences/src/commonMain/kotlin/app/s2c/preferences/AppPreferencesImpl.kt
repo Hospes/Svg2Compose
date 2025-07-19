@@ -1,6 +1,5 @@
 package app.s2c.preferences
 
-import app.s2c.core.base.inject.ApplicationCoroutineScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
 import app.s2c.models.ParserConfig
 import app.s2c.preferences.AppPreferences.LogLevel
@@ -9,17 +8,18 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.set
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalSettingsApi::class)
 @Inject
 class AppPreferencesImpl(
     settings: Lazy<ObservableSettings>,
-    private val coroutineScope: ApplicationCoroutineScope,
+    private val coroutineScope: CoroutineScope,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AppPreferences {
     private val settings: ObservableSettings by settings

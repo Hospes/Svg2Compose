@@ -3,10 +3,7 @@ kotlin = "2.2.0"
 kotlinx-serialization = "1.9.0"
 kotlinx-coroutines = "1.10.2"
 compose = "1.9.0-alpha03"
-ksp = "2.2.0-2.0.2"
-kotlininject = "0.8.0"
-kotlininject-anvil = "0.1.6"
-kotlininject-viewmodel = "0.3.0"
+metro = "0.5.1"
 androidx-lifecycle = "2.9.1"
 androidx-navigation = "2.9.0-beta03"
 log4k = "1.4.1"
@@ -19,7 +16,7 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 build-config = { id = "com.github.gmazzo.buildconfig", version = "5.6.7" }
 
 [libraries]
@@ -28,15 +25,6 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.1" }
 kotlinx-atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version = "0.20.2" }
-
-kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
-kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
-kotlininject-anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "kotlininject-anvil" }
-kotlininject-anvil-runtime = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime", version.ref = "kotlininject-anvil" }
-kotlininject-anvil-runtime-optional = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime-optional", version.ref = "kotlininject-anvil" }
-kotlininject-viewmodel-compiler = { module = "com.teobaranga.kotlin.inject.viewmodel:compiler", version.ref = "kotlininject-viewmodel" }
-kotlininject-viewmodel-runtime = { module = "com.teobaranga.kotlin.inject.viewmodel:runtime", version.ref = "kotlininject-viewmodel" }
-kotlininject-viewmodel-compose = { module = "com.teobaranga.kotlin.inject.viewmodel:runtime-compose", version.ref = "kotlininject-viewmodel" }
 
 androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }

@@ -30,7 +30,7 @@ import app.s2c.ui.common.ui.AppSwitch
 import app.s2c.ui.common.ui.AppTextField
 import app.s2c.ui.common.ui.AppToggleGroup
 import app.s2c.ui.common.ui.spaceBetween
-import com.teobaranga.kotlin.inject.viewmodel.runtime.compose.injectedViewModel
+import app.s2c.ui.di.injectedViewModel
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

@@ -1,7 +1,6 @@
 package app.s2c.core.logs
 
 import app.s2c.core.base.appinitializers.AppInitializer
-import app.s2c.core.base.inject.ApplicationCoroutineScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
 import app.s2c.preferences.AppPreferences
 import app.s2c.preferences.AppPreferences.LogLevel
@@ -11,15 +10,16 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.filter.ThresholdFilter
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.FileAppender
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 import org.slf4j.LoggerFactory
 
 @Inject
 class LogbackInitializer(
     dispatchers: AppCoroutineDispatchers,
-    private val scope: ApplicationCoroutineScope,
+    private val scope: CoroutineScope,
     private val prefs: AppPreferences,
 ) : AppInitializer {
     private val dispatcher = dispatchers.io

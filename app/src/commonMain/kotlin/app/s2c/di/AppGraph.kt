@@ -1,25 +1,17 @@
 package app.s2c.di
 
 import androidx.lifecycle.ViewModelProvider
-import app.s2c.core.base.inject.ApplicationCoroutineScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
+import dev.zacsweers.metro.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ForScope
-import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@MergeComponent(AppScope::class)
-@SingleIn(AppScope::class)
-interface AppComponent {
+@DependencyGraph(AppScope::class)
+interface AppGraph {
 
-    @ForScope(AppScope::class)
     val vmFactory: ViewModelProvider.Factory
 
-    @ForScope(AppScope::class)
     val initializers: AppInitializers
 
 
@@ -35,12 +27,12 @@ interface AppComponent {
         main = Dispatchers.Main,
     )
 
-    val appScope: ApplicationCoroutineScope
+
+    val appScope: CoroutineScope
 
     @SingleIn(AppScope::class)
     @Provides
     fun provideApplicationCoroutineScope(
         dispatchers: AppCoroutineDispatchers,
-    ): ApplicationCoroutineScope = CoroutineScope(dispatchers.main + SupervisorJob())
-
+    ): CoroutineScope = CoroutineScope(dispatchers.main + SupervisorJob())
 }
