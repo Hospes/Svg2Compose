@@ -1,12 +1,9 @@
 package app.s2c.gradle
 
-import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
-import com.android.build.gradle.internal.lint.LintModelWriterTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 
 class ComposeMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
@@ -18,10 +15,6 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 
 fun Project.configureCompose() {
     composeCompiler {
-        // Enable 'strong skipping'
-        // https://medium.com/androiddevelopers/jetpack-compose-strong-skipping-mode-explained-cbdb2aa4b900
-        featureFlags.add(ComposeFeatureFlag.StrongSkipping) // enableStrongSkippingMode.set(true)
-
         // Needed for Layout Inspector to be able to see all of the nodes in the component tree:
         //https://issuetracker.google.com/issues/338842143
         includeSourceInformation.set(true)
@@ -32,7 +25,10 @@ fun Project.configureCompose() {
             metricsDestination.set(composeReports)
         }
 
-        stabilityConfigurationFile.set(rootProject.file("compose-stability.conf"))
+        // If we want to add a 3rd party class as stable/immutable for compose, we need to enable this
+        //stabilityConfigurationFiles.addAll(
+        //    project.layout.projectDirectory.file("compose-stability.conf"),
+        //)
     }
 
     // Workaround for:

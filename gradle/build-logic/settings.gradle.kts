@@ -1,3 +1,5 @@
+rootProject.name = "svg2compose-build-logic"
+
 dependencyResolutionManagement {
     repositories {
         google {

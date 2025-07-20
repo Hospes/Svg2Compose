@@ -34,7 +34,7 @@ inline fun <reified T : Enum<T>> EnumDropdown(
             modifier = Modifier
                 .fillMaxWidth()
                 .pointerHoverIcon(PointerIcon.Hand, true)
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
         )
         ExposedDropdownMenu(
             expanded = expanded.value,
