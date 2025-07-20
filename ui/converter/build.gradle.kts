@@ -21,7 +21,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation(compose.material3)
-            implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
             implementation(libs.androidx.lifecycle.runtime.compose)

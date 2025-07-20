@@ -14,6 +14,7 @@ kotlin {
             implementation(projects.core.logging)
             implementation(projects.common.ui.compose)
             implementation(projects.common.ui.di)
+            implementation(projects.common.ui.resources)
             implementation(projects.data)
             implementation(projects.ui.converter)
             implementation(projects.ui.config)

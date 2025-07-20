@@ -9,7 +9,7 @@ kotlin {
             implementation(projects.core.base)
 
             implementation(compose.runtime)
-            implementation(compose.components.resources)
+            api(compose.components.resources)
         }
     }
 }
