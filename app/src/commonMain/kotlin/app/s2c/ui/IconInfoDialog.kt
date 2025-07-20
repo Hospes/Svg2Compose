@@ -1,6 +1,5 @@
 package app.s2c.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -88,16 +87,5 @@ internal fun IconInfoDialog(
                 Text("Copy code to clipboard")
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    MaterialTheme {
-        IconInfoDialog(
-            onValidateClick = { _, _ -> },
-            onCancelClick = {},
-        )
     }
 }

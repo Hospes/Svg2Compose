@@ -15,6 +15,8 @@ import app.s2c.ui.di.ViewModelKey
 import app.s2c.ui.di.ViewModelScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.readString
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,7 +26,7 @@ import kotlinx.coroutines.launch
 @ViewModelKey(ConverterViewModel::class)
 @Inject
 class ConverterViewModel(
-    dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
     prefs: AppPreferences,
 ) : ViewModel() {
 
@@ -118,6 +120,18 @@ class ConverterViewModel(
         viewModelScope.launch { sourceCodeInputHelper.clearErrorOnInputUpdate() }
     }
 
+
+    fun onFilePicked(file: PlatformFile?) {
+        viewModelScope.launch(dispatchers.io) {
+            val result = Result.runCatching { file?.readString() ?: throw IllegalArgumentException("File is null") }
+            result
+                .onSuccess { sourceCodeInputHelper.setText(it) }
+                .onFailure {
+                    outputCodeInputHelper.setText(it.message ?: "Unknown error")
+                    sourceCodeInputHelper.setError(TextInputState.Error.Custom(it.message ?: "Unknown error"))
+                }
+        }
+    }
 
     fun onSelectParser(parser: Input.Parser) = with(this.parser) { value = parser.p }
 

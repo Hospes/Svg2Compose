@@ -9,10 +9,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +28,9 @@ import app.s2c.ui.common.ui.AppTextField
 import app.s2c.ui.common.ui.AppToggleGroup
 import app.s2c.ui.common.ui.spaceBetween
 import app.s2c.ui.di.injectedViewModel
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -56,6 +56,7 @@ private fun ConverterScreen(
     ConverterScreen(
         state = state,
         navigateConfig = navigateConfig,
+        onFilePicked = viewModel::onFilePicked,
         sourceCodeInputState = viewModel.sourceCodeInputState,
         onSelectParser = viewModel::onSelectParser,
         onShowPreview = viewModel::onShowPreview,
@@ -69,6 +70,7 @@ private fun ConverterScreen(
 private fun ConverterScreen(
     state: ConverterViewState,
     navigateConfig: () -> Unit,
+    onFilePicked: (PlatformFile?) -> Unit,
     sourceCodeInputState: TextInputState,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
     onShowPreview: (Boolean) -> Unit,
@@ -110,6 +112,7 @@ private fun ConverterScreen(
                     ) {
                         InputPanel(
                             state = state.input,
+                            onFilePicked = onFilePicked,
                             sourceCodeInputState = sourceCodeInputState,
                             onSelectParser = onSelectParser,
                             modifier = Modifier
@@ -134,6 +137,7 @@ private fun ConverterScreen(
                     ) {
                         InputPanel(
                             state = state.input,
+                            onFilePicked = onFilePicked,
                             sourceCodeInputState = sourceCodeInputState,
                             onSelectParser = onSelectParser,
                             modifier = Modifier
@@ -163,6 +167,7 @@ private fun ConverterScreen(
 @Composable
 private fun InputPanel(
     state: ConverterViewState.Input,
+    onFilePicked: (PlatformFile?) -> Unit,
     sourceCodeInputState: TextInputState,
     onSelectParser: (ConverterViewState.Input.Parser) -> Unit,
     modifier: Modifier = Modifier,
@@ -193,9 +198,12 @@ private fun InputPanel(
                     .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                     .padding(8.dp),
             ) {
+                val filePicker = rememberFilePickerLauncher(
+                    type = FileKitType.File(extensions = listOf("svg"))
+                ) { file -> onFilePicked(file) }
                 CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 40.dp) {
                     TextButton(
-                        onClick = {},
+                        onClick = { filePicker.launch() },
                         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     ) {
@@ -431,6 +439,7 @@ private fun Preview() {
         ConverterScreen(
             state = ConverterViewState.Init,
             navigateConfig = {},
+            onFilePicked = {},
             sourceCodeInputState = TextInputState.Preview,
             onSelectParser = {},
             onShowPreview = {},

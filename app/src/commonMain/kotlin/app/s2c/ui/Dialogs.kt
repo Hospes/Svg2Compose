@@ -1,18 +1,11 @@
 package app.s2c.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.window.AwtWindow
+import androidx.compose.ui.awt.AwtWindow
 import androidx.compose.ui.window.FrameWindowScope
-import androidx.compose.ui.window.WindowScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.awt.FileDialog
 import java.io.File
 import java.nio.file.Path
-import javax.swing.JOptionPane
 
 @Composable
 fun FrameWindowScope.FileDialog(
@@ -38,33 +31,3 @@ fun FrameWindowScope.FileDialog(
     },
     dispose = FileDialog::dispose
 )
-
-@OptIn(DelicateCoroutinesApi::class)
-@Composable
-fun WindowScope.YesNoCancelDialog(
-    title: String,
-    message: String,
-    onResult: (result: AlertDialogResult) -> Unit
-) {
-    DisposableEffect(Unit) {
-        val job = GlobalScope.launch(Dispatchers.Main) {
-            val resultInt = JOptionPane.showConfirmDialog(
-                window, message, title, JOptionPane.YES_NO_CANCEL_OPTION
-            )
-            val result = when (resultInt) {
-                JOptionPane.YES_OPTION -> AlertDialogResult.Yes
-                JOptionPane.NO_OPTION -> AlertDialogResult.No
-                else -> AlertDialogResult.Cancel
-            }
-            onResult(result)
-        }
-
-        onDispose {
-            job.cancel()
-        }
-    }
-}
-
-enum class AlertDialogResult {
-    Yes, No, Cancel
-}

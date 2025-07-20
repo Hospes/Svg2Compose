@@ -1,4 +1,4 @@
-rootProject.name = "svg2compose-build-logic"
+rootProject.name = "build-logic"
 
 dependencyResolutionManagement {
     repositories {

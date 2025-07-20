@@ -1,4 +1,5 @@
 plugins {
+    id("app.s2c.android.library")
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.metro)
@@ -13,5 +14,12 @@ kotlin {
             api(libs.multiplatformsettings.core)
             api(libs.multiplatformsettings.coroutines)
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.navigation.compose)
+        }
     }
+}
+
+android {
+    namespace = "app.s2c.preferences"
 }

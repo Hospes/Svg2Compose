@@ -29,12 +29,12 @@ import app.s2c.data.builder.IconSourceBuilder
 import app.s2c.data.builder.MaterialIconSourceBuilder
 import app.s2c.data.model.IconFileContents
 import app.s2c.data.parser.IconParser
-import app.s2c.models.ParserConfig
 import app.s2c.domain.SvgPathParser
 import app.s2c.domain.UnknownColors
 import app.s2c.domain.VectorDrawableParser
 import app.s2c.domain.toImageVector
 import app.s2c.model.SvgData
+import app.s2c.models.ParserConfig
 import app.s2c.ui.IconInfoDialog
 import java.awt.FileDialog
 import java.io.File
@@ -132,26 +132,10 @@ fun FrameWindowScope.MainScreen() {
             Spacer(modifier = Modifier.width(16.dp))
             Button(
                 onClick = {
-                    val svgData = buildSvgData(
-                        currentTabIndex = currentTabIndex,
-                        vectorDrawableValue = vectorDrawableTextFieldValue.text,
-                        svgPathValue = svgPathTextFieldValue.text,
-                        onColorsNotFound = { unknownColors = it },
-                    ) ?: return@Button
-
                     svg = IconParser.SvgParser.parse(
                         content = svgPathTextFieldValue.text, iconName = "TestIcon",
                         config = ParserConfig(),
                     ).getOrNull()
-
-//                    svg = Svg(
-//                        pathDecomposed = svgData.toPathDecomposed(),
-//                        imageVectorCode = svgData.toImageVectorCode(),
-//                        imageVector = svgData.toImageVector(),
-//                        `package` = svgData.toPackage(),
-//                        imports = svgData.toImports(),
-//                        fileName = null,
-//                    )
                 },
             ) {
                 Text(text = "Convert".toUpperCase(Locale.current))
