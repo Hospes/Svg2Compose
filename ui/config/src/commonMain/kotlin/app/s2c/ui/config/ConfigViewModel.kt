@@ -3,10 +3,14 @@ package app.s2c.ui.config
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
+import app.s2c.core.logs.Log
 import app.s2c.preferences.AppPreferences
 import app.s2c.ui.common.input.DefaultTextInputStateHelper
+import app.s2c.ui.di.ViewModelAssistedFactory
 import app.s2c.ui.di.ViewModelKey
-import dev.zacsweers.metro.AppScope
+import app.s2c.ui.di.ViewModelScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.FlowPreview
@@ -14,12 +18,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-@ContributesIntoMap(AppScope::class)
+//@ContributesIntoMap(ViewModelScope::class)
 @ViewModelKey(ConfigViewModel::class)
 @Inject
 class ConfigViewModel(
     dispatchers: AppCoroutineDispatchers,
     prefs: AppPreferences,
+    @Assisted private val id: Int? = null,
 ) : ViewModel() {
     private val initConfig = prefs.parserConfig.getNotSuspended()
 
@@ -58,6 +63,7 @@ class ConfigViewModel(
 
 
     init {
+        Log.warn { "ConfigViewModel init id: $id" }
         viewModelScope.launch { _package.clearErrorOnInputUpdate() }
         viewModelScope.launch { _receiverType.clearErrorOnInputUpdate() }
 
@@ -87,4 +93,11 @@ class ConfigViewModel(
     fun onNoPreviewChanged(bool: Boolean) = with(configNoPreview) { value = bool }
     fun onMakeInternalChanged(bool: Boolean) = with(configMakeInternal) { value = bool }
     fun onMinifiedChanged(bool: Boolean) = with(configMinified) { value = bool }
+
+    @ContributesIntoMap(ViewModelScope::class)
+    @ViewModelKey(ConfigViewModel::class)
+    @AssistedFactory
+    interface Factory : ViewModelAssistedFactory {
+        fun create(id: Int?): ConfigViewModel
+    }
 }

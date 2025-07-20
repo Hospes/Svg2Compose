@@ -12,7 +12,7 @@ import app.s2c.ui.converter.ConverterViewState.Input
 import app.s2c.ui.converter.ConverterViewState.Output
 import app.s2c.ui.converter.utils.toImageVector
 import app.s2c.ui.di.ViewModelKey
-import dev.zacsweers.metro.AppScope
+import app.s2c.ui.di.ViewModelScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.FlowPreview
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-@ContributesIntoMap(AppScope::class)
+@ContributesIntoMap(ViewModelScope::class)
 @ViewModelKey(ConverterViewModel::class)
 @Inject
 class ConverterViewModel(

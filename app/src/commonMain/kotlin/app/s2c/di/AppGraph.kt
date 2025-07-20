@@ -1,16 +1,16 @@
 package app.s2c.di
 
-import androidx.lifecycle.ViewModelProvider
 import app.s2c.core.base.util.AppCoroutineDispatchers
-import dev.zacsweers.metro.*
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-@DependencyGraph(AppScope::class)
+@DependencyGraph(AppScope::class, isExtendable = true)
 interface AppGraph {
-
-    val vmFactory: ViewModelProvider.Factory
 
     val initializers: AppInitializers
 

@@ -27,7 +27,7 @@ internal fun ConfigDialog(
     navigateUp: () -> Unit,
 ) {
     ConfigDialog(
-        viewModel = injectedViewModel(),
+        viewModel = injectedViewModel<ConfigViewModel, ConfigViewModel.Factory> { it.create(67) },
         navigateUp = navigateUp,
     )
 }
