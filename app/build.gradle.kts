@@ -53,10 +53,10 @@ compose.desktop {
                 includeAllModules = true
             }
             linux {
-                iconFile.set(File("icon.png"))
+                iconFile.set(File("../icon.png"))
             }
             macOS {
-                iconFile.set(File("icon.icns"))
+                iconFile.set(File("../icon.icns"))
             }
         }
     }
