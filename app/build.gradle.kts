@@ -59,6 +59,12 @@ compose.desktop {
                 iconFile.set(File("../icon.icns"))
             }
         }
+
+        buildTypes.release {
+            proguard {
+                configurationFiles.from(project.file("proguard-rules.pro"))
+            }
+        }
     }
 }
 
