@@ -60,11 +60,17 @@ jobs:
     # by a 'published' release event. For tag pushes or manual runs, they will be skipped.
     - name: Upload .MSI to Release
       if: github.event_name == 'release' && github.event.action == 'published'
-      uses: actions/upload-release-asset@v1
+      run: gh release upload ${{ github.event.release.tag_name }} "${{ steps.locate_files.outputs.msi_path }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ${{ steps.locate_files.outputs.msi_path }}
-        asset_name: ${{ steps.locate_files.outputs.msi_name }}
-        asset_content_type: application/x-msi
+
+    # - name: Upload .MSI to Release
+    #   if: github.event_name == 'release' && github.event.action == 'published'
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ github.event.release.upload_url }}
+    #     asset_path: ${{ steps.locate_files.outputs.msi_path }}
+    #     asset_name: ${{ steps.locate_files.outputs.msi_name }}
+    #     asset_content_type: application/x-msi
