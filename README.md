@@ -28,15 +28,15 @@ Svg2Compose is a desktop application that transforms Vector Drawable files and S
 
 | Library | Version | Purpose |
 |---------|---------|----------|
-| `compose.desktop.currentOs` | Latest | Desktop Compose runtime |
-| `compose.material` | Latest | Material Design components |
-| `compose.materialIconsExtended` | Latest | Extended Material icons |
-| `androidx.navigation.compose` | Latest | Navigation between screens |
-| `androidx.lifecycle.viewmodel.compose` | Latest | ViewModel integration |
-| `kotlinx.coroutines.core` | Latest | Coroutine support |
-| `kotlinx.coroutines.swing` | Latest | Swing integration for JVM |
-| `kotlininject.viewmodel.runtime` | Latest | ViewModel dependency injection |
-| `kotlininject.compiler` | Latest | Compile-time dependency injection |
+| `compose.desktop.currentOs` | 1.9.0-alpha03 | Desktop Compose runtime |
+| `compose.material` | 1.9.0-alpha03 | Material Design components |
+| `compose.materialIconsExtended` | 1.9.0-alpha03 | Extended Material icons |
+| `androidx.navigation.compose` | 2.9.0-beta03 | Navigation between screens |
+| `androidx.lifecycle.viewmodel.compose` | 2.9.1 | ViewModel integration |
+| `kotlinx.coroutines.core` | 1.10.2 | Coroutine support |
+| `kotlinx.coroutines.swing` | 1.10.2 | Swing integration for JVM |
+| `metro` (Kotlin Inject) | 0.5.1 | Dependency injection framework |
+| `kotlin` | 2.2.0 | Kotlin language and compiler |
 
 ## 📁 Project Structure
 
@@ -76,6 +76,7 @@ Svg2Compose/
 
 ### UI Modules
 - [**Common UI Compose**](common/ui/compose/README.md) - Reusable Compose components and utilities
+- [**Common UI DI**](common/ui/di/README.md) - Dependency injection infrastructure for UI components and ViewModels
 - [**Common UI Resources**](common/ui/resources/README.md) - Shared UI resources (icons, strings, themes)
 - [**UI Converter**](ui/converter/README.md) - Main conversion interface and functionality
 - [**UI Config**](ui/config/README.md) - Application configuration and settings UI
@@ -101,26 +102,23 @@ Download the latest version (Windows, macOS, or Linux) here: [Releases](https://
 ## 📱 How to Use
 
 ### Transform a Vector Drawable
-1. Select the **Vector Drawable file** tab
-2. Enter the content of your Vector Drawable XML
-3. Click **CONVERT**
-4. If unknown colors are detected, map them to hex values (e.g., #FFFFFF)
-5. View the three-column output:
-   - **Left**: All extracted paths
-   - **Middle**: Generated ImageVector code
-   - **Right**: Rendered preview
-6. Copy the ImageVector code to your clipboard
+1. Switch to **VECTOR** mode using the toggle buttons at the top
+2. Enter your Vector Drawable XML content in the left input panel, or use the **Browse** button to load a file
+3. The conversion happens automatically as you type
+4. View the two-column output:
+   - **Left**: Your input XML/SVG content
+   - **Right**: Generated ImageVector code with a preview icon overlay in the top-right corner
+5. Edit the icon name in the "Icon Name" field if desired
+6. Copy the generated ImageVector code from the right panel
 7. Paste it into your Compose project
 
-### Transform a SVG Path
-1. Select the **SVG path** tab
-2. Enter your SVG path data
-3. Click **CONVERT**
-4. View the generated ImageVector code and preview
-5. Copy the code to your clipboard
-
-### Transform a SVG File
-*Coming soon - Full SVG file support*
+### Transform SVG Content
+1. Switch to **SVG** mode using the toggle buttons at the top (default mode)
+2. Enter your SVG path data or SVG content in the left input panel, or use the **Browse** button to load a file
+3. The conversion happens automatically in real-time as you type
+4. View the results in the right panel with the generated ImageVector code
+5. The preview icon appears as an overlay in the top-right corner of the output panel
+6. Copy the generated code to your clipboard
 
 ## 🏗️ Architecture
 
