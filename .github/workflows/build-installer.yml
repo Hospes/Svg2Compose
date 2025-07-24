@@ -41,7 +41,7 @@ jobs:
           ${{ runner.os }}-gradle-
 
     - name: Build with Gradle
-      run: ./gradlew :app:packageMsi
+      run: ./gradlew :app:packageReleaseMsi
 
     - name: Locate Generated Executables
       id: locate_files
