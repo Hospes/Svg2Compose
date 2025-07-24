@@ -32,6 +32,13 @@ jobs:
         distribution: 'oracle'
         architecture: x64
 
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: wrapper
+        cache-read-only: false
+        gradle-home-cache-cleanup: true
+
     - name: Build with Gradle
       run: ./gradlew :app:packageReleaseMsi
 
