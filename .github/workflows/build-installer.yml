@@ -63,7 +63,7 @@ jobs:
         
         # Create release with MSI attached
         gh release create $tagName `
-          --title "Release $tagName" `
+          --title "$tagName" `
           --generate-notes `
           "$msiPath"
         
