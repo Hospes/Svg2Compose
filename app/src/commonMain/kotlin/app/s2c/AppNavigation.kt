@@ -11,7 +11,7 @@ import app.s2c.ui.converter.ConverterScreen
 import app.s2c.ui.converter.addConverterScreen
 
 @Composable
-internal fun AppNavigation(
+fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {

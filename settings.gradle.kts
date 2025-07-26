@@ -3,7 +3,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     includeBuild("gradle/build-logic")
-    
+
     repositories {
         google {
             mavenContent {
@@ -59,4 +59,7 @@ include(
     ":ui:config",
 
     "app",
+
+    "desktop-app",
+    "android-app",
 )

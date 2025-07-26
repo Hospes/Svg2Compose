@@ -1,4 +1,5 @@
 plugins {
+    id("app.s2c.android.library")
     id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.metro)
 }
@@ -15,4 +16,8 @@ kotlin {
             implementation(libs.logback.classic)
         }
     }
+}
+
+android {
+    namespace = "app.s2c.core.logs"
 }

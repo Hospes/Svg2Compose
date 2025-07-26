@@ -9,7 +9,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-@DependencyGraph(AppScope::class, isExtendable = true)
 interface AppGraph {
 
     val initializers: AppInitializers

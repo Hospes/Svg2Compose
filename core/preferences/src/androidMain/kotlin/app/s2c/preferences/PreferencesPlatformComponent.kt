@@ -8,7 +8,6 @@ import com.russhwolf.settings.SharedPreferencesSettings
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
-import java.util.prefs.Preferences
 
 actual interface PreferencesPlatformComponent {
     @SingleIn(AppScope::class)

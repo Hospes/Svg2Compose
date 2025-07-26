@@ -3,7 +3,6 @@ package app.s2c
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.application
 import androidx.lifecycle.ViewModelProvider
-import app.s2c.di.AppGraph
 import app.s2c.ui.di.LocalViewModelFactoryOwner
 import app.s2c.ui.di.ViewModelFactoryOwner
 import app.s2c.ui.di.ViewModelGraph
@@ -14,7 +13,7 @@ fun main() {
     System.setProperty("skiko.renderApi", "SOFTWARE") //TODO: Fixes issue with G-Sync stuttering
 
     // Create an injection graph
-    val appGraph = createGraph<AppGraph>()
+    val appGraph = createGraph<DesktopAppGraph>()
     appGraph.initializers.initialize()
 
     val viewModelGraph = appGraph.asContribution<ViewModelGraph.Factory>().createViewModelGraph()
