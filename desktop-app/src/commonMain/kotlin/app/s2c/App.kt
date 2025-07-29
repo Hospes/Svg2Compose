@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.resources.Res
 import app.s2c.ui.resources.icon
 import kotlinx.coroutines.launch
@@ -14,16 +13,13 @@ import org.jetbrains.compose.resources.painterResource
 fun ApplicationScope.App(state: AppState) {
     ApplicationTray(state)
 
-    AppTheme {
-        Window(
-            state = rememberWindowState(width = 1280.dp, height = 800.dp),
-            title = "Svg2Compose",
-            icon = painterResource(Res.drawable.icon),
-            onCloseRequest = state::exit,
-        ) {
-            //MainScreen()
-            AppNavigation()
-        }
+    Window(
+        state = rememberWindowState(width = 1280.dp, height = 800.dp),
+        title = "Svg2Compose",
+        icon = painterResource(Res.drawable.icon),
+        onCloseRequest = state::exit,
+    ) {
+        AppNavigation()
     }
 }
 

@@ -9,7 +9,10 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -99,62 +102,65 @@ private fun ConverterScreen(
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddings ->
-        Column(
-            modifier = Modifier.padding(paddings).padding(16.dp),
-        ) {
-            // Use BoxWithConstraints to create a responsive layout
-            BoxWithConstraints {
-                val isLandscape = maxWidth > 1100.dp // Breakpoint for side-by-side layout
-                if (isLandscape) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        InputPanel(
-                            state = state.input,
-                            onFilePicked = onFilePicked,
-                            sourceCodeInputState = sourceCodeInputState,
-                            onSelectParser = onSelectParser,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .weight(1f),
-                        )
-                        OutputPanel(
-                            state = state.output,
-                            navigateConfig = navigateConfig,
-                            onShowPreview = onShowPreview,
-                            iconNameInputState = iconNameInputState,
-                            outputCodeInputState = outputCodeInputState,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .weight(1f),
-                        )
-                    }
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        InputPanel(
-                            state = state.input,
-                            onFilePicked = onFilePicked,
-                            sourceCodeInputState = sourceCodeInputState,
-                            onSelectParser = onSelectParser,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 300.dp, max = 600.dp),
-                        )
-                        OutputPanel(
-                            state = state.output,
-                            navigateConfig = navigateConfig,
-                            onShowPreview = onShowPreview,
-                            iconNameInputState = iconNameInputState,
-                            outputCodeInputState = outputCodeInputState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 300.dp, max = 600.dp),
-                        )
-                    }
+        // Use BoxWithConstraints to create a responsive layout
+        BoxWithConstraints {
+            val isLandscape = maxWidth > 1100.dp // Breakpoint for side-by-side layout
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddings)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    InputPanel(
+                        state = state.input,
+                        onFilePicked = onFilePicked,
+                        sourceCodeInputState = sourceCodeInputState,
+                        onSelectParser = onSelectParser,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f),
+                    )
+                    OutputPanel(
+                        state = state.output,
+                        navigateConfig = navigateConfig,
+                        onShowPreview = onShowPreview,
+                        iconNameInputState = iconNameInputState,
+                        outputCodeInputState = outputCodeInputState,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f),
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(paddings)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    InputPanel(
+                        state = state.input,
+                        onFilePicked = onFilePicked,
+                        sourceCodeInputState = sourceCodeInputState,
+                        onSelectParser = onSelectParser,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 300.dp, max = 600.dp),
+                    )
+                    OutputPanel(
+                        state = state.output,
+                        navigateConfig = navigateConfig,
+                        onShowPreview = onShowPreview,
+                        iconNameInputState = iconNameInputState,
+                        outputCodeInputState = outputCodeInputState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 300.dp, max = 600.dp),
+                    )
                 }
             }
         }
@@ -184,10 +190,20 @@ private fun InputPanel(
             modifier = Modifier,
         ) {
             val topElementShape = remember(shape) {
-                RoundedCornerShape(topStart = shape.topStart, topEnd = shape.topEnd, bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+                RoundedCornerShape(
+                    topStart = shape.topStart,
+                    topEnd = shape.topEnd,
+                    bottomStart = ZeroCornerSize,
+                    bottomEnd = ZeroCornerSize
+                )
             }
             val bottomElementShape = remember(shape) {
-                RoundedCornerShape(topStart = ZeroCornerSize, topEnd = ZeroCornerSize, bottomStart = shape.bottomStart, bottomEnd = shape.bottomEnd)
+                RoundedCornerShape(
+                    topStart = ZeroCornerSize,
+                    topEnd = ZeroCornerSize,
+                    bottomStart = shape.bottomStart,
+                    bottomEnd = shape.bottomEnd
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -291,7 +307,11 @@ private fun OutputPanel(
                     .fillMaxSize()
                     .clip(shape = MaterialTheme.shapes.large)
                     .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
-                    .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = MaterialTheme.shapes.large),
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = MaterialTheme.shapes.large
+                    ),
             )
         }
     }
@@ -332,10 +352,20 @@ private fun ResultView(
 ) {
     Column(modifier = modifier) {
         val topElementShape = remember(shape) {
-            RoundedCornerShape(topStart = shape.topStart, topEnd = shape.topEnd, bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+            RoundedCornerShape(
+                topStart = shape.topStart,
+                topEnd = shape.topEnd,
+                bottomStart = ZeroCornerSize,
+                bottomEnd = ZeroCornerSize
+            )
         }
         val bottomElementShape = remember(shape) {
-            RoundedCornerShape(topStart = ZeroCornerSize, topEnd = ZeroCornerSize, bottomStart = shape.bottomStart, bottomEnd = shape.bottomEnd)
+            RoundedCornerShape(
+                topStart = ZeroCornerSize,
+                topEnd = ZeroCornerSize,
+                bottomStart = shape.bottomStart,
+                bottomEnd = shape.bottomEnd
+            )
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -365,7 +395,8 @@ private fun ResultView(
                         val clipboard = LocalClipboardManager.current
                         TextButton(
                             onClick = {
-                                outputCodeInputState.fieldState.text.toString().let { clipboard.setText(AnnotatedString(it)) }
+                                outputCodeInputState.fieldState.text.toString()
+                                    .let { clipboard.setText(AnnotatedString(it)) }
                                 //TODO: Let user know that code was copied!
                             },
                             colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
