@@ -2,15 +2,17 @@ package app.s2c.ui.di
 
 import androidx.lifecycle.ViewModelProvider
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesGraphExtension
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.GraphExtension
 
-@ContributesGraphExtension(ViewModelScope::class)
+@GraphExtension(ViewModelScope::class)
 interface ViewModelGraph {
 
     val vmFactory: ViewModelProvider.Factory
 
 
-    @ContributesGraphExtension.Factory(AppScope::class)
+    @ContributesTo(AppScope::class)
+    @GraphExtension.Factory
     fun interface Factory {
         fun createViewModelGraph(): ViewModelGraph
     }

@@ -20,7 +20,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
 
-            implementation(compose.material3)
             implementation(compose.components.uiToolingPreview)
 
             implementation(libs.androidx.lifecycle.runtime.compose)
