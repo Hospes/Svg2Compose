@@ -29,12 +29,10 @@ class MainActivity : S2cActivity() {
         val appGraph = (application as S2cApp).appGraph
 
         setContent {
-            val viewModelGraph = appGraph.asContribution<ViewModelGraph.Factory>().createViewModelGraph()
-
             CompositionLocalProvider(
                 // Provide a way to access the ViewModel factory to injectedViewModel calls down the composable tree
                 LocalViewModelFactoryOwner provides object : ViewModelFactoryOwner {
-                    override val viewModelFactory: ViewModelProvider.Factory get() = viewModelGraph.vmFactory
+                    override val viewModelFactory: ViewModelProvider.Factory get() = appGraph.viewModelFactory
                 },
             ) {
                 AppNavigation()
