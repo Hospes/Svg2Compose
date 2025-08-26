@@ -1,5 +1,6 @@
 package app.s2c.ui.config
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
@@ -18,14 +19,21 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-//@ContributesIntoMap(ViewModelScope::class)
-@ViewModelKey(ConfigViewModel::class)
 @Inject
 class ConfigViewModel(
     dispatchers: AppCoroutineDispatchers,
+    savedStateHandle: SavedStateHandle,
     prefs: AppPreferences,
     @Assisted private val id: Int? = null,
 ) : ViewModel() {
+
+    @ContributesIntoMap(ViewModelScope::class)
+    @ViewModelKey(ConfigViewModel::class)
+    @AssistedFactory
+    interface Factory : ViewModelAssistedFactory {
+        fun create(id: Int?): ConfigViewModel
+    }
+
     private val initConfig = prefs.parserConfig.getNotSuspended()
 
     private val _package = DefaultTextInputStateHelper(initialText = initConfig.pkg ?: "")
@@ -63,7 +71,7 @@ class ConfigViewModel(
 
 
     init {
-        Log.warn { "ConfigViewModel init id: $id" }
+        Log.warn { "ConfigViewModel init id: $id | savedStateHandle: ${savedStateHandle.get<Int>("id")}" }
         viewModelScope.launch { _package.clearErrorOnInputUpdate() }
         viewModelScope.launch { _receiverType.clearErrorOnInputUpdate() }
 
@@ -93,11 +101,4 @@ class ConfigViewModel(
     fun onNoPreviewChanged(bool: Boolean) = with(configNoPreview) { value = bool }
     fun onMakeInternalChanged(bool: Boolean) = with(configMakeInternal) { value = bool }
     fun onMinifiedChanged(bool: Boolean) = with(configMinified) { value = bool }
-
-    @ContributesIntoMap(ViewModelScope::class)
-    @ViewModelKey(ConfigViewModel::class)
-    @AssistedFactory
-    interface Factory : ViewModelAssistedFactory {
-        fun create(id: Int?): ConfigViewModel
-    }
 }

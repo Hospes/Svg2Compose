@@ -24,7 +24,7 @@ fun AppNavigation(
         ) {
             addConverterScreen(
                 navController = navController,
-                navigateConfig = { navController.navigate(ConfigDialog) },
+                navigateConfig = { navController.navigate(ConfigDialog()) },
             )
             addConfigDialog(navController = navController)
         }

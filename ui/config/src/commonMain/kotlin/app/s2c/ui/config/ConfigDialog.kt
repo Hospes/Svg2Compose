@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Serializable
-data object ConfigDialog
+data class ConfigDialog(val id: Int = 23)
 
 @Composable
 internal fun ConfigDialog(
