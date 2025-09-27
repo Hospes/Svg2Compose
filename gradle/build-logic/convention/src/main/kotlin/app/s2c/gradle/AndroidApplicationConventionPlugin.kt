@@ -10,10 +10,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("com.android.application")
                 //apply("org.gradle.android.cache-fix")
             }
-
+                                        
             configureAndroid()
-            //configureLicensee()
-            //configureAndroidLicensesTasks()
         }
     }
 }

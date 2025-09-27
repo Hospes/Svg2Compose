@@ -13,48 +13,13 @@ fun Project.configureAndroid() {
         defaultConfig {
             minSdk = Versions.MIN_SDK
             targetSdk = Versions.TARGET_SDK
-
-            //testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-            //manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
         }
-
-//        if (this is CommonExtension<*, *, *, *, *, *>) {
-//            lint {
-//                // Disable lintVital. Not needed since lint is run on CI
-//                checkReleaseBuilds = false
-//                // Ignore any tests
-//                ignoreTestSources = true
-//                // Make the build fail on any lint errors
-//                abortOnError = true
-//            }
-//        }
 
         compileOptions {
             // https://developer.android.com/studio/write/java8-support
             isCoreLibraryDesugaringEnabled = true
         }
-
-//        testOptions {
-//            if (this@android is LibraryExtension) {
-//                // We only want to configure this for library modules
-//                targetSdk = Versions.TARGET_SDK
-//            }
-//
-//            unitTests {
-//                isIncludeAndroidResources = true
-//                isReturnDefaultValues = true
-//            }
-//        }
     }
-
-//    androidComponents {
-//        beforeVariants(selector().withBuildType("release")) { variantBuilder ->
-//            (variantBuilder as? HasUnitTestBuilder)?.apply {
-//                enableUnitTest = false
-//            }
-//        }
-//    }
 
     dependencies {
         // https://developer.android.com/studio/write/java8-support
