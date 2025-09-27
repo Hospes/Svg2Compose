@@ -1,17 +1,17 @@
 [versions]
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 kotlinx-serialization = "1.9.0"
 kotlinx-coroutines = "1.10.2"
-compose = "1.9.0-beta03"
-metro = "0.6.0"
-androidx-activity = "1.10.1"
-androidx-lifecycle = "2.9.2"
-androidx-navigation = "2.9.0-beta05"
-log4k = "1.5.0"
+compose = "1.9.0"
+metro = "0.6.8"
+androidx-activity = "1.11.0"
+androidx-lifecycle = "2.9.4"
+androidx-navigation = "2.9.0"
+log4k = "1.5.2"
 multiplatformsettings = "1.3.0"
 ksoup = "0.2.5"
-agp = "8.11.1"
-filekit = "0.10.0"
+agp = "8.11.2"
+filekit = "0.11.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -22,7 +22,7 @@ kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
-build-config = { id = "com.github.gmazzo.buildconfig", version = "5.6.7" }
+build-config = { id = "com.github.gmazzo.buildconfig", version = "5.6.8" }
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
