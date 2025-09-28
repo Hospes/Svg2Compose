@@ -10,10 +10,10 @@ kotlin {
             implementation(projects.common.ui.resources)
 
             //implementation(compose.material3)
-            api("org.jetbrains.compose.material3:material3:1.9.0-alpha04")
+            api(libs.compose.material3)
             api(compose.materialIconsExtended)
             implementation(compose.components.uiToolingPreview)
-//
+
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.navigation.compose)
         }
