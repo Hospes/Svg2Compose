@@ -8,7 +8,7 @@ import app.s2c.ui.di.ViewModelFactoryOwner
 import dev.zacsweers.metro.createGraph
 
 fun main() {
-    System.setProperty("skiko.renderApi", "SOFTWARE") //TODO: Fixes issue with G-Sync stuttering
+    System.setProperty("skiko.renderApi", "OPENGL") //TODO: Fixes issue with G-Sync stuttering
 
     // Create an injection graph
     val appGraph = createGraph<DesktopAppGraph>()
