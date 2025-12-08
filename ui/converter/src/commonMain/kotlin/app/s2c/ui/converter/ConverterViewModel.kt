@@ -17,11 +17,9 @@ import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.readString
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-@OptIn(FlowPreview::class)
 @ContributesIntoMap(ViewModelScope::class)
 @ViewModelKey(ConverterViewModel::class)
 @Inject

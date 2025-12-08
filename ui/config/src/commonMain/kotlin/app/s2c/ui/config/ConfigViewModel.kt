@@ -12,14 +12,12 @@ import app.s2c.ui.di.ViewModelKey
 import app.s2c.ui.di.ViewModelScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
-import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-@OptIn(FlowPreview::class)
-@Inject
+@AssistedInject
 class ConfigViewModel(
     dispatchers: AppCoroutineDispatchers,
     savedStateHandle: SavedStateHandle,

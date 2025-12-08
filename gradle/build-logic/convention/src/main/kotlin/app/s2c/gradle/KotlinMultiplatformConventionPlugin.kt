@@ -32,6 +32,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             //iosSimulatorArm64()
 
             sourceSets.all {
+                languageSettings.optIn("kotlinx.coroutines.FlowPreview")
                 languageSettings.optIn("kotlin.time.ExperimentalTime")
             }
 
