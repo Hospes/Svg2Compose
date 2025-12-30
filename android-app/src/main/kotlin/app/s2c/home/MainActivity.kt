@@ -7,14 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModelProvider
 import app.s2c.AppNavigation
 import app.s2c.S2cActivity
 import app.s2c.S2cApp
-import app.s2c.ui.di.LocalViewModelFactoryOwner
-import app.s2c.ui.di.ViewModelFactoryOwner
-import app.s2c.ui.di.ViewModelGraph
-import dev.zacsweers.metro.asContribution
+import app.s2c.ui.di.LocalMetroViewModelFactory
 
 class MainActivity : S2cActivity() {
 
@@ -30,10 +26,7 @@ class MainActivity : S2cActivity() {
 
         setContent {
             CompositionLocalProvider(
-                // Provide a way to access the ViewModel factory to injectedViewModel calls down the composable tree
-                LocalViewModelFactoryOwner provides object : ViewModelFactoryOwner {
-                    override val viewModelFactory: ViewModelProvider.Factory get() = appGraph.viewModelFactory
-                },
+                LocalMetroViewModelFactory provides appGraph.viewModelFactory,
             ) {
                 AppNavigation()
             }

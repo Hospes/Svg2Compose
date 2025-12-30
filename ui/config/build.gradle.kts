@@ -15,7 +15,7 @@ kotlin {
 
             implementation(projects.common.ui.compose)
             implementation(projects.common.ui.resources)
-            implementation(projects.common.ui.di)
+            implementation(projects.common.ui.metrox.viewmodel)
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)

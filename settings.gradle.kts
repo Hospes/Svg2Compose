@@ -53,7 +53,7 @@ include(
     ":core:logging",
     ":core:preferences",
 
-    ":common:ui:di",
+    ":common:ui:metrox:viewmodel",
     ":common:ui:compose",
     ":common:ui:resources",
 

@@ -11,7 +11,7 @@ kotlin {
             api(projects.core.preferences)
             api(projects.core.logging)
             api(projects.common.ui.compose)
-            api(projects.common.ui.di)
+            api(projects.common.ui.metrox.viewmodel)
             api(projects.common.ui.resources)
             implementation(projects.data)
             api(projects.ui.converter)

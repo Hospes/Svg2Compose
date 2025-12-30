@@ -10,9 +10,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-val LocalViewModelFactoryOwner = staticCompositionLocalOf<ViewModelFactoryOwner> {
-    error("No ViewModelFactoryOwner was provided provided via LocalViewModelFactoryOwner")
-}
+val LocalMetroViewModelFactory = staticCompositionLocalOf<ViewModelProvider.Factory?> { null }
 
 /**
  * Returns or creates a [ViewModel] annotated with [ContributesViewModel], scoped to the local
@@ -31,7 +29,7 @@ inline fun <reified VM : ViewModel> injectedViewModel(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     },
     key: String? = null,
-    factory: ViewModelProvider.Factory? = LocalViewModelFactoryOwner.current.viewModelFactory,
+    factory: ViewModelProvider.Factory? = LocalMetroViewModelFactory.current,
 ): VM {
     return viewModel<VM>(
         viewModelStoreOwner = viewModelStoreOwner,
@@ -58,7 +56,7 @@ inline fun <reified VM : ViewModel, reified VMF> injectedViewModel(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     },
     key: String? = null,
-    factory: ViewModelProvider.Factory? = LocalViewModelFactoryOwner.current.viewModelFactory,
+    factory: ViewModelProvider.Factory? = LocalMetroViewModelFactory.current,
     noinline creationCallback: CreationExtras.(VMF) -> VM,
 ): VM {
     return viewModel<VM>(

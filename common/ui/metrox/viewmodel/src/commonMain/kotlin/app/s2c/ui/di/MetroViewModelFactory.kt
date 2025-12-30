@@ -23,11 +23,6 @@ class MetroViewModelFactory(
     override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
         val viewModelGraph = graphFactory.createViewModelGraph(extras)
 
-        println("===== ViewModels =====")
-        println(viewModelGraph.viewModelProviders)
-        println("===== Assisted ViewModels =====")
-        println(viewModelGraph.viewModelAssistedProviders)
-
         return viewModelGraph.viewModelProviders[modelClass]?.invoke() as T?
             ?: run {
                 // The callback is meant to use an existing factory and provide the remaining

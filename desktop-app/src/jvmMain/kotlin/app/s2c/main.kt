@@ -2,13 +2,11 @@ package app.s2c
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.application
-import androidx.lifecycle.ViewModelProvider
-import app.s2c.ui.di.LocalViewModelFactoryOwner
-import app.s2c.ui.di.ViewModelFactoryOwner
+import app.s2c.ui.di.LocalMetroViewModelFactory
 import dev.zacsweers.metro.createGraph
 
 fun main() {
-    System.setProperty("skiko.renderApi", "OPENGL") //TODO: Fixes issue with G-Sync stuttering
+    //System.setProperty("skiko.renderApi", "OPENGL") //TODO: Fixes issue with G-Sync stuttering
 
     // Create an injection graph
     val appGraph = createGraph<DesktopAppGraph>()
@@ -16,10 +14,7 @@ fun main() {
 
     application {
         CompositionLocalProvider(
-            // Provide a way to access the ViewModel factory to injectedViewModel calls down the composable tree
-            LocalViewModelFactoryOwner provides object : ViewModelFactoryOwner {
-                override val viewModelFactory: ViewModelProvider.Factory get() = appGraph.viewModelFactory
-            },
+            LocalMetroViewModelFactory provides appGraph.viewModelFactory,
         ) {
             App(
                 state = rememberAppState(exitApp = ::exitApplication)
