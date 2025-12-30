@@ -1,9 +1,9 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
-    id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.metro)
+    id("app.s2c.kotlin.multiplatform")
+    id("app.s2c.compose")
+    id("app.s2c.metro")
 }
 
 kotlin {
@@ -13,7 +13,8 @@ kotlin {
 
             implementation(compose.desktop.currentOs)
 
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.jetbrains.compose.runtime)
+            implementation(libs.jetbrains.lifecycle.viewmodel)
 
             implementation(libs.kotlinx.coroutines.core)
         }

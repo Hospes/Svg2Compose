@@ -7,6 +7,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.composeCompiler.gradlePlugin)
+    compileOnly(libs.metro.gradlePlugin)
 }
 
 gradlePlugin {
@@ -21,11 +22,6 @@ gradlePlugin {
             implementationClass = "app.s2c.gradle.RootConventionPlugin"
         }
 
-        register("kotlinAndroid") {
-            id = "app.s2c.kotlin.android"
-            implementationClass = "app.s2c.gradle.KotlinAndroidConventionPlugin"
-        }
-
         register("androidApplication") {
             id = "app.s2c.android.application"
             implementationClass = "app.s2c.gradle.AndroidApplicationConventionPlugin"
@@ -36,14 +32,14 @@ gradlePlugin {
             implementationClass = "app.s2c.gradle.AndroidLibraryConventionPlugin"
         }
 
-//        register("androidTest") {
-//            id = "app.s2c.android.test"
-//            implementationClass = "app.s2c.gradle.AndroidTestConventionPlugin"
-//        }
-
         register("compose") {
             id = "app.s2c.compose"
             implementationClass = "app.s2c.gradle.ComposeMultiplatformConventionPlugin"
+        }
+
+        register("metro") {
+            id = "app.s2c.metro"
+            implementationClass = "app.s2c.gradle.MetroConventionPlugin"
         }
     }
 }

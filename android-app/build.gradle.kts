@@ -1,8 +1,7 @@
 plugins {
     id("app.s2c.android.application")
-    id("app.s2c.kotlin.android")
-    id("app.s2c.compose")
-    alias(libs.plugins.metro)
+    alias(libs.plugins.kotlin.compose.compiler)
+    id("app.s2c.metro")
 }
 
 android {

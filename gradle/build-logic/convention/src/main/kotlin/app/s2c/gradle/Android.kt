@@ -1,13 +1,14 @@
 package app.s2c.gradle
 
-import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.BaseExtension
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-fun Project.configureAndroid() {
-    android {
+fun Project.configureAndroidLegacy() {
+    androidLegacy {
         compileSdkVersion(Versions.COMPILE_SDK)
 
         defaultConfig {
@@ -27,8 +28,27 @@ fun Project.configureAndroid() {
     }
 }
 
-private fun Project.android(action: BaseExtension.() -> Unit) = extensions.configure<BaseExtension>(action)
+fun Project.configureAndroidLibrary() {
+    kotlin {
+        android {
+            compileSdk = Versions.COMPILE_SDK
+            minSdk = Versions.MIN_SDK
 
-private fun Project.androidComponents(action: AndroidComponentsExtension<*, *, *>.() -> Unit) {
-    extensions.configure(AndroidComponentsExtension::class.java, action)
+            // https://developer.android.com/studio/write/java8-support
+            enableCoreLibraryDesugaring = true
+        }
+    }
+
+    dependencies {
+        // https://developer.android.com/studio/write/java8-support
+        "coreLibraryDesugaring"(libs.findLibrary("tools.desugarjdklibs").get())
+    }
 }
+
+private fun Project.androidLegacy(action: ApplicationExtension.() -> Unit) = extensions.configure<ApplicationExtension>(action)
+
+fun Project.kotlin(configure: KotlinMultiplatformExtension.() -> Unit) =
+    extensions.configure<KotlinMultiplatformExtension>(configure)
+
+private fun KotlinMultiplatformExtension.android(configure: KotlinMultiplatformAndroidLibraryTarget.() -> Unit) =
+    extensions.configure<KotlinMultiplatformAndroidLibraryTarget>(configure)

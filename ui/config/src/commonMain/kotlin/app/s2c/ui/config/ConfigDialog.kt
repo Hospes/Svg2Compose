@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.s2c.ui.common.input.TextInputState
@@ -16,7 +17,6 @@ import app.s2c.ui.common.ui.AppSwitch
 import app.s2c.ui.common.ui.AppTextField
 import app.s2c.ui.di.injectedViewModel
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Serializable
 data class ConfigDialog(val id: Int = 23)

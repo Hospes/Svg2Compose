@@ -1,8 +1,8 @@
 plugins {
-    id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
-    id("app.s2c.compose")   //alias(libs.plugins.compose.multiplatform); alias(libs.plugins.kotlin.compose.compiler)
+    id("app.s2c.kotlin.multiplatform")
+    id("app.s2c.compose")
+    id("app.s2c.metro")
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -19,12 +19,6 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
-
-            implementation(compose.components.uiToolingPreview)
-
-            implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.androidx.navigation.compose)
 
             implementation(libs.filekit.dialogs.compose)
         }

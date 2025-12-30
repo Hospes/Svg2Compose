@@ -9,3 +9,8 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler) apply false
     alias(libs.plugins.metro) apply false
 }
+
+// Remove also build folder in root folder
+tasks.register<Delete>("clean") {
+    delete.add(rootProject.layout.buildDirectory)
+}

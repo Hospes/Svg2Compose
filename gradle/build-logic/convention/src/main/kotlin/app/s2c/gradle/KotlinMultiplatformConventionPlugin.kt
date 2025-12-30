@@ -5,11 +5,9 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
@@ -22,9 +20,8 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             applyDefaultHierarchyTemplate()
 
             jvm()
-            if (pluginManager.hasPlugin("com.android.library")) {
-                androidTarget()
-            }
+
+            // Android target configured separately with custom plugin `com.whoppah.android.library`
 
             // We don't need to build an iOS x64 framework
             // iosX64()
@@ -34,29 +31,6 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             sourceSets.all {
                 languageSettings.optIn("kotlinx.coroutines.FlowPreview")
                 languageSettings.optIn("kotlin.time.ExperimentalTime")
-            }
-
-            targets.withType<KotlinNativeTarget>().configureEach {
-                binaries.configureEach {
-                    // Add linker flag for SQLite. See:
-                    // https://github.com/touchlab/SQLiter/issues/77
-                    linkerOpts("-lsqlite3")
-
-                    // Workaround for https://youtrack.jetbrains.com/issue/KT-64508
-                    freeCompilerArgs += "-Xdisable-phases=RemoveRedundantCallsToStaticInitializersPhase"
-                }
-
-                compilations.configureEach {
-                    compileTaskProvider.configure {
-                        compilerOptions {
-                            // Various opt-ins
-                            freeCompilerArgs.addAll(
-                                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                                "-opt-in=kotlinx.cinterop.BetaInteropApi",
-                            )
-                        }
-                    }
-                }
             }
 
             targets.configureEach {

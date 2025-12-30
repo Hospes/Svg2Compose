@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class ComposeMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
@@ -31,13 +32,12 @@ fun Project.configureCompose() {
         //)
     }
 
-    // Workaround for:
-    // Task 'generateDebugUnitTestLintModel' uses this output of task
-    // 'generateResourceAccessorsForAndroidUnitTest' without declaring an explicit or
-    // implicit dependency.
-//    tasks.matching { it is AndroidLintAnalysisTask || it is LintModelWriterTask }.configureEach {
-//        mustRunAfter(tasks.matching { it.name.startsWith("generateResourceAccessorsFor") })
-//    }
+    extensions.configure<KotlinMultiplatformExtension> {
+        sourceSets.all {
+            //languageSettings.optIn("androidx.compose.ui.ExperimentalComposeUiApi")
+            //languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
+        }
+    }
 }
 
 fun Project.composeCompiler(block: ComposeCompilerGradlePluginExtension.() -> Unit) {

@@ -1,5 +1,5 @@
 plugins {
-    id("app.s2c.kotlin.multiplatform")  //alias(libs.plugins.kotlin.multiplatform)
+    id("app.s2c.kotlin.multiplatform")
 }
 
 kotlin {
