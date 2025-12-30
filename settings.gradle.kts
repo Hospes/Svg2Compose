@@ -56,6 +56,7 @@ include(
     ":common:ui:metrox:viewmodel",
     ":common:ui:compose",
     ":common:ui:resources",
+    ":common:ui:navigation",
 
     ":models",
     ":data",

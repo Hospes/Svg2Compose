@@ -10,29 +10,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
 import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.common.ui.AppColumnDialog
 import app.s2c.ui.common.ui.AppSwitch
 import app.s2c.ui.common.ui.AppTextField
-import app.s2c.ui.di.injectedViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ConfigDialog(val id: Int = 23)
+data class ConfigDialog(val id: Int = 23) : NavKey
 
 @Composable
 internal fun ConfigDialog(
-    navigateUp: () -> Unit,
-) {
-    ConfigDialog(
-        viewModel = injectedViewModel<ConfigViewModel, ConfigViewModel.Factory> { it.create(67) },
-        navigateUp = navigateUp,
-    )
-}
-
-@Composable
-private fun ConfigDialog(
     viewModel: ConfigViewModel,
     navigateUp: () -> Unit,
 ) {

@@ -1,15 +1,17 @@
 package app.s2c.ui.converter
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import app.s2c.ui.di.injectedViewModel
+import app.s2c.ui.navigation.Navigator
 
-fun NavGraphBuilder.addConverterScreen(
-    navController: NavController,
+fun EntryProviderScope<NavKey>.addConverterScreen(
+    navigator: Navigator,
     navigateConfig: () -> Unit,
 ) {
-    composable<ConverterScreen> {
+    entry<ConverterScreen> {
         ConverterScreen(
+            viewModel = injectedViewModel(),
             navigateConfig = navigateConfig,
         )
     }

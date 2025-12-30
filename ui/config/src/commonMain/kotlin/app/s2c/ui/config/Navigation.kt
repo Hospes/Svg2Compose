@@ -1,15 +1,21 @@
 package app.s2c.ui.config
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.scene.DialogSceneStrategy
+import app.s2c.ui.di.injectedViewModel
+import app.s2c.ui.navigation.Navigator
 
-fun NavGraphBuilder.addConfigDialog(
-    navController: NavController,
+fun EntryProviderScope<NavKey>.addConfigDialog(
+    navigator: Navigator,
 ) {
-    dialog<ConfigDialog> {
+    entry<ConfigDialog>(
+        metadata = DialogSceneStrategy.dialog(DialogProperties())
+    ) { key ->
         ConfigDialog(
-            navigateUp = navController::navigateUp,
+            viewModel = injectedViewModel<ConfigViewModel, ConfigViewModel.Factory> { it.create(key.id) },
+            navigateUp = navigator::navigateUp,
         )
     }
 }

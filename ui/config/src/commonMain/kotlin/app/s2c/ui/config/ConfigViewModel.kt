@@ -1,6 +1,5 @@
 package app.s2c.ui.config
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.s2c.core.base.util.AppCoroutineDispatchers
@@ -19,17 +18,16 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 class ConfigViewModel(
+    @Assisted private val id: Int,
     dispatchers: AppCoroutineDispatchers,
-    savedStateHandle: SavedStateHandle,
     prefs: AppPreferences,
-    @Assisted private val id: Int? = null,
 ) : ViewModel() {
 
     @ContributesIntoMap(ViewModelScope::class)
     @ViewModelKey(ConfigViewModel::class)
     @AssistedFactory
     interface Factory : ViewModelAssistedFactory {
-        fun create(id: Int?): ConfigViewModel
+        fun create(id: Int): ConfigViewModel
     }
 
     private val initConfig = prefs.parserConfig.getNotSuspended()
@@ -69,7 +67,7 @@ class ConfigViewModel(
 
 
     init {
-        Log.warn { "ConfigViewModel init id: $id | savedStateHandle: ${savedStateHandle.get<Int>("id")}" }
+        Log.warn { "ConfigViewModel init id: $id" }
         viewModelScope.launch { _package.clearErrorOnInputUpdate() }
         viewModelScope.launch { _receiverType.clearErrorOnInputUpdate() }
 

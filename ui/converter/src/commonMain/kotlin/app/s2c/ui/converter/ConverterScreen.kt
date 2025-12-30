@@ -25,33 +25,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
 import app.s2c.ui.common.input.TextInputState
 import app.s2c.ui.common.theme.AppTheme
 import app.s2c.ui.common.ui.AppSwitch
 import app.s2c.ui.common.ui.AppTextField
 import app.s2c.ui.common.ui.AppToggleGroup
 import app.s2c.ui.common.ui.spaceBetween
-import app.s2c.ui.di.injectedViewModel
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object ConverterScreen
+data object ConverterScreen : NavKey
 
 @Composable
 internal fun ConverterScreen(
-    navigateConfig: () -> Unit,
-) {
-    ConverterScreen(
-        viewModel = injectedViewModel(),
-        navigateConfig = navigateConfig,
-    )
-}
-
-@Composable
-private fun ConverterScreen(
     viewModel: ConverterViewModel,
     navigateConfig: () -> Unit,
 ) {
