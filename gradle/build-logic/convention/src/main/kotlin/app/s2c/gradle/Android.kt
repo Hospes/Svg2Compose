@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 fun Project.configureAndroidLegacy() {
     androidLegacy {
-        compileSdkVersion(Versions.COMPILE_SDK)
+        compileSdk { version = release(Versions.COMPILE_SDK) }
 
         defaultConfig {
             minSdk = Versions.MIN_SDK
