@@ -2,138 +2,110 @@
 
 ## 📋 Project Overview
 
-Svg2Compose is a desktop application that transforms Vector Drawable files and SVG paths into Jetpack Compose ImageVector code. This tool bridges the gap between traditional Android vector graphics and modern Compose UI development, enabling developers to easily convert their existing vector assets for use in Compose applications.
+**Svg2Compose** is a powerful cross-platform tool (Desktop & Android) that transforms **Vector Drawable** XML files and **SVG** paths into **Jetpack Compose ImageVector** code.
+
+This tool bridges the gap between traditional vector graphics and modern Compose UI development, enabling developers to effortlessly convert their existing assets for use in Kotlin Multiplatform and Android Compose applications.
 
 **Key Features:**
-- Convert Android Vector Drawable XML files to Compose ImageVector code
-- Transform SVG paths directly to ImageVector format
-- Real-time preview with three-column layout (paths, code, rendered image)
-- Color mapping for unknown color values
-- Cross-platform desktop application (Windows, macOS, Linux)
-- Copy-to-clipboard functionality for generated code
+- **Dual Mode Support:** Convert both Android Vector Drawables and standard SVG paths.
+- **Real-time Conversion:** Instant code generation as you type or load files.
+- **Responsive UI:** Adaptive layout that switches between a two-panel landscape view and a vertical portrait view based on screen size.
+- **Integrated Preview:** Visual preview of the generated icon directly within the interface.
+- **File Support:** Load `.xml` or `.svg` files directly via the built-in file picker.
+- **Cross-Platform:** Available as a native Desktop application (Windows, macOS, Linux) and an Android app.
+- **Customization:** Configurable icon naming and generation options.
 
 ## 🛠️ Technology Stack
 
-| Technology | Purpose |
-|------------|----------|
-| **Kotlin Multiplatform** | Core language and cross-platform development |
-| **Jetpack Compose Desktop** | UI framework for desktop application |
-| **Gradle** | Build system and dependency management |
-| **Kotlin Inject** | Dependency injection framework |
-| **Coroutines** | Asynchronous programming |
-| **Navigation Compose** | In-app navigation |
-| **Material Design** | UI components and theming |
+This project allows you to explore the bleeding edge of the Kotlin ecosystem, utilizing the latest pre-release versions of key libraries:
 
-## 📦 Key Libraries & Dependencies
-
-| Library | Version | Purpose |
-|---------|---------|----------|
-| `compose.desktop.currentOs` | 1.9.0-alpha03 | Desktop Compose runtime |
-| `compose.material` | 1.9.0-alpha03 | Material Design components |
-| `compose.materialIconsExtended` | 1.9.0-alpha03 | Extended Material icons |
-| `androidx.navigation.compose` | 2.9.0-beta03 | Navigation between screens |
-| `androidx.lifecycle.viewmodel.compose` | 2.9.1 | ViewModel integration |
-| `kotlinx.coroutines.core` | 1.10.2 | Coroutine support |
-| `kotlinx.coroutines.swing` | 1.10.2 | Swing integration for JVM |
-| `metro` (Kotlin Inject) | 0.5.1 | Dependency injection framework |
-| `kotlin` | 2.2.0 | Kotlin language and compiler |
+| Technology | Version | Purpose |
+|------------|---------|----------|
+| **Kotlin** | 2.3.20-Beta2 | Core language and compiler |
+| **Compose Multiplatform** | 1.10.0 | UI framework for Desktop & Android |
+| **Material 3** | 1.10.0-alpha05 | Modern UI components and theming |
+| **Navigation 3** | 1.0.0-alpha06 | Type-safe navigation for Compose |
+| **Metro** | 0.10.2 | Compile-time dependency injection |
+| **Coroutines** | 1.10.2 | Asynchronous programming |
+| **FileKit** | 0.12.0 | Cross-platform file picking |
+| **KSoup** | 0.2.5 | HTML/XML parsing |
 
 ## 📁 Project Structure
 
-```
+```text
 Svg2Compose/
-├── app/                          # Main application module
-│   ├── src/
-│   │   ├── commonMain/          # Shared application code
-│   │   └── jvmMain/             # JVM-specific code (main entry point)
-│   └── build.gradle.kts         # App module build configuration
-├── core/                         # Core functionality modules
-│   ├── base/                    # Base utilities and common code
-│   ├── logging/                 # Logging infrastructure
-│   └── preferences/             # User preferences management
-├── common/                       # Shared UI components
+├── android-app/                  # Android application entry point
+├── desktop-app/                  # Desktop (JVM) application entry point
+├── app/                          # Shared Application logic (Compose UI entry)
+├── common/                       # Shared UI and Logic
 │   └── ui/
-│       ├── compose/             # Reusable Compose components
-│       └── resources/           # Shared resources
-├── data/                         # Data layer (parsing, models)
-├── models/                       # Data models and entities
-├── ui/                          # Feature-specific UI modules
-│   ├── converter/               # Main conversion screen
-│   └── config/                  # Configuration/settings screen
-├── gradle/                       # Gradle build logic
-│   └── build-logic/             # Custom Gradle plugins
-├── build.gradle.kts             # Root build configuration
-├── settings.gradle.kts          # Project structure definition
-└── gradle.properties            # Gradle properties and settings
+│       ├── compose/             # Reusable Design System components
+│       ├── navigation/          # Navigation logic
+│       ├── resources/           # Shared resources (strings, icons)
+│       └── metrox/              # DI extensions
+├── core/                         # Core infrastructure
+│   ├── base/                    # Base utilities & Common Interfaces
+│   ├── logging/                 # Logging (Log4k)
+│   └── preferences/             # Settings management
+├── data/                         # Data layer (Parsing logic, Repositories)
+├── models/                       # Domain Models
+├── ui/                           # Feature Modules
+│   ├── converter/               # Main Conversion Screen
+│   └── config/                  # Settings/Configuration Screen
+└── gradle/                       # Build logic and version catalog
 ```
-
-## 📖 Module Documentation
-
-### Core Modules
-- [**Core Base**](core/base/README.md) - Foundation utilities, dependency injection setup, and common interfaces
-- [**Core Logging**](core/logging/README.md) - Centralized logging infrastructure
-- [**Core Preferences**](core/preferences/README.md) - User preferences and settings management
-
-### UI Modules
-- [**Common UI Compose**](common/ui/compose/README.md) - Reusable Compose components and utilities
-- [**Common UI DI**](common/ui/di/README.md) - Dependency injection infrastructure for UI components and ViewModels
-- [**Common UI Resources**](common/ui/resources/README.md) - Shared UI resources (icons, strings, themes)
-- [**UI Converter**](ui/converter/README.md) - Main conversion interface and functionality
-- [**UI Config**](ui/config/README.md) - Application configuration and settings UI
-
-### Data & Models
-- [**Data**](data/README.md) - Data parsing, processing, and repository layer
-- [**Models**](models/README.md) - Core data models and entities
-
-### Application
-- [**App**](app/README.md) - Main application module, entry point, and application-level configuration
 
 ## 🚀 Getting Started
 
-### Download
-Download the latest version (Windows, macOS, or Linux) here: [Releases](https://github.com/DenisMondon/Svg2Compose/releases).
+### Prerequisites
+- JDK 17 or higher
+- Android Studio (for Android deployment)
 
-### Development Setup
-1. Clone the repository
-2. Open in IntelliJ IDEA or Android Studio
-3. Run the application: `./gradlew :app:run`
-4. Build distributions: `./gradlew :app:packageDistributionForCurrentOS`
+### Running the Application
+
+**Desktop (Windows/macOS/Linux):**
+```bash
+./gradlew :desktop-app:run
+```
+
+**Android:**
+```bash
+./gradlew :android-app:installDebug
+```
 
 ## 📱 How to Use
 
-### Transform a Vector Drawable
-1. Switch to **VECTOR** mode using the toggle buttons at the top
-2. Enter your Vector Drawable XML content in the left input panel, or use the **Browse** button to load a file
-3. The conversion happens automatically as you type
-4. View the two-column output:
-   - **Left**: Your input XML/SVG content
-   - **Right**: Generated ImageVector code with a preview icon overlay in the top-right corner
-5. Edit the icon name in the "Icon Name" field if desired
-6. Copy the generated ImageVector code from the right panel
-7. Paste it into your Compose project
+The application features a responsive interface divided into an **Input Panel** and an **Output Panel**.
 
-### Transform SVG Content
-1. Switch to **SVG** mode using the toggle buttons at the top (default mode)
-2. Enter your SVG path data or SVG content in the left input panel, or use the **Browse** button to load a file
-3. The conversion happens automatically in real-time as you type
-4. View the results in the right panel with the generated ImageVector code
-5. The preview icon appears as an overlay in the top-right corner of the output panel
-6. Copy the generated code to your clipboard
+### 1. Provide Input
+*   **Select Mode:** Use the toggle to switch between **SVG** (default) and **VECTOR** modes.
+*   **Load File:** Click **"Load from file..."** to open a system file picker and select your `.svg` or `.xml` file.
+*   **Paste Code:** Alternatively, paste your raw SVG path data or Vector Drawable XML directly into the input text area.
+
+### 2. Get Result
+*   **View Code:** The generated Kotlin code appears immediately in the Output Panel.
+*   **Preview:** Toggle the **PREVIEW** switch to overlay a visual rendering of the icon on top of the code.
+*   **Name Icon:** Enter a custom name in the "Icon Name" field to update the generated variable/object name.
+*   **Copy:** Click the **Copy** button to copy the entire code block to your clipboard.
+*   **Config:** Click the **Config** button (Settings icon) to tweak generation settings.
 
 ## 🏗️ Architecture
 
-The application follows a modular architecture with clear separation of concerns:
+The project follows a clean, modular architecture:
 
-- **Presentation Layer**: Compose UI with MVVM pattern
-- **Domain Layer**: Business logic and use cases
-- **Data Layer**: Parsing engines and data models
-- **Infrastructure**: Dependency injection, logging, and preferences
-
-The project uses Kotlin Multiplatform to share code between different platforms while maintaining platform-specific optimizations for desktop environments.
+*   **UI Layer:** Built with **Jetpack Compose** and **Material 3**. Uses **MVVM** pattern with generic ViewModels.
+*   **Navigation:** Uses **Navigation 3** (Type-safe, component-based navigation).
+*   **DI:** Uses **Metro** for compile-time dependency injection, ensuring type safety and performance.
+*   **Multiplatform:** Code is shared via the `app` and `common` modules, while `android-app` and `desktop-app` serve as platform-specific launchers.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read the contributing guidelines and ensure all tests pass before submitting a pull request.
+Contributions are welcome!
+1.  Fork the repository.
+2.  Create a feature branch (`git checkout -b feature/amazing-feature`).
+3.  Commit your changes.
+4.  Push to the branch.
+5.  Open a Pull Request.
 
 ## 📄 License
 
