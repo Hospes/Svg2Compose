@@ -34,7 +34,6 @@ jobs:
       with:
         gradle-version: wrapper
         cache-read-only: false
-        gradle-home-cache-cleanup: true
 
     - name: Configure Build Environment
       shell: bash
@@ -51,6 +50,7 @@ jobs:
       run: ./gradlew ${{ env.GRADLE_TASK }}
 
     - name: Upload Installer Artifact
+      if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
         name: installer-${{ matrix.os }}
