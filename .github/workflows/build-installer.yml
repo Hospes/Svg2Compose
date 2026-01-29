@@ -14,37 +14,37 @@ jobs:
     if: |
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
       github.event_name == 'workflow_dispatch'
-    runs-on: [self-hosted, windows, x64]
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Set up JDK 21
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: 21
-        distribution: 'oracle'
+        distribution: 'temurin'
         architecture: x64
 
     - name: Set up Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5
       with:
         gradle-version: wrapper
         cache-read-only: false
         gradle-home-cache-cleanup: true
 
     - name: Build with Gradle
-      run: ./gradlew :app:packageReleaseMsi
+      run: ./gradlew :desktop-app:packageReleaseMsi
 
     - name: Locate Generated Executables
       id: locate_files
       shell: powershell
       run: |
         # Find the .msi file in the build output directory
-        $msiFile = Get-ChildItem -Path "app/build/compose/binaries" -Recurse -Filter "*.msi" | Select-Object -First 1
+        $msiFile = Get-ChildItem -Path "desktop-app/build/compose/binaries" -Recurse -Filter "*.msi" | Select-Object -First 1
         if ($null -eq $msiFile) {
           Write-Error "Could not find the generated .msi file."
           exit 1
