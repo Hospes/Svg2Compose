@@ -11,6 +11,3 @@
 
 # Fix for Logback warnings
 -dontwarn org.tukaani.xz.**
-
-# Ignore other common duplicates in fat jars
--dontnote META-INF/**
