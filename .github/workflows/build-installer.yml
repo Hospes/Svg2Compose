@@ -1,20 +1,21 @@
-name: Build and Release Windows Executables
+name: Build and Release Desktop App
 
 on:
   push:
     tags: 
-        - 'v?[0-9]+.[0-9]+.[0-9]+'  # Trigger on tags like 1.0.0, 2.5.10 or v1.2.3
+        - 'v?[0-9]+.[0-9]+.[0-9]+'
     branches: 
-        - 'release/**'  # Push events to branches matching refs/heads/release/10
+        - 'release/**'
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build and Package for Windows x64
-    if: |
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
-      github.event_name == 'workflow_dispatch'
-    runs-on: windows-latest
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
 
     steps:
     - name: Checkout repository
@@ -27,7 +28,6 @@ jobs:
       with:
         java-version: 21
         distribution: 'temurin'
-        architecture: x64
 
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v5
@@ -36,68 +36,91 @@ jobs:
         cache-read-only: false
         gradle-home-cache-cleanup: true
 
-    - name: Build with Gradle
-      run: ./gradlew :desktop-app:packageReleaseMsi
-
-    - name: Locate Generated Executables
-      id: locate_files
-      shell: powershell
+    - name: Configure Build Environment
+      shell: bash
       run: |
-        # Find the .msi file in the build output directory
-        $msiFile = Get-ChildItem -Path "desktop-app/build/compose/binaries" -Recurse -Filter "*.msi" | Select-Object -First 1
-        if ($null -eq $msiFile) {
-          Write-Error "Could not find the generated .msi file."
-          exit 1
-        }
-        Write-Host "Found MSI: $($msiFile.FullName)"
-        echo "msi_path=$($msiFile.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-        echo "msi_name=$($msiFile.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        if [ "$RUNNER_OS" == "Windows" ]; then
+           echo "GRADLE_TASK=:desktop-app:packageReleaseMsi" >> $GITHUB_ENV
+           echo "ARTIFACT_PATTERN=*.msi" >> $GITHUB_ENV
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+           echo "GRADLE_TASK=:desktop-app:packageReleaseDmg" >> $GITHUB_ENV
+           echo "ARTIFACT_PATTERN=*.dmg" >> $GITHUB_ENV
+        fi
 
-    # Create GitHub release with MSI package when triggered by tag push
-    - name: Create GitHub Release
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-      shell: powershell
-      run: |
-        $tagName = "${{ github.ref_name }}"
-        $msiPath = "${{ steps.locate_files.outputs.msi_path }}"
-        
-        # Create release with MSI attached
-        gh release create $tagName `
-          --title "$tagName" `
-          --generate-notes `
-          "$msiPath"
-        
-        Write-Host "Created release $tagName with MSI package"
+    - name: Build Application
+      run: ./gradlew ${{ env.GRADLE_TASK }}
+
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: installer-${{ matrix.os }}
+        path: desktop-app/build/compose/binaries/**/${{ env.ARTIFACT_PATTERN }}
+        if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: release_assets
+        merge-multiple: true
+
+    - name: Publish Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG_NAME="${{ github.ref_name }}"
+        
+        # Find all files in the artifacts directory
+        FILES=$(find release_assets -type f)
+        
+        echo "Processing release for tag: $TAG_NAME"
+        echo "Files to upload:"
+        echo "$FILES"
+        
+        # Check if release already exists
+        if gh release view "$TAG_NAME" > /dev/null 2>&1; then
+          echo "Release $TAG_NAME already exists. Uploading assets..."
+          gh release upload "$TAG_NAME" $FILES --clobber
+        else
+          echo "Release $TAG_NAME does not exist. Creating new release..."
+          gh release create "$TAG_NAME" \
+            --title "$TAG_NAME" \
+            --generate-notes \
+            $FILES
+        fi
 
-    # Cleanup artifacts from old releases - keep artifacts only for the last 3 releases
     - name: Cleanup Old Release Artifacts
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-      shell: powershell
-      run: |
-        Write-Host "Cleaning up artifacts from old releases, keeping artifacts only for the last 3 releases..."
-        
-        # Get all releases sorted by creation date (newest first)
-        $releases = gh release list --json tagName,createdAt --limit 50 | ConvertFrom-Json
-        $sortedReleases = $releases | Sort-Object { [DateTime]$_.createdAt } -Descending
-        
-        # Skip the first 3 (keep their artifacts) and remove artifacts from the rest
-        $releasesToCleanup = $sortedReleases | Select-Object -Skip 3
-        
-        foreach ($release in $releasesToCleanup) {
-          Write-Host "Removing artifacts from release: $($release.tagName)"
-          
-          # Get all assets for this release
-          $assets = gh release view $($release.tagName) --json assets | ConvertFrom-Json
-          
-          # Delete each asset
-          foreach ($asset in $assets.assets) {
-            Write-Host "  - Deleting asset: $($asset.name)"
-            gh release delete-asset $($release.tagName) $($asset.name) --yes
-          }
-        }
-        
-        Write-Host "Cleanup completed. Kept artifacts only for latest 3 releases."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "Cleaning up artifacts from old releases (keeping last 3)..."
+        
+        # Get releases sorted by date (newest first), skip first 3, get tags
+        TAGS_TO_CLEAN=$(gh release list --json tagName,createdAt --limit 50 | \
+          jq -r 'sort_by(.createdAt) | reverse | .[3:] | .[].tagName')
+        
+        for TAG in $TAGS_TO_CLEAN; do
+          if [ -z "$TAG" ]; then continue; fi
+          echo "Processing release: $TAG"
+          
+          # List assets for the release
+          ASSETS=$(gh release view "$TAG" --json assets -q '.assets[].name')
+          
+          for ASSET in $ASSETS; do
+            echo "  - Deleting asset: $ASSET"
+            gh release delete-asset "$TAG" "$ASSET" --yes
+          done
+        done
+        
+        echo "Cleanup completed."
