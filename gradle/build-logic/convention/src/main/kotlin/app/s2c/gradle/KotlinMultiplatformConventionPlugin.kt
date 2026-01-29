@@ -28,19 +28,10 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             //iosArm64()
             //iosSimulatorArm64()
 
-            sourceSets.all {
-                languageSettings.optIn("kotlinx.coroutines.FlowPreview")
-                languageSettings.optIn("kotlin.time.ExperimentalTime")
-            }
-
-            targets.configureEach {
-                compilations.configureEach {
-                    compileTaskProvider.configure {
-                        compilerOptions {
-                            freeCompilerArgs.add("-Xexpect-actual-classes")
-                        }
-                    }
-                }
+            compilerOptions {
+                optIn.add("kotlinx.coroutines.FlowPreview")
+                optIn.add("kotlin.time.ExperimentalTime")
+                freeCompilerArgs.add("-Xexpect-actual-classes")
             }
 
             metadata {
