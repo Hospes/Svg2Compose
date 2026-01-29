@@ -11,3 +11,7 @@
 
 # Fix for Logback warnings
 -dontwarn org.tukaani.xz.**
+
+# Fix for androidx.navigation3 and navigationevent
+-keep class androidx.navigation3.** { *; }
+-keep class androidx.navigationevent.** { *; }
